@@ -42,8 +42,8 @@ export function ProfileForm({ session }: { session: Session }) {
 
   const updateUser = api.user.update.useMutation({
     async onSuccess(newUser) {
-      // update session data
-      await update({ username: newUser.username, name: newUser.name });
+      // refresh session data
+      await update();
     },
   });
 
