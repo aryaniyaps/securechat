@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Session } from "next-auth";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { AvatarUpload } from "~/components/ui/avatar-upload";
@@ -26,33 +27,37 @@ const profileSchema = z.object({
     .max(28, {
       message: "Username cannot be longer than 28 characters.",
     }),
-  name: z
-    .string()
-    .min(3, {
-      message: "Name must be at least 3 characters.",
-    })
-    .max(75, {
+  name: z.optional(
+    z.string().max(75, {
       message: "Username cannot be longer than 75 characters.",
-    }),
+    })
+  ),
   avatar: z.optional(z.any()), // Assuming we have some way to validate files server-side
 });
 
 export function ProfileForm({ session }: { session: Session }) {
   const { toast } = useToast();
 
-  const updateMutation = api.user.update.useMutation({});
+  const { update } = useSession();
+
+  const updateUser = api.user.update.useMutation({
+    async onSuccess(newUser) {
+      // update session data
+      await update({ username: newUser.username, name: newUser.name });
+    },
+  });
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       username: session.user.username,
+      name: session.user.name || undefined,
     },
   });
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     if (values.avatar) {
       // upload avatar here
-
       let error, data;
 
       if (error) {
@@ -63,17 +68,18 @@ export function ProfileForm({ session }: { session: Session }) {
         console.error(error);
       }
 
-      // await updateMutation.mutateAsync({
+      // await updateUser.mutateAsync({
       //   username: values.username,
       //   avatar: data?.path,
       // });
     } else {
-      await updateMutation.mutateAsync({
+      await updateUser.mutateAsync({
         username: values.username,
+        name: values.name,
       });
     }
 
-    form.reset({ username: values.username });
+    form.reset({ username: values.username, name: values.name });
 
     toast({
       description: "your user profile is updated!",
@@ -106,30 +112,30 @@ export function ProfileForm({ session }: { session: Session }) {
         <div className="flex w-6/12 flex-col gap-4">
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>username</FormLabel>
+                <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="first last" {...field} />
                 </FormControl>
-                <FormDescription>
-                  this is your public display name
-                </FormDescription>
+                <FormDescription>this is your full name</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="name"
+            name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>full name</FormLabel>
+                <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="first last" {...field} />
+                  <Input placeholder="shadcn" {...field} />
                 </FormControl>
-                <FormDescription>this is your full name</FormDescription>
+                <FormDescription>
+                  this is your public display name
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

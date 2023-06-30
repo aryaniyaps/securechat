@@ -5,6 +5,7 @@ export const userRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       z.object({
+        name: z.optional(z.string()),
         username: z.optional(z.string()),
         avatar: z.optional(z.any()),
       })
@@ -12,12 +13,12 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // upload avatar here
       return await ctx.prisma.user.update({
-        data: { username: input.username },
+        data: { username: input.username, name: input.name },
         where: { id: ctx.session.user.id },
       });
     }),
 
-  getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+  fetch: protectedProcedure.query(({ ctx }) => {
+    return ctx.session.user;
   }),
 });

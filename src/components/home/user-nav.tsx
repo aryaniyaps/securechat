@@ -11,11 +11,15 @@ export function UserNav({ session }: { session: Session }) {
         <AvatarImage
           src={session.user.image}
           loading="eager"
-          alt={session.user.name || "avatar"}
+          alt={session.user.name || session.user.username}
         />
-        <AvatarFallback>{session.user.name?.slice(0, 2)}</AvatarFallback>
+        <AvatarFallback>
+          {(session.user.name || session.user.username).slice(0, 2)}
+        </AvatarFallback>
       </Avatar>
-      <p className="text-sm font-semibold leading-none">{session.user.name}</p>
+      <p className="text-sm font-semibold leading-none">
+        {session.user.name || session.user.username}
+      </p>
     </Link>
   );
 }
