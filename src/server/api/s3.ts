@@ -9,4 +9,5 @@ export const s3Client = new S3Client({
     accessKeyId: env.AWS_S3_ACCESS_KEY,
     secretAccessKey: env.AWS_S3_SECRET_KEY,
   },
+  forcePathStyle: true,
 });

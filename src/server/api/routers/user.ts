@@ -1,6 +1,8 @@
 import {
   CreateBucketCommand,
   GetObjectCommand,
+  HeadBucketCommand,
+  NoSuchBucket,
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -26,11 +28,14 @@ export const userRouter = createTRPCRouter({
       // Ensure bucket exists
       try {
         await s3Client.send(
-          new CreateBucketCommand({ Bucket: env.AWS_S3_BUCKET_NAME })
+          new HeadBucketCommand({ Bucket: env.AWS_S3_BUCKET_NAME })
         );
       } catch (error) {
-        console.error("Error creating bucket:", error);
-        throw new Error("Failed to create bucket");
+        if (error instanceof NoSuchBucket) {
+          await s3Client.send(
+            new CreateBucketCommand({ Bucket: env.AWS_S3_BUCKET_NAME })
+          );
+        }
       }
 
       // Upload file
@@ -51,7 +56,7 @@ export const userRouter = createTRPCRouter({
       );
       // Return URL or ID for uploaded file
       console.log("SIGNED URL: ", url);
-      return url;
+      return url.replace(env.AWS_S3_END_POINT, "http://localhost:9000");
     }),
   update: protectedProcedure
     .input(

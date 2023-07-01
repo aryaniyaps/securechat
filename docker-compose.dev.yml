@@ -13,6 +13,17 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  minio:
+    image: minio/minio
+    restart: unless-stopped
+    volumes:
+      - minio_data:/data
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data
   app:
     build:
       context: .
@@ -26,8 +37,10 @@ services:
       - /app/node_modules
     depends_on:
       - db
+      - minio
     env_file:
     - .env
 
 volumes:
+  minio_data:
   db_data:
