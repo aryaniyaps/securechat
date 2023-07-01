@@ -1,7 +1,13 @@
+import {
+  CreateBucketCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { minioClient } from "../minio";
+import { s3Client } from "../s3";
 
 export const userRouter = createTRPCRouter({
   uploadAvatar: protectedProcedure
@@ -18,25 +24,33 @@ export const userRouter = createTRPCRouter({
       const fileName = `avatar-${ctx.session.user.id}`;
 
       // Ensure bucket exists
-      if (!(await minioClient.bucketExists(env.MINIO_BUCKET_NAME))) {
-        await minioClient.makeBucket(env.MINIO_BUCKET_NAME, "us-east-1"); // Adjust region as needed
+      try {
+        await s3Client.send(
+          new CreateBucketCommand({ Bucket: env.AWS_S3_BUCKET_NAME })
+        );
+      } catch (error) {
+        console.error("Error creating bucket:", error);
+        throw new Error("Failed to create bucket");
       }
 
       // Upload file
-      await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file);
-
-      console.log(
-        "PRESIGNED OBJECT: ",
-        await minioClient.presignedGetObject(env.MINIO_BUCKET_NAME, fileName)
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: env.AWS_S3_BUCKET_NAME,
+          Key: fileName,
+          Body: file,
+        })
       );
 
-      const url = await minioClient.presignedUrl(
-        "GET",
-        env.MINIO_BUCKET_NAME,
-        fileName
+      const url = await getSignedUrl(
+        s3Client,
+        new GetObjectCommand({
+          Bucket: env.AWS_S3_BUCKET_NAME,
+          Key: fileName,
+        })
       );
       // Return URL or ID for uploaded file
-      console.log("PRE SIGNED URL: ", url);
+      console.log("SIGNED URL: ", url);
       return url;
     }),
   update: protectedProcedure
@@ -48,7 +62,6 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("UPDATE MUTATION PASSED AVATAR URL: ", input.avatarUrl);
       return await ctx.prisma.user.update({
         data: {
           ...(input.username && {
