@@ -58,7 +58,6 @@ export function ProfileForm({ session }: { session: Session }) {
   });
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
-    let imageUrl;
     if (values.avatar) {
       // convert file to base64 or another format that can be sent via JSON
       const reader = new FileReader();
@@ -66,16 +65,23 @@ export function ProfileForm({ session }: { session: Session }) {
       reader.onloadend = async function () {
         const base64data = reader.result as string;
         // upload avatar here
-        imageUrl = await uploadAvatar.mutateAsync({
+        const imageUrl = await uploadAvatar.mutateAsync({
           avatar: base64data,
         });
+        console.log("IMAGE URL: ", imageUrl);
+        await updateUser.mutateAsync({
+          username: values.username,
+          name: values.name,
+          avatarUrl: imageUrl,
+        });
       };
+    } else {
+      console.log("UPDATING USER...");
+      await updateUser.mutateAsync({
+        username: values.username,
+        name: values.name,
+      });
     }
-    await updateUser.mutateAsync({
-      username: values.username,
-      name: values.name,
-      avatarUrl: imageUrl,
-    });
 
     form.reset({ username: values.username, name: values.name });
 

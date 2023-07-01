@@ -10,6 +10,7 @@ export const userRouter = createTRPCRouter({
         avatar: z.string(), // Base64 encoded image
       })
     )
+    .output(z.string())
     .mutation(async ({ ctx, input }) => {
       // Convert base64 string to buffer
       const file = Buffer.from(input.avatar, "base64");
@@ -24,8 +25,19 @@ export const userRouter = createTRPCRouter({
       // Upload file
       await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file);
 
+      console.log(
+        "PRESIGNED OBJECT: ",
+        await minioClient.presignedGetObject(env.MINIO_BUCKET_NAME, fileName)
+      );
+
+      const url = await minioClient.presignedUrl(
+        "GET",
+        env.MINIO_BUCKET_NAME,
+        fileName
+      );
       // Return URL or ID for uploaded file
-      return `${env.MINIO_END_POINT}/${env.MINIO_BUCKET_NAME}/${fileName}`;
+      console.log("PRE SIGNED URL: ", url);
+      return url;
     }),
   update: protectedProcedure
     .input(
@@ -36,6 +48,7 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("UPDATE MUTATION PASSED AVATAR URL: ", input.avatarUrl);
       return await ctx.prisma.user.update({
         data: {
           ...(input.username && {
