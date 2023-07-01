@@ -32,7 +32,7 @@ const profileSchema = z.object({
       message: "Username cannot be longer than 75 characters.",
     })
   ),
-  avatar: z.optional(z.any()), // Assuming we have some way to validate files server-side
+  avatar: z.optional(z.instanceof(Blob)),
 });
 
 export function ProfileForm({ session }: { session: Session }) {
@@ -41,43 +41,41 @@ export function ProfileForm({ session }: { session: Session }) {
   const { update } = useSession();
 
   const updateUser = api.user.update.useMutation({
-    async onSuccess(newUser) {
+    async onSuccess() {
       // refresh session data
       await update();
     },
   });
 
+  const uploadAvatar = api.user.uploadAvatar.useMutation();
+
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       username: session.user.username,
-      name: session.user.name || undefined,
+      name: session.user.name || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
+    let imageUrl;
     if (values.avatar) {
-      // upload avatar here
-      let error, data;
-
-      if (error) {
-        toast({
-          description: "couldn't upload avatar, please try again",
-          variant: "destructive",
+      // convert file to base64 or another format that can be sent via JSON
+      const reader = new FileReader();
+      reader.readAsDataURL(values.avatar);
+      reader.onloadend = async function () {
+        const base64data = reader.result as string;
+        // upload avatar here
+        imageUrl = await uploadAvatar.mutateAsync({
+          avatar: base64data,
         });
-        console.error(error);
-      }
-
-      // await updateUser.mutateAsync({
-      //   username: values.username,
-      //   avatar: data?.path,
-      // });
-    } else {
-      await updateUser.mutateAsync({
-        username: values.username,
-        name: values.name,
-      });
+      };
     }
+    await updateUser.mutateAsync({
+      username: values.username,
+      name: values.name,
+      avatarUrl: imageUrl,
+    });
 
     form.reset({ username: values.username, name: values.name });
 
@@ -119,7 +117,7 @@ export function ProfileForm({ session }: { session: Session }) {
                 <FormControl>
                   <Input placeholder="first last" {...field} />
                 </FormControl>
-                <FormDescription>this is your full name</FormDescription>
+                <FormDescription>This is your full name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -134,7 +132,7 @@ export function ProfileForm({ session }: { session: Session }) {
                   <Input placeholder="shadcn" {...field} />
                 </FormControl>
                 <FormDescription>
-                  this is your public display name
+                  This is your public display name.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

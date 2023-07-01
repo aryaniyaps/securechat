@@ -1,0 +1,7 @@
+docker-compose.yml
+docker-compose.dev.yml
+**/node_modules/
+**/.next/
+.env
+.git
+npm-debug.log
