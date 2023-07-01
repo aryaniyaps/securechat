@@ -1,15 +1,7 @@
-import {
-  CreateBucketCommand,
-  GetObjectCommand,
-  HeadBucketCommand,
-  NoSuchBucket,
-  PutObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { s3Client } from "../s3";
+import { minioClient } from "../minio";
 
 export const userRouter = createTRPCRouter({
   uploadAvatar: protectedProcedure
@@ -26,37 +18,70 @@ export const userRouter = createTRPCRouter({
       const fileName = `avatar-${ctx.session.user.id}`;
 
       // Ensure bucket exists
-      try {
-        await s3Client.send(
-          new HeadBucketCommand({ Bucket: env.AWS_S3_BUCKET_NAME })
-        );
-      } catch (error) {
-        if (error instanceof NoSuchBucket) {
-          await s3Client.send(
-            new CreateBucketCommand({ Bucket: env.AWS_S3_BUCKET_NAME })
+      if (!(await minioClient.bucketExists(env.MINIO_BUCKET_NAME))) {
+        try {
+          console.log("making bucket...");
+          await minioClient.makeBucket(env.MINIO_BUCKET_NAME);
+          await minioClient.setBucketPolicy(
+            env.MINIO_BUCKET_NAME,
+            `{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:ListBucket"
+      ],
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Resource": [
+        "arn:aws:s3:::${env.MINIO_BUCKET_NAME}"
+      ],
+      "Sid": ""
+    },
+    {
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "*"
+        ]
+      },
+      "Resource": [
+        "arn:aws:s3:::${env.MINIO_BUCKET_NAME}/*"
+      ],
+      "Sid": ""
+    }
+  ]
+}`
           );
+        } catch {
+          await minioClient.removeBucket(env.MINIO_BUCKET_NAME);
         }
       }
 
       // Upload file
-      await s3Client.send(
-        new PutObjectCommand({
-          Bucket: env.AWS_S3_BUCKET_NAME,
-          Key: fileName,
-          Body: file,
-        })
+      await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file);
+
+      console.log(
+        "PRESIGNED OBJECT: ",
+        await minioClient.presignedGetObject(env.MINIO_BUCKET_NAME, fileName)
       );
 
-      const url = await getSignedUrl(
-        s3Client,
-        new GetObjectCommand({
-          Bucket: env.AWS_S3_BUCKET_NAME,
-          Key: fileName,
-        })
+      const url = await minioClient.presignedUrl(
+        "GET",
+        env.MINIO_BUCKET_NAME,
+        fileName
       );
       // Return URL or ID for uploaded file
-      console.log("SIGNED URL: ", url);
-      return url.replace(env.AWS_S3_END_POINT, "http://localhost:9000");
+      console.log("PRE SIGNED URL: ", url);
+      return url.replace(env.MINIO_END_POINT, "localhost");
     }),
   update: protectedProcedure
     .input(
@@ -67,6 +92,7 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("UPDATE MUTATION PASSED AVATAR URL: ", input.avatarUrl);
       return await ctx.prisma.user.update({
         data: {
           ...(input.username && {

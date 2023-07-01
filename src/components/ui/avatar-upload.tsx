@@ -7,13 +7,13 @@ import { Button } from "./button";
 import { Dialog, DialogContent, DialogFooter } from "./dialog";
 
 interface AvatarUploadProps extends React.HTMLProps<HTMLInputElement> {
-  username: string;
+  placeholder: string;
   avatarURL: string;
   onAvatarChange: (newAvatar: Blob) => void;
 }
 
 export const AvatarUpload: React.FC<AvatarUploadProps> = ({
-  username,
+  placeholder,
   avatarURL,
   onAvatarChange,
   disabled,
@@ -117,8 +117,8 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
           accept="image/png, image/jpeg"
         />
         <Avatar className="h-24 w-24">
-          <AvatarImage src={preview} loading="eager" alt={`@${username}`} />
-          <AvatarFallback>{username.slice(0, 2)}</AvatarFallback>
+          <AvatarImage src={preview} loading="eager" alt={`@${placeholder}`} />
+          <AvatarFallback>{placeholder.slice(0, 2)}</AvatarFallback>
         </Avatar>
       </label>
 

@@ -11,8 +11,6 @@
     "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.363.0",
-    "@aws-sdk/s3-request-presigner": "^3.363.0",
     "@hookform/resolvers": "^3.1.1",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.14.0",
@@ -32,6 +30,7 @@
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
     "lucide-react": "^0.252.0",
+    "minio": "^7.1.1",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",
     "nodemailer": "^6.9.3",

@@ -103,7 +103,7 @@ export function ProfileForm({ session }: { session: Session }) {
             <FormItem>
               <FormControl>
                 <AvatarUpload
-                  username={session.user.username}
+                  placeholder={session.user.name || session.user.username}
                   avatarURL={session.user.image}
                   onAvatarChange={onChange}
                   disabled={form.formState.isSubmitting}
