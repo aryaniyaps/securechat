@@ -26,6 +26,7 @@ export const userRouter = createTRPCRouter({
         try {
           console.log("making bucket...");
           await minioClient.makeBucket(env.MINIO_BUCKET_NAME);
+          //allow everyone to GET from bucket
           await minioClient.setBucketPolicy(
             env.MINIO_BUCKET_NAME,
             `{
@@ -85,7 +86,6 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("UPDATE MUTATION PASSED AVATAR: ", input.image);
       return await ctx.prisma.user.update({
         data: {
           ...(input.username && {
