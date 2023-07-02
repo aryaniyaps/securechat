@@ -72,7 +72,7 @@ export const userRouter = createTRPCRouter({
   }`
           );
           // add default avatar
-          const filePath = path.join(__dirname, "avatar.jpg");
+          const filePath = path.join(process.cwd(), "assets", "avatar.jpg");
           const fileData = fs.readFileSync(filePath);
           await minioClient.putObject(
             env.MINIO_BUCKET_NAME,
