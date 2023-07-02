@@ -17,6 +17,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
+import { getAvatarUrl } from "../../../utils/avatar";
 
 const profileSchema = z.object({
   username: z
@@ -64,15 +65,18 @@ export function ProfileForm({ session }: { session: Session }) {
       reader.readAsDataURL(values.avatar);
       reader.onloadend = async function () {
         const base64data = reader.result as string;
+        // Remove data URL scheme
+        const base64Index = base64data.indexOf("base64,") + "base64,".length;
         // upload avatar here
-        const imageUrl = await uploadAvatar.mutateAsync({
-          avatar: base64data,
+        const image = await uploadAvatar.mutateAsync({
+          avatar: base64data.substring(base64Index),
+          fileType: values.avatar!.type,
         });
-        console.log("IMAGE URL: ", imageUrl);
+        console.log("IMAGE: ", image);
         await updateUser.mutateAsync({
           username: values.username,
           name: values.name,
-          avatarUrl: imageUrl,
+          image: image,
         });
       };
     } else {
@@ -104,7 +108,7 @@ export function ProfileForm({ session }: { session: Session }) {
               <FormControl>
                 <AvatarUpload
                   placeholder={session.user.name || session.user.username}
-                  avatarURL={session.user.image}
+                  avatarURL={getAvatarUrl(session.user.image)}
                   onAvatarChange={onChange}
                   disabled={form.formState.isSubmitting}
                 />

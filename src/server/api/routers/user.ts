@@ -8,6 +8,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         avatar: z.string(), // Base64 encoded image
+        fileType: z.string(), // File type
       })
     )
     .output(z.string())
@@ -15,7 +16,10 @@ export const userRouter = createTRPCRouter({
       // Convert base64 string to buffer
       const file = Buffer.from(input.avatar, "base64");
 
-      const fileName = `avatar-${ctx.session.user.id}`;
+      // Determine file extension
+      const extension = input.fileType.split("/")[1] || "jpg"; // defaults to jpg;
+
+      const fileName = `avatar-${ctx.session.user.id}.${extension}`;
 
       // Ensure bucket exists
       if (!(await minioClient.bucketExists(env.MINIO_BUCKET_NAME))) {
@@ -25,41 +29,41 @@ export const userRouter = createTRPCRouter({
           await minioClient.setBucketPolicy(
             env.MINIO_BUCKET_NAME,
             `{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "s3:GetBucketLocation",
-        "s3:ListBucket"
-      ],
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": [
-          "*"
-        ]
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "s3:GetBucketLocation",
+          "s3:ListBucket"
+        ],
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": [
+            "*"
+          ]
+        },
+        "Resource": [
+          "arn:aws:s3:::${env.MINIO_BUCKET_NAME}"
+        ],
+        "Sid": ""
       },
-      "Resource": [
-        "arn:aws:s3:::${env.MINIO_BUCKET_NAME}"
-      ],
-      "Sid": ""
-    },
-    {
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": [
-          "*"
-        ]
-      },
-      "Resource": [
-        "arn:aws:s3:::${env.MINIO_BUCKET_NAME}/*"
-      ],
-      "Sid": ""
-    }
-  ]
-}`
+      {
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": [
+            "*"
+          ]
+        },
+        "Resource": [
+          "arn:aws:s3:::${env.MINIO_BUCKET_NAME}/*"
+        ],
+        "Sid": ""
+      }
+    ]
+  }`
           );
         } catch {
           await minioClient.removeBucket(env.MINIO_BUCKET_NAME);
@@ -67,32 +71,21 @@ export const userRouter = createTRPCRouter({
       }
 
       // Upload file
-      await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file);
-
-      console.log(
-        "PRESIGNED OBJECT: ",
-        await minioClient.presignedGetObject(env.MINIO_BUCKET_NAME, fileName)
-      );
-
-      const url = await minioClient.presignedUrl(
-        "GET",
-        env.MINIO_BUCKET_NAME,
-        fileName
-      );
-      // Return URL or ID for uploaded file
-      console.log("PRE SIGNED URL: ", url);
-      return url.replace(env.MINIO_END_POINT, "localhost");
+      await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file, {
+        "Content-Type": input.fileType,
+      });
+      return fileName;
     }),
   update: protectedProcedure
     .input(
       z.object({
         name: z.optional(z.string()),
         username: z.optional(z.string()),
-        avatarUrl: z.optional(z.string()),
+        image: z.optional(z.string()),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("UPDATE MUTATION PASSED AVATAR URL: ", input.avatarUrl);
+      console.log("UPDATE MUTATION PASSED AVATAR: ", input.image);
       return await ctx.prisma.user.update({
         data: {
           ...(input.username && {
@@ -101,8 +94,8 @@ export const userRouter = createTRPCRouter({
           ...(input.name && {
             name: input.name,
           }),
-          ...(input.avatarUrl && {
-            image: input.avatarUrl,
+          ...(input.image && {
+            image: input.image,
           }),
         },
         where: { id: ctx.session.user.id },
