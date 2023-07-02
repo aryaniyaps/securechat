@@ -1,3 +1,6 @@
+import fs from "fs";
+import { nanoid } from "nanoid";
+import path from "path";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -19,7 +22,9 @@ export const userRouter = createTRPCRouter({
       // Determine file extension
       const extension = input.fileType.split("/")[1] || "jpg"; // defaults to jpg;
 
-      const fileName = `avatar-${ctx.session.user.id}.${extension}`;
+      const fileName = `${ctx.session.user.id}/avatar-${nanoid(
+        6
+      )}.${extension}`;
 
       // Ensure bucket exists
       if (!(await minioClient.bucketExists(env.MINIO_BUCKET_NAME))) {
@@ -65,6 +70,14 @@ export const userRouter = createTRPCRouter({
       }
     ]
   }`
+          );
+          // add default avatar
+          const filePath = path.join(__dirname, "avatar.jpg");
+          const fileData = fs.readFileSync(filePath);
+          await minioClient.putObject(
+            env.MINIO_BUCKET_NAME,
+            "avatar.jpg",
+            fileData
           );
         } catch {
           await minioClient.removeBucket(env.MINIO_BUCKET_NAME);
