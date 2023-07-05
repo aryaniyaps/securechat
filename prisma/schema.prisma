@@ -15,8 +15,23 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
+model Room {
+    id        String    @id @default(cuid())
+    name      String
+    ownerId   String
+    owner     User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    messages  Message[]
+}
+
+model Message {
     id        String   @id @default(cuid())
+    content   String
+    ownerId   String
+    roomId    String
+    owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -49,14 +64,19 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String    @default("avatar.jpg")
-    username      String    @default(nanoid(8))
-    accounts      Account[]
-    sessions      Session[]
+    id                String    @id @default(cuid())
+    name              String?
+    email             String?   @unique
+    emailVerified     DateTime?
+    image             String    @default("avatar.jpg")
+    username          String    @default(nanoid(8))
+    emailChange       String?
+    emailChangeToken  String?
+    emailChangeSentAt DateTime?
+    accounts          Account[]
+    sessions          Session[]
+    rooms             Room[]
+    messages          Message[]
 }
 
 model VerificationToken {

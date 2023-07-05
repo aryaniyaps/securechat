@@ -1,10 +1,12 @@
+import { TRPCError } from "@trpc/server";
 import fs from "fs";
 import { nanoid } from "nanoid";
 import path from "path";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { minioClient } from "../minio";
+import { transport } from "~/server/email";
+import { minioClient } from "../../minio";
 
 export const userRouter = createTRPCRouter({
   uploadAvatar: protectedProcedure
@@ -112,6 +114,65 @@ export const userRouter = createTRPCRouter({
           }),
         },
         where: { id: ctx.session.user.id },
+      });
+    }),
+  requestEmailChange: protectedProcedure
+    .input(z.object({ newEmail: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      const existingUser = await ctx.prisma.user.findUnique({
+        where: { email: input.newEmail },
+      });
+      if (existingUser) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "New email address is already in use.",
+        });
+      }
+      // send email change here
+      // link will be something like: http://localhost:3000/auth/email/change?changeToken=XXX&newEmail=newEmail@example.com
+      const changeToken = nanoid(12);
+      const changeUrl = new URL("/auth/email/change", env.NEXT_PUBLIC_SITE_URL);
+      changeUrl.searchParams.append("changeToken", changeToken);
+      changeUrl.searchParams.append("newEmail", input.newEmail);
+      await transport.sendMail({
+        to: input.newEmail,
+        subject: "Email Change Request",
+        text: `To confirm your email change, please visit the following link: ${changeUrl.toString()}`,
+        html: `To confirm your email change, please <a href="${changeUrl.toString()}">click here</a>.`,
+      });
+      await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          emailChange: input.newEmail,
+          emailChangeToken: changeToken,
+          emailChangeSentAt: new Date(),
+        },
+      });
+    }),
+  changeEmail: protectedProcedure
+    .input(z.object({ changeToken: z.string(), newEmail: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          emailChange: input.newEmail,
+          emailChangeToken: input.changeToken,
+        },
+      });
+      if (!user) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid email change token detected.",
+        });
+      }
+      // update user email
+      await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          email: input.newEmail,
+          emailChange: null,
+          emailChangeToken: null,
+          emailChangeSentAt: null,
+        },
       });
     }),
 });

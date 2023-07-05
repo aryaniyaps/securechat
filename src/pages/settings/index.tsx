@@ -1,9 +1,11 @@
+import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { Icons } from "~/components/icons";
 import { SettingsLayout } from "~/components/settings/layout";
 import { ProfileForm } from "~/components/settings/profile/profile-form";
 import { Separator } from "~/components/ui/separator";
+import { getServerAuthSession } from "~/server/auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
 export default function SettingsPage() {
@@ -36,4 +38,21 @@ export default function SettingsPage() {
       </SettingsLayout>
     </>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}, // You can add additional props here if needed
+  };
 }

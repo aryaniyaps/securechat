@@ -21,8 +21,8 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   const [crop, setCrop] = React.useState<Crop>({
     x: 0,
     y: 0,
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     unit: "px",
   });
   const [isOpen, setIsOpen] = React.useState(false);
@@ -136,9 +136,10 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
               <Image
                 src={selectedImage}
                 ref={onImageLoad}
-                className="h-auto w-auto object-contain"
-                width={400}
-                height={400}
+                //className="max-h-96 max-w-sm object-contain"
+                width={300}
+                height={300}
+                sizes="(max-height: 300px) 100vw"
                 alt="selected image"
               />
             )}

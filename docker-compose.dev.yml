@@ -3,7 +3,7 @@ version: '3.7'
 services:
   db:
     image: postgres:13
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
@@ -26,23 +26,46 @@ services:
 
     command: server /data --console-address :9001
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
-    command: sh -c "npm run prisma:migrate && npm run dev"
+  soketi:
+    restart: unless-stopped
+    image: 'quay.io/soketi/soketi:0.17-16-alpine'
     ports:
-      - 3000:3000
-    volumes:
-      - .:/app
-      - /app/node_modules
-    depends_on:
-      - db
-      - minio
-    env_file:
-    - .env
+      - 6001:6001
+      - 9601:9601
+    environment:
+      SOKETI_DEBUG: '1'
+      DEFAULT_APP_ID: 'app-id'
+      DEFAULT_APP_KEY: 'app-key'
+      DEFAULT_APP_SECRET: 'app-secret'
+      PUSHER_HOST: '127.0.0.1'
+      PUSHER_PORT:  '6001'
+      PUSHER_SCHEME: 'http' # or https
+      METRICS_SERVER_PORT: 9601
+      DEFAULT_APP_ENABLE_CLIENT_MESSAGES: false
+    networks:
+      - soketi_network
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: development
+  #   command: sh -c "npm run prisma:migrate && npm run dev"
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - db
+  #     - minio
+  #   env_file:
+  #   - .env
 
 volumes:
   minio_data:
   db_data:
+
+networks:
+  soketi_network:
+    driver: bridge
