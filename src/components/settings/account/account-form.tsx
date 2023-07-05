@@ -74,11 +74,11 @@ export function AccountForm({ session, ...props }: AccountFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>email address</FormLabel>
+              <FormLabel>Email address</FormLabel>
               <FormControl>
                 <Input placeholder="example@gmail.com" {...field} />
               </FormControl>
-              <FormDescription>your email address is private</FormDescription>
+              <FormDescription>Your email address is private.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -88,7 +88,7 @@ export function AccountForm({ session, ...props }: AccountFormProps) {
           type="submit"
           disabled={!form.formState.isDirty || form.formState.isSubmitting}
         >
-          update account
+          Update account
         </Button>
       </form>
     </Form>

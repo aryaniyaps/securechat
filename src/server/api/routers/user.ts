@@ -125,12 +125,11 @@ export const userRouter = createTRPCRouter({
       if (existingUser) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "New email address is already in use.",
+          message: "Requested email is already in use.",
         });
       }
-      // send email change here
-      // link will be something like: http://localhost:3000/auth/email/change?changeToken=XXX&newEmail=newEmail@example.com
-      const changeToken = nanoid(12);
+
+      const changeToken = nanoid(18);
       const changeUrl = new URL("/auth/email/change", env.NEXT_PUBLIC_SITE_URL);
       changeUrl.searchParams.append("changeToken", changeToken);
       changeUrl.searchParams.append("newEmail", input.newEmail);
@@ -161,7 +160,7 @@ export const userRouter = createTRPCRouter({
       if (!user) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Invalid email change token detected.",
+          message: "Could not change email. Please try again later.",
         });
       }
       // update user email

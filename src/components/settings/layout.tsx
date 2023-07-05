@@ -4,11 +4,11 @@ import { SidebarNav } from "./sidebar-nav";
 
 const sidebarNavItems = [
   {
-    title: "profile",
+    title: "Profile",
     href: "/settings",
   },
   {
-    title: "account",
+    title: "Account",
     href: "/settings/account",
   },
 ];
@@ -18,10 +18,10 @@ export function SettingsLayout({ children }: { children: React.ReactNode }) {
     <main className=" flex min-h-screen w-full flex-col">
       <div className="border-b p-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <h1 className="font-semibold">settings</h1>
+          <h1 className="font-semibold">Settings</h1>
           <Link href="/">
             <Button variant="link" size="sm">
-              back to dashboard
+              Back to dashboard
             </Button>
           </Link>
         </div>

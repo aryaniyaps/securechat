@@ -89,7 +89,7 @@ export function ProfileForm({ session }: { session: Session }) {
     form.reset({ username: values.username, name: values.name });
 
     toast({
-      description: "your user profile is updated!",
+      description: "Your user profile is updated!",
     });
   }
 
@@ -152,7 +152,7 @@ export function ProfileForm({ session }: { session: Session }) {
             type="submit"
             disabled={!form.formState.isDirty || form.formState.isSubmitting}
           >
-            update profile
+            Update profile
           </Button>
         </div>
       </form>

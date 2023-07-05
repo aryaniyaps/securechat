@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Icons } from "~/components/icons";
 import { api } from "~/utils/api";
+import { withAuth } from "~/utils/auth";
 
 export default function EmailChangePage() {
   const router = useRouter();
@@ -13,6 +14,9 @@ export default function EmailChangePage() {
       if (err instanceof TRPCClientError) {
         setError(err.message);
       }
+    },
+    onSuccess: async () => {
+      await router.replace("/settings/account");
     },
   });
   const { changeToken, newEmail } = router.query;
@@ -26,11 +30,11 @@ export default function EmailChangePage() {
         });
       }
       setLoading(false);
-      await router.replace("/settings/account");
     }
 
     completeEmailChange().catch((err) => console.error(err));
-  }, [changeEmail, changeToken, newEmail, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [changeToken, newEmail, router]);
 
   if (loading) {
     return (
@@ -56,3 +60,11 @@ export default function EmailChangePage() {
     </div>
   );
 }
+
+export const getServerSideProps = withAuth(async (_) => {
+  return {
+    props: {
+      // page data here
+    },
+  };
+});

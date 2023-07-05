@@ -1,11 +1,10 @@
-import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { Icons } from "~/components/icons";
 import { SettingsLayout } from "~/components/settings/layout";
 import { ProfileForm } from "~/components/settings/profile/profile-form";
 import { Separator } from "~/components/ui/separator";
-import { getServerAuthSession } from "~/server/auth";
+import { withAuth } from "~/utils/auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
 export default function SettingsPage() {
@@ -27,9 +26,9 @@ export default function SettingsPage() {
       <SettingsLayout>
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium">user profile</h3>
+            <h3 className="text-lg font-medium">User profile</h3>
             <p className="text-sm text-muted-foreground">
-              this is how others will see you on {APP_NAME}
+              This is how others will see you on {APP_NAME}.
             </p>
           </div>
           <Separator />
@@ -40,19 +39,10 @@ export default function SettingsPage() {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/signin",
-        permanent: false,
-      },
-    };
-  }
-
+export const getServerSideProps = withAuth(async (_) => {
   return {
-    props: {}, // You can add additional props here if needed
+    props: {
+      // page data here
+    },
   };
-}
+});
