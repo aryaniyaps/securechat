@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -29,6 +30,7 @@ const createRoomSchema = z.object({
 
 export function RoomController() {
   const utils = api.useContext();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof createRoomSchema>>({
     resolver: zodResolver(createRoomSchema),
@@ -58,9 +60,10 @@ export function RoomController() {
   });
 
   async function onSubmit(values: z.infer<typeof createRoomSchema>) {
-    await createRoom.mutateAsync({ name: values.name });
+    const room = await createRoom.mutateAsync({ name: values.name });
     form.reset({ name: "" });
     setOpen(false); // Closes the dialog after room creation
+    await router.push(`/rooms/${room.id}`);
   }
 
   return (

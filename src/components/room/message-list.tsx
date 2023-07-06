@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
@@ -20,6 +21,20 @@ export function MessageList({ roomId }: { roomId: string }) {
     }
   );
 
+  // Create a reference to the container div
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Extract the first page's message count into its own variable
+  const firstPageMessageCount = messagesPages?.pages[0]?.items.length;
+
+  // Add an effect that scrolls to the bottom of the messages container whenever
+  // a new message is received
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [firstPageMessageCount]);
+
   if (isLoading) {
     return (
       <main className="flex min-h-screen w-full items-center justify-center">
@@ -30,6 +45,7 @@ export function MessageList({ roomId }: { roomId: string }) {
 
   return (
     <div className="flex flex-shrink-0 flex-grow flex-col-reverse gap-8 overflow-y-auto">
+      <div ref={messagesEndRef} />
       {messagesPages &&
         messagesPages.pages.flatMap((page) =>
           page.items.map((message) => (
