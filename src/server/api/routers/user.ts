@@ -173,5 +173,6 @@ export const userRouter = createTRPCRouter({
           emailChangeSentAt: null,
         },
       });
+      // TODO: update Oauth providers here?
     }),
 });

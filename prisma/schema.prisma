@@ -16,13 +16,14 @@ datasource db {
 }
 
 model Room {
-    id        String    @id @default(cuid())
+    id        String   @id @default(cuid())
     name      String
     ownerId   String
-    owner     User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    messages  Message[]
+    owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    messages Message[]
 }
 
 model Message {
@@ -30,10 +31,11 @@ model Message {
     content   String
     ownerId   String
     roomId    String
-    owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-    room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    room  Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -60,7 +62,8 @@ model Session {
     sessionToken String   @unique
     userId       String
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -73,10 +76,11 @@ model User {
     emailChange       String?
     emailChangeToken  String?
     emailChangeSentAt DateTime?
-    accounts          Account[]
-    sessions          Session[]
-    rooms             Room[]
-    messages          Message[]
+
+    accounts Account[]
+    sessions Session[]
+    rooms    Room[]
+    messages Message[]
 }
 
 model VerificationToken {

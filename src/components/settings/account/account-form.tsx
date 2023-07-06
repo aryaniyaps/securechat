@@ -21,8 +21,8 @@ import { api } from "~/utils/api";
 
 const userSchema = z.object({
   email: z
-    .string({ required_error: "please enter your email" })
-    .email({ message: "please enter a valid email" }),
+    .string({ required_error: "Please enter your email." })
+    .email({ message: "Please enter a valid email." }),
 });
 
 interface AccountFormProps extends React.HTMLAttributes<HTMLFormElement> {

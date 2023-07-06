@@ -12,6 +12,43 @@ const messageSchema = z.object({
 });
 
 export const messageRouter = createTRPCRouter({
+  getAll: protectedProcedure
+    .input(
+      z.object({
+        roomId: z.string(),
+        cursor: z.string().nullish(),
+        limit: z.number().min(1).max(100),
+      })
+    )
+    .output(
+      z.object({
+        items: z.array(messageSchema),
+        nextCursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const items = await ctx.prisma.message.findMany({
+        where: { roomId: input.roomId },
+        take: input.limit + 1, // get an extra item at the end which we'll use as next cursor
+        ...(input.cursor && {
+          cursor: { id: input.cursor },
+        }),
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      let nextCursor: typeof input.cursor | undefined = undefined;
+      if (items.length > input.limit) {
+        const nextItem = items.pop();
+        if (nextItem) {
+          nextCursor = nextItem.id;
+        }
+      }
+      return {
+        items,
+        nextCursor,
+      };
+    }),
   create: protectedProcedure
     .input(
       z.object({
