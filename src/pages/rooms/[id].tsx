@@ -40,9 +40,7 @@ export default function RoomPage({
       </Head>
       <HomeLayout title={room.name} session={session}>
         <div className="flex min-h-full w-full flex-col gap-8 px-4">
-          <div className="flex-grow overflow-y-auto">
-            <MessageList roomId={room.id} />
-          </div>
+          <MessageList roomId={room.id} />
           <div className="flex-none">
             <MessageController roomId={room.id} />
           </div>
