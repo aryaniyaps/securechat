@@ -32,11 +32,7 @@ export const env = createEnv({
     MINIO_ACCESS_KEY: z.string().min(1),
     MINIO_SECRET_KEY: z.string().min(1),
     MINIO_BUCKET_NAME: z.string().min(1),
-    PUSHER_APP_KEY: z.string().min(1),
-    PUSHER_WS_HOST: z.string().min(1),
-    PUSHER_WS_PORT: z.preprocess((val) => Number(val), z.number()),
-    PUSHER_FORCE_TLS: z.preprocess((val) => Boolean(val), z.boolean()),
-    PUSHER_APP_CLUSTER: z.string().min(1),
+    PUSHER_URL: z.string().min(1),
   },
 
   /**
@@ -48,6 +44,14 @@ export const env = createEnv({
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
     NEXT_PUBLIC_MINIO_ENDPOINT: z.string().min(1),
     NEXT_PUBLIC_MINIO_BUCKET: z.string().min(1),
+    NEXT_PUBLIC_PUSHER_APP_KEY: z.string().min(1),
+    NEXT_PUBLIC_PUSHER_APP_CLUSTER: z.string().min(1),
+    NEXT_PUBLIC_PUSHER_FORCE_TLS: z.preprocess(
+      (val) => Boolean(val),
+      z.boolean()
+    ),
+    NEXT_PUBLIC_PUSHER_WS_HOST: z.string().min(1),
+    NEXT_PUBLIC_PUSHER_WS_PORT: z.preprocess((val) => Number(val), z.number()),
   },
 
   /**
@@ -72,11 +76,12 @@ export const env = createEnv({
     MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME,
     NEXT_PUBLIC_MINIO_ENDPOINT: process.env.NEXT_PUBLIC_MINIO_ENDPOINT,
     NEXT_PUBLIC_MINIO_BUCKET: process.env.NEXT_PUBLIC_MINIO_BUCKET,
-    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
-    PUSHER_WS_HOST: process.env.PUSHER_WS_HOST,
-    PUSHER_WS_PORT: process.env.PUSHER_WS_PORT,
-    PUSHER_FORCE_TLS: process.env.PUSHER_FORCE_TLS,
-    PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
+    PUSHER_URL: process.env.PUSHER_URL,
+    NEXT_PUBLIC_PUSHER_APP_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
+    NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
+    NEXT_PUBLIC_PUSHER_FORCE_TLS: process.env.NEXT_PUBLIC_PUSHER_FORCE_TLS,
+    NEXT_PUBLIC_PUSHER_WS_HOST: process.env.NEXT_PUBLIC_PUSHER_WS_HOST,
+    NEXT_PUBLIC_PUSHER_WS_PORT: process.env.NEXT_PUBLIC_PUSHER_WS_PORT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

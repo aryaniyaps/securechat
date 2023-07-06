@@ -1,0 +1,10 @@
+import Pusher from "pusher-js";
+import { env } from "~/env.mjs";
+
+export const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_APP_KEY, {
+  cluster: env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
+  forceTLS: env.NEXT_PUBLIC_PUSHER_FORCE_TLS,
+  wsHost: env.NEXT_PUBLIC_PUSHER_WS_HOST,
+  wsPort: env.NEXT_PUBLIC_PUSHER_WS_PORT,
+  enabledTransports: ["ws", "wss"],
+});

@@ -46,7 +46,7 @@ export function MessageList({ roomId }: { roomId: string }) {
   }
 
   return (
-    <div ref={containerRef} className="flex-grow overflow-y-auto">
+    <div ref={containerRef} className="flex-grow overflow-y-auto ">
       <div className="flex flex-shrink-0 flex-grow flex-col-reverse gap-8">
         <div ref={bottomChatRef} />
         {messagesPages &&

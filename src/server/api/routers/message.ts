@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { pusher } from "~/server/pusher";
 
 const messageSchema = z.object({
   id: z.string(),
@@ -91,7 +92,8 @@ export const messageRouter = createTRPCRouter({
         },
       });
       // broadcast message here
-      // pusher.channel(`room-${input.roomId}`).trigger("message:create", message);
+      await pusher.trigger(`room-${input.roomId}`, "message:create", message);
+      console.log("MESSAGE TRIGGER PULLED");
       return message;
     }),
   delete: protectedProcedure
@@ -127,5 +129,7 @@ export const messageRouter = createTRPCRouter({
           id: input.id,
         },
       });
+      // broadcast message here
+      await pusher.trigger(`room-${message.roomId}`, "message:delete", message);
     }),
 });
