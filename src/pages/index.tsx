@@ -1,9 +1,12 @@
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { HomeLayout } from "~/components/home/layout";
+import { RoomController } from "~/components/home/room-controller";
 import { Icons } from "~/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import {
   Table,
   TableBody,
@@ -19,6 +22,8 @@ import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
 export default function HomePage() {
   const { data: session } = useSession();
+
+  const router = useRouter();
 
   const {
     data: roomsPages,
@@ -51,7 +56,11 @@ export default function HomePage() {
       </Head>
       <HomeLayout session={session}>
         {/* Render your rooms here */}
-        <div className="flex w-full flex-1 flex-col">
+        <div className="flex flex-1 flex-col gap-6">
+          <div className="flex justify-between gap-4">
+            <Input disabled placeholder="search rooms here..." />
+            <RoomController />
+          </div>
           <Table className="flex-grow">
             <TableHeader>
               <TableRow>
@@ -64,7 +73,13 @@ export default function HomePage() {
               {roomsPages &&
                 roomsPages.pages.flatMap((page) =>
                   page.items.map((room) => (
-                    <TableRow key={room.id}>
+                    <TableRow
+                      className="cursor-pointer"
+                      key={room.id}
+                      onClick={async () =>
+                        await router.push(`/rooms/${room.id}`)
+                      }
+                    >
                       <TableCell className="font-medium">{room.name}</TableCell>
                       <TableCell className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">

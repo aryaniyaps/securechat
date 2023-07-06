@@ -81,6 +81,6 @@
   body,
   #__next {
     @apply min-h-screen;
-    @apply w-full;
+    @apply w-full h-full;
   }
 }

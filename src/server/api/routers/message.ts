@@ -9,6 +9,11 @@ const messageSchema = z.object({
   ownerId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  owner: z.object({
+    name: z.string().nullish(),
+    username: z.string(),
+    image: z.string(),
+  }),
 });
 
 export const messageRouter = createTRPCRouter({
@@ -36,6 +41,15 @@ export const messageRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+            },
+          },
+        },
       });
       let nextCursor: typeof input.cursor | undefined = undefined;
       if (items.length > input.limit) {
@@ -59,13 +73,26 @@ export const messageRouter = createTRPCRouter({
     .output(messageSchema)
     .mutation(async ({ ctx, input }) => {
       // create message here
-      return await ctx.prisma.message.create({
+      // check if room ID is valid here
+      const message = await ctx.prisma.message.create({
         data: {
           content: input.content,
           roomId: input.roomId,
           ownerId: ctx.session.user.id,
         },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+            },
+          },
+        },
       });
+      // broadcast message here
+      // pusher.channel(`room-${input.roomId}`).trigger("message:create", message);
+      return message;
     }),
   delete: protectedProcedure
     .input(
@@ -73,7 +100,6 @@ export const messageRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .output(messageSchema)
     .mutation(async ({ ctx, input }) => {
       // delete message here
       const message = await ctx.prisma.message.findUnique({
@@ -96,7 +122,7 @@ export const messageRouter = createTRPCRouter({
         });
       }
 
-      return await ctx.prisma.message.delete({
+      await ctx.prisma.message.delete({
         where: {
           id: input.id,
         },

@@ -66,7 +66,9 @@ export function RoomController() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create Room</Button>
+        <Button variant="outline" className="min-w-fit">
+          Create Room
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
@@ -77,7 +79,6 @@ export function RoomController() {
             <FormField
               name="name"
               control={form.control}
-              rules={{ required: "Room Name is required" }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Room Name</FormLabel>

@@ -16,6 +16,24 @@ const roomSchema = z.object({
 });
 
 export const roomRouter = createTRPCRouter({
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const room = await ctx.prisma.room.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!room) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Room with ID ${input.id} not found.`,
+        });
+      }
+
+      return room;
+    }),
   getAll: protectedProcedure
     .input(
       z.object({
