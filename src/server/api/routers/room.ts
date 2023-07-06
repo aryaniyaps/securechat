@@ -8,6 +8,11 @@ const roomSchema = z.object({
   ownerId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  owner: z.object({
+    name: z.string().nullish(),
+    username: z.string(),
+    image: z.string(),
+  }),
 });
 
 export const roomRouter = createTRPCRouter({
@@ -33,6 +38,15 @@ export const roomRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+            },
+          },
+        },
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -53,7 +67,6 @@ export const roomRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .output(roomSchema)
     .mutation(async ({ ctx, input }) => {
       // delete room here
       const room = await ctx.prisma.room.findUnique({
@@ -76,7 +89,7 @@ export const roomRouter = createTRPCRouter({
         });
       }
 
-      return await ctx.prisma.room.delete({
+      await ctx.prisma.room.delete({
         where: {
           id: input.id,
         },
@@ -93,6 +106,15 @@ export const roomRouter = createTRPCRouter({
       // create room here
       return await ctx.prisma.room.create({
         data: { name: input.name, ownerId: ctx.session.user.id },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+            },
+          },
+        },
       });
     }),
 });

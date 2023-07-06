@@ -28,15 +28,38 @@ const createRoomSchema = z.object({
 });
 
 export function RoomController() {
+  const utils = api.useContext();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof createRoomSchema>>({
     resolver: zodResolver(createRoomSchema),
+    defaultValues: {
+      name: "",
+    },
   });
 
-  const createRoom = api.room.create.useMutation();
+  const createRoom = api.room.create.useMutation({
+    async onSuccess(newRoom) {
+      await utils.room.getAll.cancel();
+
+      utils.room.getAll.setInfiniteData({ limit: 10 }, (oldData) => {
+        if (oldData == null || oldData.pages[0] == null) return;
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              items: [newRoom, ...oldData.pages[0].items],
+            },
+            ...oldData.pages.slice(1),
+          ],
+        };
+      });
+    },
+  });
 
   async function onSubmit(values: z.infer<typeof createRoomSchema>) {
     await createRoom.mutateAsync({ name: values.name });
+    form.reset({ name: "" });
     setOpen(false); // Closes the dialog after room creation
   }
 
