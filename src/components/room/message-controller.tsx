@@ -22,25 +22,7 @@ export function MessageController({ roomId }: { roomId: string }) {
     },
   });
 
-  const createMessage = api.message.create.useMutation({
-    async onSuccess(newMessage) {
-      await utils.message.getAll.cancel();
-
-      utils.message.getAll.setInfiniteData({ limit: 10, roomId }, (oldData) => {
-        if (oldData == null || oldData.pages[0] == null) return;
-        return {
-          ...oldData,
-          pages: [
-            {
-              ...oldData.pages[0],
-              items: [newMessage, ...oldData.pages[0].items],
-            },
-            ...oldData.pages.slice(1),
-          ],
-        };
-      });
-    },
-  });
+  const createMessage = api.message.create.useMutation({});
 
   async function onSubmit(values: z.infer<typeof createMessageSchema>) {
     await createMessage.mutateAsync({ content: values.content, roomId });

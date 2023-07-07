@@ -93,7 +93,6 @@ export const messageRouter = createTRPCRouter({
       });
       // broadcast message here
       await pusher.trigger(`room-${input.roomId}`, "message:create", message);
-      console.log("MESSAGE TRIGGER PULLED");
       return message;
     }),
   delete: protectedProcedure
