@@ -37,6 +37,7 @@ export const roomRouter = createTRPCRouter({
   getAll: protectedProcedure
     .input(
       z.object({
+        search: z.optional(z.string()),
         cursor: z.string().nullish(),
         limit: z.number().min(1).max(100),
       })
@@ -56,6 +57,11 @@ export const roomRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
+        ...(input.search && {
+          where: {
+            name: { search: input.search.trim().split(" ").join(" & ") },
+          },
+        }),
         include: {
           owner: {
             select: {

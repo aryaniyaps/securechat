@@ -1,6 +1,8 @@
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 import { HomeLayout } from "~/components/home/layout";
 import { RoomController } from "~/components/home/room-controller";
 import { Icons } from "~/components/icons";
@@ -25,19 +27,33 @@ export default function HomePage() {
 
   const router = useRouter();
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // delay is set to 1000ms (adjust delay as needed)
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 1000);
+
   const {
     data: roomsPages,
     isLoading,
     hasNextPage,
     fetchNextPage,
+    refetch,
   } = api.room.getAll.useInfiniteQuery(
     {
       limit: 10,
+      ...(debouncedSearchQuery && {
+        search: String(debouncedSearchQuery),
+      }),
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
+
+  useEffect(() => {
+    console.log("REFETCHING");
+    refetch().catch((err) => console.error(err));
+  }, [debouncedSearchQuery]);
 
   if (!session || isLoading) {
     return (
@@ -56,9 +72,13 @@ export default function HomePage() {
       </Head>
       <HomeLayout session={session}>
         {/* Render your rooms here */}
-        <div className="flex flex-1 flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6 px-2">
           <div className="flex justify-between gap-4">
-            <Input disabled placeholder="search rooms here..." />
+            <Input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="search rooms here..."
+            />
             <RoomController />
           </div>
           <Table className="flex-grow">

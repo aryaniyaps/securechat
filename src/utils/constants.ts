@@ -1,3 +1,3 @@
-export const APP_NAME = "Beintern";
+export const APP_NAME = "SecureChat";
 
-export const APP_DESCRIPTION = "The ultimate platform for internships.";
+export const APP_DESCRIPTION = "Secure chat rooms for everyone.";
