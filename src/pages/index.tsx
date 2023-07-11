@@ -52,8 +52,8 @@ export default function HomePage() {
 
   useEffect(() => {
     console.log("REFETCHING");
-    refetch().catch((err) => console.error(err));
-  }, [debouncedSearchQuery]);
+    refetch({}).catch((err) => console.error(err));
+  }, [debouncedSearchQuery, refetch]);
 
   if (!session || isLoading) {
     return (

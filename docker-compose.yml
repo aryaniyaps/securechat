@@ -31,6 +31,8 @@ services:
       - 3000:3000
     depends_on:
       - db
+      - minio
+      - typesense
     env_file:
       - .env
 

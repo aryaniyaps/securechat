@@ -46,6 +46,17 @@ services:
     networks:
       - soketi_network
 
+  typesense:
+    restart: unless-stopped
+    image: typesense/typesense:0.24.1
+    ports:
+      - 8108:8108
+    environment:
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_API_KEY: api-key
+    volumes:
+    - typesense_data:/data
+
   # app:
   #   build:
   #     context: .
@@ -60,12 +71,14 @@ services:
   #   depends_on:
   #     - db
   #     - minio
+  #     - typesense
   #   env_file:
   #   - .env
 
 volumes:
   minio_data:
   db_data:
+  typesense_data:
 
 networks:
   soketi_network:

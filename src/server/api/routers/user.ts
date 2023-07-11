@@ -101,6 +101,17 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.username) {
+        const existingUser = await ctx.prisma.user.findUnique({
+          where: { username: input.username },
+        });
+        if (existingUser) {
+          throw new TRPCError({
+            message: "Username is already taken.",
+            code: "CONFLICT",
+          });
+        }
+      }
       return await ctx.prisma.user.update({
         data: {
           ...(input.username && {
@@ -124,7 +135,7 @@ export const userRouter = createTRPCRouter({
       });
       if (existingUser) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
+          code: "CONFLICT",
           message: "Requested email is already in use.",
         });
       }
