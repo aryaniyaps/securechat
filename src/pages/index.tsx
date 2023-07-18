@@ -86,7 +86,9 @@ function getColumns(session: Session | null) {
       enableHiding: false,
       header: () => <div className="text-right">Created At</div>,
       cell: ({ row }) => (
-        <div className="text-right">{row.original.createdAt.toUTCString()}</div>
+        <div className="text-right">
+          {new Date(row.original.createdAt).toLocaleString()}
+        </div>
       ),
     },
     {
@@ -112,61 +114,62 @@ function RoomActions({
   const utils = api.useContext();
   const deleteRoom = api.room.delete.useMutation({
     onSuccess: async (_) => {
-      // delete room from cache here
       await utils.room.getAll.cancel();
 
       utils.room.getAll.setInfiniteData({ limit: 10 }, (oldData) => {
-        if (oldData == null || oldData.pages[0] == null) return;
+        if (oldData == null) return;
+
         return {
           ...oldData,
-          pages: [
-            {
-              ...oldData.pages[0],
-              items: oldData.pages[0].items.filter(
-                (myRoom) => myRoom.id !== room.id
+          pages: oldData.pages.map((page) => {
+            return {
+              ...page,
+              items: page.items.filter(
+                (existingRoom) => existingRoom.id !== room.id
               ),
-            },
-            ...oldData.pages.slice(1),
-          ],
+            };
+          }),
         };
       });
     },
   });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open Menu</span>
-          <Icons.ellipsis className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() =>
-            navigator.clipboard.writeText(
-              `${env.NEXT_PUBLIC_SITE_URL}/rooms/${room.id}`
-            )
-          }
-        >
-          Copy Room URL
-        </DropdownMenuItem>
-        {/* Only Room owner can delete their room. */}
-        {session && session.user.id == room.ownerId && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={async () => {
-                await deleteRoom.mutateAsync({ id: room.id });
-              }}
-            >
-              <p className="text-red-500">Delete room</p>
-            </DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex justify-end">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open Menu</span>
+            <Icons.ellipsisHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() =>
+              navigator.clipboard.writeText(
+                `${env.NEXT_PUBLIC_SITE_URL}/rooms/${room.id}`
+              )
+            }
+          >
+            Copy Room URL
+          </DropdownMenuItem>
+          {/* Only Room owner can delete their room. */}
+          {session && session.user.id == room.ownerId && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={async () => {
+                  await deleteRoom.mutateAsync({ id: room.id });
+                }}
+              >
+                <p className="text-red-500">Delete room</p>
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
 
