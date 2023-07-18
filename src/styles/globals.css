@@ -82,5 +82,6 @@
   #__next {
     @apply min-h-screen;
     @apply w-full h-full;
+    @apply overflow-hidden;
   }
 }

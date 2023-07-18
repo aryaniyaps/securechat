@@ -86,7 +86,10 @@ export function RoomController() {
                 <FormItem>
                   <FormLabel>Room Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="room name" {...field} />
+                    <Input
+                      placeholder="What should we call your room?"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
