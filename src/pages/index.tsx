@@ -87,7 +87,13 @@ function getColumns(session: Session | null) {
       header: () => <div className="text-right">Created At</div>,
       cell: ({ row }) => (
         <div className="text-right">
-          {new Date(row.original.createdAt).toLocaleString()}
+          {new Date(row.original.createdAt).toLocaleString(undefined, {
+            year: "2-digit",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </div>
       ),
     },
