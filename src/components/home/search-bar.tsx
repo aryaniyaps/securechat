@@ -1,15 +1,8 @@
-import { useContext } from "react";
+import { useSearchQuery } from "~/hooks/use-search-query";
 import { Input } from "../ui/input";
-import { SearchContext } from "./search-provider";
 
 export function SearchBar() {
-  const context = useContext(SearchContext);
-
-  if (!context) {
-    throw new Error("SearchBar must be used within a SearchProvider");
-  }
-
-  const { searchQuery, setSearchQuery } = context;
+  const { searchQuery, setSearchQuery } = useSearchQuery();
 
   return (
     <Input

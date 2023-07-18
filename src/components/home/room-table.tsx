@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import { type Session } from "next-auth";
 import Link from "next/link";
-import { useContext, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Icons } from "~/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -28,9 +28,9 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { env } from "~/env.mjs";
+import { useSearchQuery } from "~/hooks/use-search-query";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
-import { SearchContext } from "./search-provider";
 
 function getColumns(session: Session | null) {
   const columns: ColumnDef<
@@ -173,13 +173,7 @@ function RoomActions({
 }
 
 export function RoomTable({ session }: { session: Session }) {
-  const context = useContext(SearchContext);
-
-  if (!context) {
-    throw new Error("RoomTable must be used within a SearchProvider");
-  }
-
-  const { searchQuery, debouncedSearchQuery } = context;
+  const { searchQuery, debouncedSearchQuery } = useSearchQuery();
 
   const {
     data: roomsPages,
