@@ -1,9 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+
+const SCROLL_THRESHOLD = 250;
 
 export function MessageList({ roomId }: { roomId: string }) {
   const {
@@ -22,8 +24,9 @@ export function MessageList({ roomId }: { roomId: string }) {
   );
 
   const bottomChatRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = useRef(true);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const scrollBottom = () => {
     if (scrollToBottom.current && bottomChatRef.current) {
@@ -31,17 +34,43 @@ export function MessageList({ roomId }: { roomId: string }) {
     }
   };
 
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      // we are getting a negative value here (possibly because we are using flex-col-reverse)
+      const scrollTop = Math.abs(scrollContainerRef.current.scrollTop);
+
+      setShowScrollButton(scrollTop > SCROLL_THRESHOLD);
+    }
+  };
+
   useEffect(() => {
-    scrollBottom();
+    const currentScrollContainer = scrollContainerRef.current;
+
+    if (currentScrollContainer) {
+      currentScrollContainer.addEventListener("scroll", handleScroll);
+      return () =>
+        currentScrollContainer.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      // we are getting a negative value here (possibly because we are using flex-col-reverse)
+      const scrollTop = Math.abs(scrollContainerRef.current.scrollTop);
+
+      if (scrollTop <= SCROLL_THRESHOLD) {
+        scrollBottom();
+      }
+    }
   }, [messagesPages]);
 
   const handleFetchMore = async () => {
-    if (containerRef.current) {
-      const { scrollTop } = containerRef.current;
+    if (scrollContainerRef.current) {
+      const { scrollTop } = scrollContainerRef.current;
 
       scrollToBottom.current = false;
       await fetchNextPage();
-      containerRef.current.scrollTop = scrollTop;
+      scrollContainerRef.current.scrollTop = scrollTop;
 
       setTimeout(() => {
         scrollToBottom.current = true;
@@ -58,11 +87,23 @@ export function MessageList({ roomId }: { roomId: string }) {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="flex flex-grow justify-end overflow-y-auto"
-    >
-      <div className="flex flex-grow flex-col-reverse gap-8 overflow-y-auto">
+    <div className="relative flex flex-grow justify-end overflow-y-auto">
+      <div
+        ref={scrollContainerRef}
+        className="flex flex-grow flex-col-reverse gap-8 overflow-y-auto"
+        onScroll={handleScroll}
+      >
+        {/* Add this Button component right below the main div */}
+        {showScrollButton && (
+          <Button
+            variant="secondary"
+            className="absolute bottom-0 right-0 m-4"
+            onClick={scrollBottom}
+          >
+            <Icons.arrowDown size={20} className="h-4 w-4" />
+          </Button>
+        )}
+
         <div ref={bottomChatRef} />
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
