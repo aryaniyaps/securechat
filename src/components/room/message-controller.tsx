@@ -13,8 +13,6 @@ const createMessageSchema = z.object({
 });
 
 export function MessageController({ roomId }: { roomId: string }) {
-  const utils = api.useContext();
-
   const form = useForm<z.infer<typeof createMessageSchema>>({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {

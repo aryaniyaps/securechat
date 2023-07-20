@@ -23,19 +23,31 @@ export function MessageList({ roomId }: { roomId: string }) {
 
   const bottomChatRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = useRef(true);
 
-  useEffect(() => {
-    const current = containerRef.current;
-    const scrollHeight = current?.scrollHeight ?? 0;
-    const scrollTop = current?.scrollTop ?? 0;
-    const clientHeight = current?.clientHeight ?? 0;
-
-    const isCloseToBottom = scrollHeight - scrollTop <= clientHeight + 150;
-
-    if (isCloseToBottom && bottomChatRef.current) {
+  const scrollBottom = () => {
+    if (scrollToBottom.current && bottomChatRef.current) {
       bottomChatRef.current.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  useEffect(() => {
+    scrollBottom();
   }, [messagesPages]);
+
+  const handleFetchMore = async () => {
+    if (containerRef.current) {
+      const { scrollTop } = containerRef.current;
+
+      scrollToBottom.current = false;
+      await fetchNextPage();
+      containerRef.current.scrollTop = scrollTop;
+
+      setTimeout(() => {
+        scrollToBottom.current = true;
+      }, 500);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -46,8 +58,11 @@ export function MessageList({ roomId }: { roomId: string }) {
   }
 
   return (
-    <div ref={containerRef} className="flex-grow overflow-y-auto ">
-      <div className="flex flex-shrink-0 flex-grow flex-col-reverse gap-8">
+    <div
+      ref={containerRef}
+      className="flex flex-grow justify-end overflow-y-auto"
+    >
+      <div className="flex flex-grow flex-col-reverse gap-8 overflow-y-auto">
         <div ref={bottomChatRef} />
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
@@ -76,7 +91,7 @@ export function MessageList({ roomId }: { roomId: string }) {
             ))
           )}
         {hasNextPage && (
-          <Button variant="ghost" onClick={() => fetchNextPage()}>
+          <Button variant="ghost" onClick={handleFetchMore}>
             Load More
           </Button>
         )}
