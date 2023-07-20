@@ -162,7 +162,7 @@ function RoomActions({
                   await deleteRoom.mutateAsync({ id: room.id });
                 }}
               >
-                <p className="text-red-500">Delete room</p>
+                <p className="text-destructive">Delete room</p>
               </DropdownMenuItem>
             </>
           )}
