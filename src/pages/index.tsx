@@ -5,7 +5,7 @@ import { RoomController } from "~/components/home/room-controller";
 import { RoomTable } from "~/components/home/room-table";
 import { SearchBar } from "~/components/home/search-bar";
 import { SearchProvider } from "~/components/home/search-provider";
-import { Icons } from "~/components/icons";
+import { LoadingScreen } from "~/components/loading-screen";
 import { withAuth } from "~/utils/auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
@@ -13,11 +13,7 @@ export default function HomePage() {
   const { data: session } = useSession();
 
   if (!session) {
-    return (
-      <main className="flex min-h-screen w-full items-center justify-center">
-        <Icons.spinner className="h-8 w-8 animate-spin text-gray-400" />
-      </main>
-    );
+    return <LoadingScreen />;
   }
 
   return (

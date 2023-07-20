@@ -53,9 +53,27 @@
     --input: 217.2 32.6% 17.5%;
 
     --primary: 210 40% 98%;
+    --primary-100:  #ffff;
+    --primary-200:  #ffff;
+    --primary-300:  #ffff;
+    --primary-400:  #ffff;
+    --primary-500:  #ffff;
+    --primary-600:  #ffff;
+    --primary-700:  #ffff;
+    --primary-800:  #ffff;
+    --primary-900:  #ffff;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
+    --secondary-100:  #ffff;
+    --secondary-200:  #ffff;
+    --secondary-300:  #ffff;
+    --secondary-400:  #ffff;
+    --secondary-500:  #ffff;
+    --secondary-600:  #ffff;
+    --secondary-700:  #ffff;
+    --secondary-800:  #ffff;
+    --secondary-900:  #ffff;
     --secondary-foreground: 210 40% 98%;
 
     --accent: 217.2 32.6% 17.5%;
@@ -95,7 +113,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-200;
+    @apply bg-secondary-200;
     @apply rounded-xl;
     @apply border-transparent border-solid border-4;
     @apply bg-clip-padding;

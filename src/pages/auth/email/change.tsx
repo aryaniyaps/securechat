@@ -38,7 +38,7 @@ export default function EmailChangePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center font-medium text-gray-400">
+      <div className="flex min-h-screen w-full items-center justify-center font-medium text-primary">
         <p>Completing email change...</p>
         <Icons.spinner className="h-4 w-4 animate-spin" />
       </div>
@@ -47,14 +47,14 @@ export default function EmailChangePage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center font-medium text-red-500">
+      <div className="flex min-h-screen w-full items-center justify-center font-medium text-destructive">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center gap-2 font-medium text-gray-400">
+    <div className="flex min-h-screen w-full items-center justify-center gap-2 font-medium text-primary">
       <p>redirecting...</p>
       <Icons.spinner className="h-4 w-4 animate-spin" />
     </div>

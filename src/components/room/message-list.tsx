@@ -78,13 +78,7 @@ export function MessageList({ roomId }: { roomId: string }) {
     }
   };
 
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen w-full items-center justify-center">
-        <Icons.spinner className="h-8 w-8 animate-spin text-gray-400" />
-      </main>
-    );
-  }
+  if (isLoading) return;
 
   return (
     <div className="relative flex flex-grow justify-end overflow-y-auto">
@@ -123,7 +117,7 @@ export function MessageList({ roomId }: { roomId: string }) {
                       )}
                     </AvatarFallback>
                   </Avatar>
-                  <h3 className="text-sm font-medium text-gray-500">
+                  <h3 className="text-sm font-medium text-primary">
                     {message.owner.name || message.owner.username}
                   </h3>
                 </div>

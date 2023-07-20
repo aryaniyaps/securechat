@@ -44,7 +44,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
       </div>
       <Button
         variant="link"
-        className="text-red-500"
+        className="text-destructive"
         onClick={async () => {
           await signOut();
         }}

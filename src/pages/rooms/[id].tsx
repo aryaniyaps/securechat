@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect } from "react";
 import { HomeLayout } from "~/components/home/layout";
-import { Icons } from "~/components/icons";
+import { LoadingScreen } from "~/components/loading-screen";
 import { MessageController } from "~/components/room/message-controller";
 import { MessageList } from "~/components/room/message-list";
 import { useRoom } from "~/hooks/use-room";
@@ -82,11 +82,7 @@ export default function RoomPage({
   }, [roomId, setRoomId]);
 
   if (!session || isLoading || !room) {
-    return (
-      <main className="flex min-h-screen w-full items-center justify-center">
-        <Icons.spinner className="h-8 w-8 animate-spin text-gray-400" />
-      </main>
-    );
+    return <LoadingScreen />;
   }
 
   return (
