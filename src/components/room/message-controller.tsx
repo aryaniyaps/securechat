@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
+import { Icons } from "../icons";
+import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
 
 const createMessageSchema = z.object({
@@ -29,18 +31,28 @@ export function MessageController({ roomId }: { roomId: string }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full gap-4"
+      >
         <FormField
           name="content"
           control={form.control}
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="w-full flex-grow">
               <FormControl>
                 <Input placeholder="send a message..." {...field} />
               </FormControl>
             </FormItem>
           )}
         />
+        <Button
+          variant="ghost"
+          type="submit"
+          disabled={!form.formState.isValid}
+        >
+          <Icons.send size={20} className="h-4 w-4" />
+        </Button>
       </form>
     </Form>
   );

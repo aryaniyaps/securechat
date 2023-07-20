@@ -100,12 +100,10 @@ export default function RoomPage({
       </Head>
       <HomeLayout title={room.name} session={session}>
         {/* TODO: add edit button here if user is owner */}
-        <div className="flex min-h-full w-full gap-8 px-4">
+        <div className="flex min-h-full min-w-full gap-8 px-4">
           <div className="flex flex-grow flex-col gap-8">
             <MessageList roomId={room.id} />
-            <div className="flex-none">
-              <MessageController roomId={room.id} />
-            </div>
+            <MessageController roomId={room.id} />
           </div>
           <UserList />
         </div>
