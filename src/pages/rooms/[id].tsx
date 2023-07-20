@@ -81,7 +81,7 @@ export default function RoomPage({
     }
   }, [roomId, setRoomId]);
 
-  if (!session || isLoading) {
+  if (!session || isLoading || !room) {
     return (
       <main className="flex min-h-screen w-full items-center justify-center">
         <Icons.spinner className="h-8 w-8 animate-spin text-gray-400" />
@@ -98,6 +98,7 @@ export default function RoomPage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeLayout title={room.name} session={session}>
+        {/* TODO: add edit button here if user is owner */}
         <div className="flex min-h-full w-full flex-col gap-8 px-4">
           <MessageList roomId={room.id} />
           <div className="flex-none">
