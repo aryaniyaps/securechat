@@ -132,7 +132,7 @@ export function MessageList({ roomId }: { roomId: string }) {
             ))
           )}
         {hasNextPage && (
-          <Button variant="ghost" onClick={handleFetchMore}>
+          <Button variant="link" onClick={handleFetchMore}>
             Load More
           </Button>
         )}
