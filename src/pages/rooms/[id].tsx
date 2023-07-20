@@ -10,7 +10,6 @@ import { HomeLayout } from "~/components/home/layout";
 import { Icons } from "~/components/icons";
 import { MessageController } from "~/components/room/message-controller";
 import { MessageList } from "~/components/room/message-list";
-import { UserList } from "~/components/room/user-list";
 import { useRoom } from "~/hooks/use-room";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
@@ -100,12 +99,9 @@ export default function RoomPage({
       </Head>
       <HomeLayout title={room.name} session={session}>
         {/* TODO: add edit button here if user is owner */}
-        <div className="flex min-h-full min-w-full gap-8 px-4">
-          <div className="flex flex-grow flex-col gap-8">
-            <MessageList roomId={room.id} />
-            <MessageController roomId={room.id} />
-          </div>
-          <UserList />
+        <div className="flex min-h-full min-w-full flex-col gap-8 px-4">
+          <MessageList roomId={room.id} />
+          <MessageController roomId={room.id} />
         </div>
       </HomeLayout>
     </>

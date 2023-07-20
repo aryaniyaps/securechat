@@ -97,7 +97,7 @@ export function MessageList({ roomId }: { roomId: string }) {
         {showScrollButton && (
           <Button
             variant="secondary"
-            className="absolute bottom-0 right-0 m-4"
+            className="absolute bottom-0 right-0 mb-4 mr-8"
             onClick={scrollBottom}
           >
             <Icons.arrowDown size={20} className="h-4 w-4" />
