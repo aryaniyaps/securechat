@@ -117,7 +117,7 @@ export function MessageList({ roomId }: { roomId: string }) {
                       )}
                     </AvatarFallback>
                   </Avatar>
-                  <h3 className="text-sm font-medium text-primary">
+                  <h3 className="text-xs font-medium text-primary">
                     {message.owner.name || message.owner.username}
                   </h3>
                 </div>

@@ -7,18 +7,11 @@ services:
       - minio_data:/data
     ports:
       - 9000:9000
-    environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: minio123
     command: server /data
 
   db:
     image: postgres:13
     restart: always
-    environment:
-      POSTGRES_USER: prisma
-      POSTGRES_PASSWORD: prisma
-      POSTGRES_DB: prisma
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -32,10 +25,22 @@ services:
     depends_on:
       - db
       - minio
-      - typesense
+      - soketi
     env_file:
       - .env
+
+  soketi:
+    restart: unless-stopped
+    image: "quay.io/soketi/soketi:0.17-16-alpine"
+    ports:
+      - 6001:6001
+    networks:
+      - soketi_network
 
 volumes:
   minio_data:
   db_data:
+
+networks:
+  soketi_network:
+    driver: bridge

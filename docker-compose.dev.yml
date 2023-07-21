@@ -46,17 +46,6 @@ services:
     networks:
       - soketi_network
 
-  typesense:
-    restart: unless-stopped
-    image: typesense/typesense:0.24.1
-    ports:
-      - 8108:8108
-    environment:
-      TYPESENSE_DATA_DIR: /data
-      TYPESENSE_API_KEY: api-key
-    volumes:
-    - typesense_data:/data
-
   # app:
   #   build:
   #     context: .
