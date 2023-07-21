@@ -69,7 +69,7 @@ function getColumns(session: Session | null) {
                 {(value.name || value.username).slice(0, 2)}
               </AvatarFallback>
             </Avatar>
-            {value.name || value.username}
+            <p className="hidden sm:block">{value.name || value.username}</p>
           </div>
         );
       },
@@ -79,15 +79,25 @@ function getColumns(session: Session | null) {
       enableHiding: false,
       header: () => <div className="text-right">Created At</div>,
       cell: ({ row }) => (
-        <div className="text-right">
-          {new Date(row.original.createdAt).toLocaleString(undefined, {
-            year: "2-digit",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </div>
+        <>
+          <div className="hidden text-right sm:block">
+            {new Date(row.original.createdAt).toLocaleString(undefined, {
+              year: "2-digit",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </div>
+          <div className="overflow-clip  text-right text-xs sm:hidden">
+            {new Date(row.original.createdAt).toLocaleString(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </div>
+        </>
       ),
     },
     {
@@ -162,7 +172,7 @@ function RoomActions({
                   await deleteRoom.mutateAsync({ id: room.id });
                 }}
               >
-                <p className="text-destructive">Delete room</p>
+                <p className="font-bold text-destructive">Delete room</p>
               </DropdownMenuItem>
             </>
           )}
