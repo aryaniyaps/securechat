@@ -1,6 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 const roomSchema = z.object({
   id: z.string(),
@@ -16,7 +20,7 @@ const roomSchema = z.object({
 });
 
 export const roomRouter = createTRPCRouter({
-  getById: protectedProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const room = await ctx.prisma.room.findUnique({

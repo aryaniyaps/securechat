@@ -1,7 +1,10 @@
 docker-compose.yml
 docker-compose.dev.yml
-**/node_modules/
-**/.next/
+Dockerfile
+.dockerignore
+node_modules
+README.md
+.next
 .env
 .git
 npm-debug.log

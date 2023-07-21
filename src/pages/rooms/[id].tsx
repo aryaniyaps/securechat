@@ -1,7 +1,6 @@
 import {
-  type GetStaticPaths,
-  type GetStaticPropsContext,
-  type InferGetStaticPropsType,
+  type GetServerSidePropsContext,
+  type InferGetServerSidePropsType,
 } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
@@ -11,20 +10,24 @@ import { LoadingScreen } from "~/components/loading-screen";
 import { MessageController } from "~/components/room/message-controller";
 import { MessageList } from "~/components/room/message-list";
 import { useRoom } from "~/hooks/use-room";
+import { ssgHelper } from "~/server/api/ssgHelper";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
 import { pusher } from "~/utils/pusher";
 
 export default function RoomPage({
   id,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const utils = api.useContext();
 
   const { data: session } = useSession();
 
-  const { data: room, isLoading } = api.room.getById.useQuery({
-    id,
-  });
+  const { data: room, isLoading } = api.room.getById.useQuery(
+    {
+      id,
+    },
+    { refetchOnMount: false }
+  );
 
   const { roomId, setRoomId } = useRoom(); // use roomId where needed, setRoomId to update the roomId
 
@@ -104,15 +107,8 @@ export default function RoomPage({
   );
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-};
-
-export async function getStaticProps(
-  context: GetStaticPropsContext<{ id: string }>
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: string }>
 ) {
   const id = context.params?.id;
 
@@ -124,9 +120,31 @@ export async function getStaticProps(
     };
   }
 
+  const helper = ssgHelper();
+
+  let room;
+
+  try {
+    room = await helper.room.getById.fetch({ id });
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
+
+  if (!room) {
+    return {
+      notFound: true,
+    };
+  }
+
+  // dehydrate the state
+  const trpcState = helper.dehydrate();
+
   return {
     props: {
       id,
+      trpcState,
     },
   };
 }
