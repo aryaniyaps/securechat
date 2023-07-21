@@ -11,6 +11,10 @@ const sidebarNavItems = [
     title: "Account",
     href: "/settings/account",
   },
+  {
+    title: "Appearance",
+    href: "/settings/appearance",
+  },
 ];
 
 export function SettingsLayout({ children }: { children: React.ReactNode }) {

@@ -250,7 +250,7 @@ export function RoomTable({ session }: { session: Session }) {
         </TableBody>
       </Table>
       {hasNextPage && (
-        <Button variant="ghost" onClick={() => fetchNextPage()}>
+        <Button variant="link" onClick={() => fetchNextPage()}>
           Load More
         </Button>
       )}
