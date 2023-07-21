@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Icons } from "~/components/icons";
 import { api } from "~/utils/api";
-import { withAuth } from "~/utils/auth";
 
 export default function EmailChangePage() {
   const router = useRouter();
@@ -60,12 +59,3 @@ export default function EmailChangePage() {
     </div>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/require-await
-export const getServerSideProps = withAuth(async (_) => {
-  return {
-    props: {
-      // page data here
-    },
-  };
-});

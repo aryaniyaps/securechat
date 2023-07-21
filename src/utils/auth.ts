@@ -1,9 +1,21 @@
-import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
+import {
+  type GetServerSideProps,
+  type GetServerSidePropsContext,
+  type GetServerSidePropsResult,
+} from "next";
+import { type ParsedUrlQuery } from "querystring";
 import { env } from "~/env.mjs";
 import { getServerAuthSession } from "~/server/auth";
 
-export function withAuth(getServerSidePropsFunc: GetServerSideProps) {
-  return async function (context: GetServerSidePropsContext) {
+export function withAuth<
+  Props extends { [key: string]: any } = { [key: string]: any },
+  Params extends ParsedUrlQuery = ParsedUrlQuery
+>(
+  getServerSidePropsFunc?: (
+    context: GetServerSidePropsContext<Params>
+  ) => Promise<GetServerSidePropsResult<Props>>
+): GetServerSideProps<Props, Params> {
+  return async (context: GetServerSidePropsContext<Params>) => {
     const session = await getServerAuthSession(context);
 
     if (!session) {
@@ -19,16 +31,15 @@ export function withAuth(getServerSidePropsFunc: GetServerSideProps) {
     }
 
     // Run the getServerSideProps function that was passed in, if any
-    let props = {};
     if (getServerSidePropsFunc) {
       const result = await getServerSidePropsFunc(context);
-      if ("props" in result) {
-        props = result.props;
+      if (result) {
+        return result;
       }
     }
 
     return {
-      props: props,
+      props: {} as Props,
     };
   };
 }

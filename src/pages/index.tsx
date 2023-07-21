@@ -6,7 +6,6 @@ import { RoomTable } from "~/components/home/room-table";
 import { SearchBar } from "~/components/home/search-bar";
 import { SearchProvider } from "~/components/home/search-provider";
 import { LoadingScreen } from "~/components/loading-screen";
-import { withAuth } from "~/utils/auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
 export default function HomePage() {
@@ -40,10 +39,10 @@ export default function HomePage() {
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export const getServerSideProps = withAuth(async (_) => {
-  return {
-    props: {
-      // page data here
-    },
-  };
-});
+// export const getServerSideProps = withAuth(async (_) => {
+//   return {
+//     props: {
+//       // page data here
+//     },
+//   };
+// });

@@ -108,7 +108,6 @@ export default function RoomPage({
   );
 }
 
-// TODO: add auth to this page
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: string }>
 ) => {

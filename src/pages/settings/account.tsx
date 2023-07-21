@@ -4,7 +4,6 @@ import { LoadingScreen } from "~/components/loading-screen";
 import { AccountForm } from "~/components/settings/account/account-form";
 import { SettingsLayout } from "~/components/settings/layout";
 import { Separator } from "~/components/ui/separator";
-import { withAuth } from "~/utils/auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
 export default function AccountSettingsPage() {
@@ -34,12 +33,3 @@ export default function AccountSettingsPage() {
     </>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/require-await
-export const getServerSideProps = withAuth(async (_) => {
-  return {
-    props: {
-      // page data here
-    },
-  };
-});

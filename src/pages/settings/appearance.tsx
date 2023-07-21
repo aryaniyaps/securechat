@@ -2,7 +2,6 @@ import Head from "next/head";
 import { AppearanceForm } from "~/components/settings/appearance/appearance-form";
 import { SettingsLayout } from "~/components/settings/layout";
 import { Separator } from "~/components/ui/separator";
-import { withAuth } from "~/utils/auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
 export default function AppearanceSettingsPage() {
@@ -28,12 +27,3 @@ export default function AppearanceSettingsPage() {
     </>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/require-await
-export const getServerSideProps = withAuth(async (_) => {
-  return {
-    props: {
-      // page data here
-    },
-  };
-});
