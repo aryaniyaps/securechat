@@ -28,6 +28,8 @@ RUN npm ci
 
 COPY . .
 
+ENV SKIP_ENV_VALIDATION 1
+
 RUN npm run build
 
 # STAGE 3: Production
@@ -39,16 +41,21 @@ WORKDIR /app
 # Environment variables
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV SKIP_ENV_VALIDATION 1
 
-COPY --from=build /app/next.config.js ./
+COPY --from=build /app/next.config.mjs ./
 COPY --from=build /app/package*.json ./
+COPY --from=build /app/public ./public
 COPY --from=build /app/prisma ./prisma/
 
 RUN npm ci --only=production
 
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
+
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+
 
 EXPOSE 3000
+ENV PORT 3000
 
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

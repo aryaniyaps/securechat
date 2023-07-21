@@ -82,6 +82,7 @@ export default function RoomPage({
         setRoomId(null);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, setRoomId]);
 
   if (!session || isLoading || !room) {
@@ -107,9 +108,10 @@ export default function RoomPage({
   );
 }
 
-export async function getServerSideProps(
+// TODO: add auth to this page
+export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: string }>
-) {
+) => {
   const id = context.params?.id;
 
   if (id == null) {
@@ -147,4 +149,4 @@ export async function getServerSideProps(
       trpcState,
     },
   };
-}
+};

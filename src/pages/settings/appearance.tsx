@@ -29,6 +29,7 @@ export default function AppearanceSettingsPage() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps = withAuth(async (_) => {
   return {
     props: {

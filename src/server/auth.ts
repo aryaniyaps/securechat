@@ -1,9 +1,9 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type User } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
   type DefaultSession,
+  type DefaultUser,
   type NextAuthOptions,
 } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
@@ -19,18 +19,24 @@ import { prisma } from "~/server/db";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: User;
-    // user: {
-    //   id: string;
-    //   // ...other properties
-    //   // role: UserRole;
-    // } & DefaultSession["user"];
+    user: {
+      id: string;
+      // ...other properties
+      // role: UserRole;
+      image: string;
+      emailVerified: Date | null;
+      username: string;
+    } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    id: string;
+    // ...other properties
+    // role: UserRole;
+    image: string;
+    emailVerified: Date | null;
+    username: string;
+  }
 }
 
 /**

@@ -5,6 +5,5 @@ Dockerfile
 node_modules
 README.md
 .next
-.env
 .git
 npm-debug.log

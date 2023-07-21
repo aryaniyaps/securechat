@@ -103,9 +103,13 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       if (input.username) {
         const existingUser = await ctx.prisma.user.findUnique({
-          where: { username: input.username },
+          where: {
+            username: input.username,
+          },
         });
-        if (existingUser) {
+        // TODO: find a better way to do this
+        // (maybe send in only dirty values from the client)
+        if (existingUser && existingUser.id != ctx.session.user.id) {
           throw new TRPCError({
             message: "Username is already taken.",
             code: "CONFLICT",

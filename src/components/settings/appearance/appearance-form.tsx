@@ -38,7 +38,7 @@ export function AppearanceForm() {
         <FormField
           control={form.control}
           name="theme"
-          render={({ field: { ref, ...field } }) => (
+          render={({ field: { ref: _ref, ...field } }) => (
             <FormItem>
               <FormLabel>App theme</FormLabel>
               <FormControl>
