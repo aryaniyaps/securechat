@@ -1,4 +1,4 @@
-# Beintern
+# SecureChat
 
 ## Starting the project
 

@@ -1,4 +1,11 @@
-http://localhost {
+http://vnadi.com {
+    redir https://vnadi.com{uri}
+}
+
+https://vnadi.com {
+    tls {
+        protocol tls1.3
+    }
     reverse_proxy app:3000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -7,17 +14,14 @@ http://localhost {
     }
 }
 
-https://localhost {
-    tls internal
-    reverse_proxy app:3000 {
-        header_up Host {host}
-        header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
-    }
+http://minio.vnadi.com {
+    redir https://minio.vnadi.com{uri}
 }
 
-http://minio.localhost {
+https://minio.vnadi.com {
+    tls {
+        protocol tls1.3
+    }
     reverse_proxy minio:9000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -26,17 +30,14 @@ http://minio.localhost {
     }
 }
 
-https://minio.localhost {
-    tls internal
-    reverse_proxy minio:9000 {
-        header_up Host {host}
-        header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
-    }
+http://socket.vnadi.com {
+    redir https://socket.vnadi.com{uri}
 }
 
-http://socket.localhost {
+https://socket.vnadi.com {
+    tls {
+        protocol tls1.3
+    }
     reverse_proxy soketi:6001 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -46,21 +47,6 @@ http://socket.localhost {
         header_up Upgrade {http.upgrade}
     }
     log {
-        output file /var/log/caddy/socket.localhost.log
-    }
-}
-
-https://socket.localhost {
-    tls internal
-    reverse_proxy soketi:6001 {
-        header_up Host {host}
-        header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
-        header_up Connection {http.upgrade}
-        header_up Upgrade {http.upgrade}
-    }
-    log {
-        output file /var/log/caddy/socket.localhost.log
+        output file /var/log/caddy/socket.vnadi.com.log
     }
 }
