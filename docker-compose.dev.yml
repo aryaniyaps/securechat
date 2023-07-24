@@ -1,17 +1,18 @@
 version: "3.7"
 
 services:
-  db:
-    image: postgres:13
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: prisma
-      POSTGRES_PASSWORD: prisma
-      POSTGRES_DB: prisma
-    ports:
-      - 5432:5432
+  caddy:
+    image: caddy:2-alpine
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data/caddy
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - app
+      - minio
+      - soketi
 
   minio:
     image: minio/minio
@@ -19,56 +20,86 @@ services:
     volumes:
       - minio_data:/data
     environment:
-      MINIO_SERVER_URL: http://localhost:9000
-    ports:
-      - 9000:9000
-      - 9001:9001
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+      MINIO_SERVER_URL: ${MINIO_SERVER_URL}
+    command: server /data
 
-    command: server /data --console-address :9001
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        # MINIO Public Information
+        NEXT_PUBLIC_MINIO_ENDPOINT: ${NEXT_PUBLIC_MINIO_ENDPOINT}
+        NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
+        # Pusher Public Information
+        NEXT_PUBLIC_PUSHER_APP_KEY: ${NEXT_PUBLIC_PUSHER_APP_KEY}
+        NEXT_PUBLIC_PUSHER_APP_CLUSTER: ${NEXT_PUBLIC_PUSHER_APP_CLUSTER}
+        NEXT_PUBLIC_PUSHER_FORCE_TLS: ${NEXT_PUBLIC_PUSHER_FORCE_TLS}
+        NEXT_PUBLIC_PUSHER_WS_HOST: ${NEXT_PUBLIC_PUSHER_WS_HOST}
+        NEXT_PUBLIC_PUSHER_WS_PORT: ${NEXT_PUBLIC_PUSHER_WS_PORT}
+    depends_on:
+      - db
+      - minio
+      - soketi
+    environment:
+      # Prisma
+      DATABASE_URL: ${DATABASE_URL}
+      # Next Auth
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      # Next Auth Google Provider
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      # Next Auth Email Provider
+      EMAIL_SERVER: ${EMAIL_SERVER}
+      EMAIL_FROM: ${EMAIL_FROM}
+      # MinIO Configuration
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_END_POINT: ${MINIO_END_POINT}
+      MINIO_PORT: ${MINIO_PORT}
+      MINIO_USE_SSL: ${MINIO_USE_SSL}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
+
+      # Pusher Configuration
+      PUSHER_APP_ID: "${PUSHER_APP_ID}"
+      PUSHER_APP_KEY: "${PUSHER_APP_KEY}"
+      PUSHER_CLUSTER: "${PUSHER_CLUSTER}"
+      PUSHER_SECRET: "${PUSHER_SECRET}"
+      PUSHER_USE_TLS: "${PUSHER_USE_TLS}"
+      PUSHER_HOST: "${PUSHER_HOST}"
+      PUSHER_PORT: "${PUSHER_PORT}"
 
   soketi:
     restart: unless-stopped
     image: "quay.io/soketi/soketi:0.17-16-alpine"
-    ports:
-      - 6001:6001
-      - 9601:9601
     environment:
-      SOKETI_DEBUG: "1"
-      DEFAULT_APP_ID: "app-id"
-      DEFAULT_APP_KEY: "app-key"
-      DEFAULT_APP_SECRET: "app-secret"
-      PUSHER_HOST: "127.0.0.1"
-      PUSHER_PORT: "6001"
-      PUSHER_SCHEME: "http" # or https
-      PUSHER_CLUSTER: "self-hosted"
+      SOKETI_DEBUG: "0"
       METRICS_SERVER_PORT: 9601
       DEFAULT_APP_ENABLE_CLIENT_MESSAGES: false
-    networks:
-      - soketi_network
-
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #     target: development
-  #   command: sh -c "npm run prisma:migrate && npm run dev"
-  #   ports:
-  #     - 3000:3000
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - db
-  #     - minio
-  #     - typesense
-  #   env_file:
-  #   - .env
+      DEFAULT_APP_ID: "${PUSHER_APP_ID}"
+      DEFAULT_APP_KEY: "${PUSHER_APP_KEY}"
+      DEFAULT_APP_SECRET: "${PUSHER_SECRET}"
+      PUSHER_HOST: "${PUSHER_HOST}"
+      PUSHER_PORT: "${PUSHER_PORT}"
+      PUSHER_SCHEME: "${PUSHER_SCHEME}"
+      PUSHER_CLUSTER: "${PUSHER_CLUSTER}"
 
 volumes:
   minio_data:
   db_data:
-  typesense_data:
-
-networks:
-  soketi_network:
-    driver: bridge
+  caddy_data:
