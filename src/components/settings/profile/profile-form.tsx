@@ -43,9 +43,13 @@ export function ProfileForm({ session }: { session: Session }) {
   const { update } = useSession();
 
   const updateUser = api.user.update.useMutation({
-    async onSuccess() {
+    async onSuccess(updatedUser) {
       // refresh session data
-      await update();
+      await update({
+        name: updatedUser.name,
+        username: updatedUser.username,
+        image: updatedUser.image,
+      });
     },
   });
 
@@ -149,7 +153,7 @@ export function ProfileForm({ session }: { session: Session }) {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="username" {...field} />
                 </FormControl>
                 <FormDescription>
                   This is your public display name.

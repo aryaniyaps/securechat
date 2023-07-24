@@ -9,13 +9,14 @@ import { HomeLayout } from "~/components/home/layout";
 import { LoadingScreen } from "~/components/loading-screen";
 import { MessageController } from "~/components/room/message-controller";
 import { MessageList } from "~/components/room/message-list";
+import { withAuth } from "~/components/with-auth";
 import { useRoom } from "~/hooks/use-room";
 import { ssgHelper } from "~/server/api/ssgHelper";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
 import { pusher } from "~/utils/pusher";
 
-export default function RoomPage({
+function RoomPage({
   id,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const utils = api.useContext();
@@ -39,6 +40,8 @@ export default function RoomPage({
     if (roomId) {
       // Subscribe to the channel you want to listen to
       const channel = pusher.subscribe(`room-${roomId}`);
+
+      console.log("SUBSCRIBED TO ROOM: ", channel);
 
       channel.bind(
         "message:create",
@@ -107,6 +110,8 @@ export default function RoomPage({
     </>
   );
 }
+
+export default withAuth(RoomPage);
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: string }>

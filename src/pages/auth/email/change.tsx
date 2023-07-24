@@ -2,9 +2,10 @@ import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Icons } from "~/components/icons";
+import { withAuth } from "~/components/with-auth";
 import { api } from "~/utils/api";
 
-export default function EmailChangePage() {
+function EmailChangePage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -59,3 +60,5 @@ export default function EmailChangePage() {
     </div>
   );
 }
+
+export default withAuth(EmailChangePage);

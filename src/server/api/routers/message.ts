@@ -92,14 +92,8 @@ export const messageRouter = createTRPCRouter({
         },
       });
       // broadcast message here
-      console.log("BEFORE MESSAGE TRIGGER");
-      try {
-        await pusher.trigger(`room-${input.roomId}`, "message:create", message);
-      } catch (err) {
-        console.error(err);
-      }
+      await pusher.trigger(`room-${input.roomId}`, "message:create", message);
 
-      console.log("AFTER MESSAGE TRIGGER");
       return message;
     }),
   delete: protectedProcedure

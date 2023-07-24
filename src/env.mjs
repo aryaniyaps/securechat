@@ -20,6 +20,7 @@ export const env = createEnv({
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
       process.env.VERCEL ? z.string().min(1) : z.string().url()
     ),
+    NEXTAUTH_URL_INTERNAL: z.string().url(),
     // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
@@ -54,6 +55,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_FORCE_TLS: z.string().min(1),
     NEXT_PUBLIC_PUSHER_WS_HOST: z.string().min(1),
     NEXT_PUBLIC_PUSHER_WS_PORT: z.string().min(1),
+    NEXT_PUBLIC_PUSHER_WS_PATH: z.string().min(1),
     NEXT_PUBLIC_SITE_URL: z.string().min(1),
   },
 
@@ -66,6 +68,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
@@ -84,6 +87,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_FORCE_TLS: process.env.NEXT_PUBLIC_PUSHER_FORCE_TLS,
     NEXT_PUBLIC_PUSHER_WS_HOST: process.env.NEXT_PUBLIC_PUSHER_WS_HOST,
     NEXT_PUBLIC_PUSHER_WS_PORT: process.env.NEXT_PUBLIC_PUSHER_WS_PORT,
+    NEXT_PUBLIC_PUSHER_WS_PATH: process.env.NEXT_PUBLIC_PUSHER_WS_PATH,
     PUSHER_APP_ID: process.env.PUSHER_APP_ID,
     PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
     PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,

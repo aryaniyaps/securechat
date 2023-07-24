@@ -56,7 +56,6 @@
   "devDependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/eslint": "^8.37.0",
-    "@types/nanoid": "^3.0.0",
     "@types/node": "^18.16.0",
     "@types/nodemailer": "^6.4.8",
     "@types/prettier": "^2.7.2",

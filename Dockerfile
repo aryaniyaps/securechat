@@ -48,9 +48,6 @@ COPY --from=build /app/package*.json ./
 COPY --from=build /app/public ./public
 COPY --from=build /app/prisma ./prisma/
 
-RUN npm ci --only=production
-
-
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 

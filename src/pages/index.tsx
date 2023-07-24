@@ -6,9 +6,10 @@ import { RoomTable } from "~/components/home/room-table";
 import { SearchBar } from "~/components/home/search-bar";
 import { SearchProvider } from "~/components/home/search-provider";
 import { LoadingScreen } from "~/components/loading-screen";
+import { withAuth } from "~/components/with-auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
-export default function HomePage() {
+function HomePage() {
   const { data: session } = useSession();
 
   if (!session) {
@@ -37,3 +38,5 @@ export default function HomePage() {
     </>
   );
 }
+
+export default withAuth(HomePage);

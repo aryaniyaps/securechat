@@ -163,7 +163,11 @@ export default function SignIn({
                       key={provider.id}
                       className="w-full"
                       variant="outline"
-                      onClick={() => signIn(provider.id)}
+                      onClick={() =>
+                        signIn(provider.id, {
+                          callbackUrl: String(callbackUrl),
+                        })
+                      }
                     >
                       <Icons.google className="mr-2 h-4 w-4" /> {provider.name}
                     </Button>

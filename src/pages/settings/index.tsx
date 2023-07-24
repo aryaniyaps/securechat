@@ -4,9 +4,10 @@ import { LoadingScreen } from "~/components/loading-screen";
 import { SettingsLayout } from "~/components/settings/layout";
 import { ProfileForm } from "~/components/settings/profile/profile-form";
 import { Separator } from "~/components/ui/separator";
+import { withAuth } from "~/components/with-auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
-export default function SettingsPage() {
+function SettingsPage() {
   const { data: session } = useSession();
   if (!session) {
     return <LoadingScreen />;
@@ -33,3 +34,5 @@ export default function SettingsPage() {
     </>
   );
 }
+
+export default withAuth(SettingsPage);
