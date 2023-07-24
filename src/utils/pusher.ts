@@ -6,7 +6,6 @@ export const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_APP_KEY, {
   forceTLS: env.NEXT_PUBLIC_PUSHER_FORCE_TLS === "true",
   wsHost: env.NEXT_PUBLIC_PUSHER_WS_HOST,
   wsPort: Number(env.NEXT_PUBLIC_PUSHER_WS_PORT),
-  wsPath: env.NEXT_PUBLIC_PUSHER_WS_PATH,
   disableStats: true,
   enabledTransports: ["ws", "wss"],
 });

@@ -55,7 +55,6 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_FORCE_TLS: z.string().min(1),
     NEXT_PUBLIC_PUSHER_WS_HOST: z.string().min(1),
     NEXT_PUBLIC_PUSHER_WS_PORT: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_WS_PATH: z.string().min(1),
     NEXT_PUBLIC_SITE_URL: z.string().min(1),
   },
 
@@ -87,7 +86,6 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_FORCE_TLS: process.env.NEXT_PUBLIC_PUSHER_FORCE_TLS,
     NEXT_PUBLIC_PUSHER_WS_HOST: process.env.NEXT_PUBLIC_PUSHER_WS_HOST,
     NEXT_PUBLIC_PUSHER_WS_PORT: process.env.NEXT_PUBLIC_PUSHER_WS_PORT,
-    NEXT_PUBLIC_PUSHER_WS_PATH: process.env.NEXT_PUBLIC_PUSHER_WS_PATH,
     PUSHER_APP_ID: process.env.PUSHER_APP_ID,
     PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
     PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,

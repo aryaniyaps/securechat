@@ -22,8 +22,6 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data
-    ports:
-      - 9000:9000
 
   db:
     image: postgres:13
