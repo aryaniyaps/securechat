@@ -1,12 +1,10 @@
-# Production Configuration
-http://vnadi.com {
-    redir https://vnadi.com{uri}
+# Local Configuration
+http://localhost {
+    redir https://localhost{uri}
 }
 
-https://vnadi.com {
-    tls {
-        protocol tls1.3
-    }
+https://localhost {
+    tls internal
     reverse_proxy app:3000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -15,14 +13,12 @@ https://vnadi.com {
     }
 }
 
-http://minio.vnadi.com {
-    redir https://minio.vnadi.com{uri}
+http://minio.localhost {
+    redir https://minio.localhost{uri}
 }
 
-https://minio.vnadi.com {
-    tls {
-        protocol tls1.3
-    }
+https://minio.localhost {
+    tls internal
     reverse_proxy minio:9000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -31,14 +27,12 @@ https://minio.vnadi.com {
     }
 }
 
-http://socket.vnadi.com {
-    redir https://socket.vnadi.com{uri}
+http://socket.localhost {
+    redir https://socket.localhost{uri}
 }
 
-https://socket.vnadi.com {
-    tls {
-        protocol tls1.3
-    }
+https://socket.localhost {
+    tls internal
     reverse_proxy soketi:6001 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -48,6 +42,6 @@ https://socket.vnadi.com {
         header_up Upgrade {http.upgrade}
     }
     log {
-        output file /var/log/caddy/socket.vnadi.com.log
+        output file /var/log/caddy/socket.localhost.log
     }
 }

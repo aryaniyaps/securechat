@@ -24,6 +24,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data
+    ports:
+      - 9000:9000
 
   db:
     image: postgres:13
@@ -34,12 +36,14 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
   app:
     build:
-      context: .
+      context: ../
       dockerfile: Dockerfile
-      target: production
+      target: development
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
         # MINIO Public Information
@@ -51,6 +55,8 @@ services:
         NEXT_PUBLIC_PUSHER_FORCE_TLS: ${NEXT_PUBLIC_PUSHER_FORCE_TLS}
         NEXT_PUBLIC_PUSHER_WS_HOST: ${NEXT_PUBLIC_PUSHER_WS_HOST}
         NEXT_PUBLIC_PUSHER_WS_PORT: ${NEXT_PUBLIC_PUSHER_WS_PORT}
+    volumes:
+      - ..:/workspace
     depends_on:
       - db
       - minio
@@ -98,6 +104,9 @@ services:
       PUSHER_PORT: "${PUSHER_PORT}"
       PUSHER_SCHEME: "${PUSHER_SCHEME}"
       PUSHER_CLUSTER: "${PUSHER_CLUSTER}"
+    ports:
+      - 6001:6001
+      - 9601:9601
 
 volumes:
   minio_data:

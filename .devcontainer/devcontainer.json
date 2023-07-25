@@ -1,0 +1,34 @@
+{
+  "name": "SecureChat",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [
+    80,
+    443,
+    5432,
+    9000,
+    6001,
+    9601
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "zamerick.vscode-caddyfile-syntax",
+        "github.vscode-github-actions",
+        "hashicorp.terraform",
+        "ZainChen.json",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma",
+        "christian-kohler.path-intellisense",
+        "bradlc.vscode-tailwindcss",
+        "pmneo.tsimporter",
+        "redhat.vscode-yaml"
+      ]
+    }
+  }
+}
