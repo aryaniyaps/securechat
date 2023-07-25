@@ -14,14 +14,6 @@ services:
       - minio
       - soketi
 
-    deploy:
-      replicas: 3
-      update_config:
-        parallelism: 2
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-
   minio:
     image: minio/minio
     restart: unless-stopped
@@ -44,24 +36,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-      args:
-        # MINIO Public Information
-        NEXT_PUBLIC_MINIO_ENDPOINT: ${NEXT_PUBLIC_MINIO_ENDPOINT}
-        NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
-        # Pusher Public Information
-        NEXT_PUBLIC_PUSHER_APP_KEY: ${NEXT_PUBLIC_PUSHER_APP_KEY}
-        NEXT_PUBLIC_PUSHER_APP_CLUSTER: ${NEXT_PUBLIC_PUSHER_APP_CLUSTER}
-        NEXT_PUBLIC_PUSHER_FORCE_TLS: ${NEXT_PUBLIC_PUSHER_FORCE_TLS}
-        NEXT_PUBLIC_PUSHER_WS_HOST: ${NEXT_PUBLIC_PUSHER_WS_HOST}
-        NEXT_PUBLIC_PUSHER_WS_PORT: ${NEXT_PUBLIC_PUSHER_WS_PORT}
-    depends_on:
-      - db
-      - minio
-      - soketi
+    image: aryaniyaps/securechat:latest
     environment:
       # Prisma
       DATABASE_URL: ${DATABASE_URL}
@@ -90,6 +65,11 @@ services:
       PUSHER_USE_TLS: "${PUSHER_USE_TLS}"
       PUSHER_HOST: "${PUSHER_HOST}"
       PUSHER_PORT: "${PUSHER_PORT}"
+
+    depends_on:
+      - db
+      - minio
+      - soketi
 
   soketi:
     restart: unless-stopped
