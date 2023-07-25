@@ -55,7 +55,6 @@ export const env = createEnv({
     NEXT_PUBLIC_PUSHER_FORCE_TLS: z.string().min(1),
     NEXT_PUBLIC_PUSHER_WS_HOST: z.string().min(1),
     NEXT_PUBLIC_PUSHER_WS_PORT: z.string().min(1),
-    NEXT_PUBLIC_SITE_URL: z.string().min(1),
   },
 
   /**
@@ -68,7 +67,6 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     EMAIL_SERVER: process.env.EMAIL_SERVER,

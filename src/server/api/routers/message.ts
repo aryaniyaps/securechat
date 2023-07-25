@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { pusher } from "~/server/pusher";
+import { pusher } from "~/server/config/pusher";
 
 const messageSchema = z.object({
   id: z.string(),

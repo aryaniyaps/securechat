@@ -5,8 +5,8 @@ import path from "path";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { transport } from "~/server/email";
-import { minioClient } from "../../minio";
+import { transport } from "~/server/config/email";
+import { minioClient } from "~/server/config/minio";
 
 export const userRouter = createTRPCRouter({
   uploadAvatar: protectedProcedure
@@ -145,7 +145,7 @@ export const userRouter = createTRPCRouter({
       }
 
       const changeToken = nanoid(18);
-      const changeUrl = new URL("/auth/email/change", env.NEXT_PUBLIC_SITE_URL);
+      const changeUrl = new URL("/auth/email/change", env.NEXTAUTH_URL);
       changeUrl.searchParams.append("changeToken", changeToken);
       changeUrl.searchParams.append("newEmail", input.newEmail);
       await transport.sendMail({

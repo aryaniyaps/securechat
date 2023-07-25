@@ -27,7 +27,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { env } from "~/env.mjs";
 import { useSearchQuery } from "~/hooks/use-search-query";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
@@ -157,7 +156,7 @@ function RoomActions({
           <DropdownMenuItem
             onClick={() =>
               navigator.clipboard.writeText(
-                `${env.NEXT_PUBLIC_SITE_URL}/rooms/${room.id}`
+                `${window.location.origin}/rooms/${room.id}`
               )
             }
           >

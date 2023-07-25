@@ -11,7 +11,7 @@ import { MessageController } from "~/components/room/message-controller";
 import { MessageList } from "~/components/room/message-list";
 import { withAuth } from "~/components/with-auth";
 import { useRoom } from "~/hooks/use-room";
-import { ssgHelper } from "~/server/api/ssgHelper";
+import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
 import { pusher } from "~/utils/pusher";
@@ -126,17 +126,10 @@ export const getServerSideProps = async (
     };
   }
 
-  const helper = ssgHelper();
-
-  let room;
-
-  try {
-    room = await helper.room.getById.fetch({ id });
-  } catch {
-    return {
-      notFound: true,
-    };
-  }
+  // TODO: return room as a cache here
+  // For now, using SSGHelper requires setting environment variables on server side during build time
+  // whereas we are only going to fetch during runtime
+  const room = await prisma.room.findUnique({ where: { id } });
 
   if (!room) {
     return {
@@ -144,13 +137,9 @@ export const getServerSideProps = async (
     };
   }
 
-  // dehydrate the state
-  const trpcState = helper.dehydrate();
-
   return {
     props: {
       id,
-      trpcState,
     },
   };
 };

@@ -49,7 +49,6 @@ services:
       dockerfile: Dockerfile
       target: production
       args:
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
         # MINIO Public Information
         NEXT_PUBLIC_MINIO_ENDPOINT: ${NEXT_PUBLIC_MINIO_ENDPOINT}
         NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
