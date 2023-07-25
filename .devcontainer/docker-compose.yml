@@ -23,9 +23,10 @@ services:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
-    command: server /data
+    command: server /data --console-address :9001
     ports:
       - 9000:9000
+      - 9001:9001
 
   db:
     image: postgres:13
@@ -89,6 +90,8 @@ services:
       PUSHER_USE_TLS: "${PUSHER_USE_TLS}"
       PUSHER_HOST: "${PUSHER_HOST}"
       PUSHER_PORT: "${PUSHER_PORT}"
+    ports:
+      - 3000:3000
 
   soketi:
     restart: unless-stopped

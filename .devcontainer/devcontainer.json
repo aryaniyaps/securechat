@@ -6,14 +6,43 @@
   "forwardPorts": [
     80,
     443,
+    3000,
     5432,
     9000,
+    9001,
     6001,
     9601
   ],
+  "portsAttributes": {
+		"443": {
+			"label": "Caddy Server (SSL)"
+		},
+		"80": {
+			"label": "Caddy Server"
+		},
+    "3000": {
+      "label": "Next.js Application"
+    },
+    "5432": {
+      "label": "PostgreSQL Database"
+    },
+    "9000": {
+      "label": "MinIO Server"
+    },
+    "9001": {
+      "label": "MinIO Console"
+    },
+    "6001": {
+      "label": "Soketi Server"
+    },
+    "9601": {
+      "label": "Soketi Metrics"
+    }
+  },
   "customizations": {
     "vscode": {
       "settings": {
+        "git.path": "/usr/bin/git",
         "terminal.integrated.shell.linux": "/bin/bash"
       },
       "extensions": [
