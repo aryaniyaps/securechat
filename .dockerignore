@@ -4,5 +4,6 @@ Dockerfile
 .dockerignore
 node_modules
 README.md
+.git
 .next
 npm-debug.log

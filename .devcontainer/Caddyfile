@@ -1,10 +1,5 @@
 # Local Configuration
 http://localhost {
-    redir https://localhost{uri}
-}
-
-https://localhost {
-    tls internal
     reverse_proxy app:3000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
@@ -14,11 +9,6 @@ https://localhost {
 }
 
 http://minio.localhost {
-    redir https://minio.localhost{uri}
-}
-
-https://minio.localhost {
-    tls internal
 
     reverse_proxy /ui/* minio:9001 {
         header_up Host {host}
@@ -36,11 +26,6 @@ https://minio.localhost {
 }
 
 http://socket.localhost {
-    redir https://socket.localhost{uri}
-}
-
-https://socket.localhost {
-    tls internal
     reverse_proxy soketi:6001 {
         header_up Host {host}
         header_up X-Real-IP {remote}

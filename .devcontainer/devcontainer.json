@@ -5,7 +5,6 @@
   "workspaceFolder": "/workspace",
   "forwardPorts": [
     80,
-    443,
     3000,
     5432,
     9000,
@@ -14,9 +13,6 @@
     9601
   ],
   "portsAttributes": {
-		"443": {
-			"label": "Caddy Server (SSL)"
-		},
 		"80": {
 			"label": "Caddy Server"
 		},
@@ -42,10 +38,14 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "git.path": "/usr/bin/git",
-        "terminal.integrated.shell.linux": "/bin/bash"
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true
+        },
+        "editor.formatOnSave": true
       },
       "extensions": [
+        "mutantdino.resourcemonitor",
         "ms-azuretools.vscode-docker",
         "zamerick.vscode-caddyfile-syntax",
         "github.vscode-github-actions",
