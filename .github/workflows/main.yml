@@ -24,4 +24,5 @@ jobs:
         with:
           context: .
           push: true
+          target: production
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/securechat:latest
