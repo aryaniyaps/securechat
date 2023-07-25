@@ -19,6 +19,14 @@ http://minio.localhost {
 
 https://minio.localhost {
     tls internal
+
+    reverse_proxy /ui/* minio:9001 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
     reverse_proxy minio:9000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
