@@ -1,21 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { pusher } from "~/server/config/pusher";
-
-const messageSchema = z.object({
-  id: z.string(),
-  content: z.string(),
-  roomId: z.string(),
-  ownerId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-  owner: z.object({
-    name: z.string().nullish(),
-    username: z.string(),
-    image: z.string(),
-  }),
-});
 
 export const messageRouter = createTRPCRouter({
   getAll: protectedProcedure

@@ -1,4 +1,3 @@
-import { type Room } from "@prisma/client";
 import {
   flexRender,
   getCoreRowModel,
@@ -28,13 +27,12 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { useSearchQuery } from "~/hooks/use-search-query";
+import { type Room } from "~/schemas/room";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 
 function getColumns(session: Session | null) {
-  const columns: ColumnDef<
-    Room & { owner: { image: string; name?: string | null; username: string } }
-  >[] = [
+  const columns: ColumnDef<Room>[] = [
     {
       accessorKey: "name",
       header: "Room Name",
@@ -114,9 +112,7 @@ function RoomActions({
   room,
   session,
 }: {
-  room: Room & {
-    owner: { image: string; name?: string | null; username: string };
-  };
+  room: Room;
   session: Session | null;
 }) {
   const utils = api.useContext();

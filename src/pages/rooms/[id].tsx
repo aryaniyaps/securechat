@@ -41,8 +41,6 @@ function RoomPage({
       // Subscribe to the channel you want to listen to
       const channel = pusher.subscribe(`room-${roomId}`);
 
-      console.log("SUBSCRIBED TO ROOM: ", channel);
-
       channel.bind(
         "message:create",
         async (newMessage: {

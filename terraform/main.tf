@@ -5,8 +5,8 @@ provider "digitalocean" {
 resource "digitalocean_droplet" "web" {
   image    = "ubuntu-20-04-x64"
   name     = "web-server"
-  region   = "nyc2"
-  size     = "s-2vcpu-2gb"
+  region   = "blr1"
+  size     = "s-1vcpu-1gb"
   ssh_keys = [var.ssh_fingerprint]
 
   connection {
@@ -25,18 +25,24 @@ resource "digitalocean_droplet" "web" {
       "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
       "apt-get update",
       "apt-get install -y docker-ce",
-      "curl -L \"https://github.com/docker/compose/releases/download/latest/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+      "curl -L \"https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
       "chmod +x /usr/local/bin/docker-compose"
     ]
   }
 
   provisioner "file" {
-    source      = "docker-compose.yml"
+    source      = "../docker-compose.yml"
     destination = "/root/docker-compose.yml"
+  }
+
+  provisioner "file" {
+    source      = "../Caddyfile"
+    destination = "/root/Caddyfile"
   }
 
   provisioner "remote-exec" {
     inline = [
+      "echo 'DIGITALOCEAN_API_TOKEN=${var.do_token}' >> /root/.env",
       "echo 'DATABASE_URL=${var.database_url}' >> /root/.env",
       "echo 'NEXTAUTH_SECRET=${var.nextauth_secret}' >> /root/.env",
       "echo 'NEXTAUTH_URL=${var.nextauth_url}' >> /root/.env",
@@ -72,6 +78,26 @@ resource "digitalocean_droplet" "web" {
       "cd /root",
       "docker-compose pull",
       "docker-compose up -d"
+    ]
+  }
+}
+
+
+resource "null_resource" "run_db_migrate" {
+  depends_on = [digitalocean_droplet.web]
+
+  connection {
+    type        = "ssh"
+    user        = "root"
+    private_key = file(var.pvt_key)
+    host        = digitalocean_droplet.web.ipv4_address
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "docker exec -it app npm install",
+      "docker exec -it app npm run db:migrate",
+      "docker exec -it app rm -rf node_modules"
     ]
   }
 }
