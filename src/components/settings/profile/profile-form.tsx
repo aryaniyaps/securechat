@@ -37,7 +37,7 @@ const profileSchema = z.object({
   avatar: z.optional(z.instanceof(Blob)),
 });
 
-export function ProfileForm({ session }: { session: Session }) {
+export default function ProfileForm({ session }: { session: Session }) {
   const { toast } = useToast();
 
   const { update } = useSession();

@@ -4,6 +4,11 @@ const path = require("path");
 /** @type {import("eslint").Linter.Config} */
 const config = {
   overrides: [
+    // Only uses Testing Library lint rules in test files
+    {
+      files: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      extends: ["plugin:testing-library/react"],
+    },
     {
       extends: [
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
@@ -18,7 +23,7 @@ const config = {
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
-  plugins: ["@typescript-eslint", "prettier"],
+  plugins: ["@typescript-eslint", "prettier", "testing-library"],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",

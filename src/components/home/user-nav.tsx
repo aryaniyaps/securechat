@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { getAvatarUrl } from "~/utils/avatar";
 
-export function UserNav({ session }: { session: Session }) {
+export default function UserNav({ session }: { session: Session }) {
   return (
     <Link href="/settings" className="flex items-center gap-4">
       <Avatar className="h-8 w-8">

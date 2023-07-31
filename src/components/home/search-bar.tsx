@@ -1,7 +1,7 @@
 import { useSearchQuery } from "~/hooks/use-search-query";
 import { Input } from "../ui/input";
 
-export function SearchBar() {
+export default function SearchBar() {
   const { searchQuery, setSearchQuery } = useSearchQuery();
 
   return (

@@ -14,7 +14,7 @@ const createMessageSchema = z.object({
     .max(250, { message: "Message cannot exceed 25 characters." }),
 });
 
-export function MessageController({ roomId }: { roomId: string }) {
+export default function MessageController({ roomId }: { roomId: string }) {
   const form = useForm<z.infer<typeof createMessageSchema>>({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {

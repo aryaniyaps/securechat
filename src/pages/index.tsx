@@ -1,11 +1,11 @@
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { HomeLayout } from "~/components/home/layout";
-import { RoomController } from "~/components/home/room-controller";
-import { RoomTable } from "~/components/home/room-table";
-import { SearchBar } from "~/components/home/search-bar";
+import HomeLayout from "~/components/home/layout";
+import RoomController from "~/components/home/room-controller";
+import RoomTable from "~/components/home/room-table";
+import SearchBar from "~/components/home/search-bar";
 import { SearchProvider } from "~/components/home/search-provider";
-import { LoadingScreen } from "~/components/loading-screen";
+import LoadingScreen from "~/components/loading-screen";
 import { withAuth } from "~/components/with-auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 

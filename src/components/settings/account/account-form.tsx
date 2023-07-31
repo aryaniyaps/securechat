@@ -29,7 +29,7 @@ interface AccountFormProps extends React.HTMLAttributes<HTMLFormElement> {
   session: Session;
 }
 
-export function AccountForm({ session, ...props }: AccountFormProps) {
+export default function AccountForm({ session, ...props }: AccountFormProps) {
   const { toast } = useToast();
 
   const requestEmailChangeMutation = api.user.requestEmailChange.useMutation();

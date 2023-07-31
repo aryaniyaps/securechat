@@ -1,8 +1,8 @@
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { LoadingScreen } from "~/components/loading-screen";
-import { AccountForm } from "~/components/settings/account/account-form";
-import { SettingsLayout } from "~/components/settings/layout";
+import LoadingScreen from "~/components/loading-screen";
+import AccountForm from "~/components/settings/account/account-form";
+import SettingsLayout from "~/components/settings/layout";
 import { Separator } from "~/components/ui/separator";
 import { withAuth } from "~/components/with-auth";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";

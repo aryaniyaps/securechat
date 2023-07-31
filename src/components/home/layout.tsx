@@ -1,9 +1,9 @@
 import { type Session } from "next-auth";
 import Link from "next/link";
 import { APP_NAME } from "~/utils/constants";
-import { UserNav } from "./user-nav";
+import UserNav from "./user-nav";
 
-export function HomeLayout({
+export default function HomeLayout({
   children,
   session,
   title,

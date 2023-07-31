@@ -28,7 +28,7 @@ const createRoomSchema = z.object({
     .max(25, { message: "Room name cannot exceed 25 characters." }),
 });
 
-export function RoomController() {
+export default function RoomController() {
   const utils = api.useContext();
   const router = useRouter();
   const [open, setOpen] = useState(false);

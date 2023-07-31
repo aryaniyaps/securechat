@@ -22,7 +22,7 @@ const appearanceSchema = z.object({
   theme: z.string(),
 });
 
-export function AppearanceForm() {
+export default function AppearanceForm() {
   const { setTheme, theme } = useTheme();
 
   const form = useForm<z.infer<typeof appearanceSchema>>({

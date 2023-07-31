@@ -177,7 +177,7 @@ function RoomActions({
   );
 }
 
-export function RoomTable({ session }: { session: Session }) {
+export default function RoomTable({ session }: { session: Session }) {
   const { searchQuery, debouncedSearchQuery } = useSearchQuery();
 
   const {

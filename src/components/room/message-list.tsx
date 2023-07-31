@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 
 const SCROLL_THRESHOLD = 250;
 
-export function MessageList({ roomId }: { roomId: string }) {
+export default function MessageList({ roomId }: { roomId: string }) {
   const {
     data: messagesPages,
     isLoading,
