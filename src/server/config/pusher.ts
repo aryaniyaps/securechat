@@ -8,5 +8,5 @@ export const pusher = new Pusher({
   host: env.PUSHER_HOST,
   port: env.PUSHER_PORT,
   cluster: env.PUSHER_CLUSTER,
-  useTLS: env.PUSHER_USE_TLS === "true",
+  useTLS: env.PUSHER_USE_TLS,
 });

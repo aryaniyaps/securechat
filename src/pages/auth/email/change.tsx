@@ -32,7 +32,7 @@ function EmailChangePage() {
       setLoading(false);
     }
 
-    completeEmailChange().catch((err) => console.error(err));
+    void completeEmailChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changeToken, newEmail, router]);
 
