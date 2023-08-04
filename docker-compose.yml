@@ -5,6 +5,8 @@ services:
     image: aryaniyaps/securechat-proxy:latest
     volumes:
       - caddy_data:/data/caddy
+    environment:
+      DIGITALOCEAN_API_TOKEN: ${DIGITALOCEAN_API_TOKEN}
     ports:
       - 80:80
       - 443:443
@@ -42,6 +44,7 @@ services:
       # Next Auth
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_URL_INTERNAL: ${NEXTAUTH_URL_INTERNAL}
       # Next Auth Google Provider
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
