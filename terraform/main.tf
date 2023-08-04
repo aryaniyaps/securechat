@@ -35,11 +35,6 @@ resource "digitalocean_droplet" "web" {
     destination = "/root/docker-compose.yml"
   }
 
-  provisioner "file" {
-    source      = "../Caddyfile"
-    destination = "/root/Caddyfile"
-  }
-
   provisioner "remote-exec" {
     inline = [
       "echo 'DIGITALOCEAN_API_TOKEN=${var.do_token}' >> /root/.env",
@@ -78,26 +73,6 @@ resource "digitalocean_droplet" "web" {
       "cd /root",
       "docker-compose pull",
       "docker-compose up -d"
-    ]
-  }
-}
-
-
-resource "null_resource" "run_db_migrate" {
-  depends_on = [digitalocean_droplet.web]
-
-  connection {
-    type        = "ssh"
-    user        = "root"
-    private_key = file(var.pvt_key)
-    host        = digitalocean_droplet.web.ipv4_address
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "docker exec -it app npm install",
-      "docker exec -it app npm run db:migrate",
-      "docker exec -it app rm -rf node_modules"
     ]
   }
 }
