@@ -7,7 +7,6 @@
     80,
     3000,
     27017,
-    28017,
     9000,
     9001,
     6001,
@@ -21,9 +20,6 @@
       "label": "Next.js Application"
     },
     "27017": {
-      "label": "MongoDB Database"
-    },
-    "28017": {
       "label": "MongoDB Database"
     },
     "9000": {
