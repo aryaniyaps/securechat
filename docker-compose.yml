@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   caddy:
-    image: aryaniyaps/securechat-caddy:latest
+    image: aryaniyaps/securechat-proxy:latest
     volumes:
       - caddy_data:/data/caddy
     ports:

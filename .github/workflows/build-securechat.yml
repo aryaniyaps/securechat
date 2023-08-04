@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push SecureChat Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build_securechat:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push SecureChat Docker image
         uses: docker/build-push-action@v2
         env:
           NEXT_PUBLIC_SITE_URL: https://vnadi.com
@@ -46,10 +46,3 @@ jobs:
             NEXT_PUBLIC_PUSHER_FORCE_TLS=${{ env.NEXT_PUBLIC_PUSHER_FORCE_TLS }}
             NEXT_PUBLIC_PUSHER_WS_HOST=${{ env.NEXT_PUBLIC_PUSHER_WS_HOST }}
             NEXT_PUBLIC_PUSHER_WS_PORT=${{ env.NEXT_PUBLIC_PUSHER_WS_PORT }}
-
-      # - name: Build and push Docker image
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: ./caddy
-      #     push: true
-      #     tags: ${{ secrets.DOCKER_HUB_USERNAME }}/securechat-caddy:latest
