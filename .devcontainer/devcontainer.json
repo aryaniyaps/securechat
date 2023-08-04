@@ -6,7 +6,8 @@
   "forwardPorts": [
     80,
     3000,
-    5432,
+    27017,
+    28017,
     9000,
     9001,
     6001,
@@ -19,8 +20,11 @@
     "3000": {
       "label": "Next.js Application"
     },
-    "5432": {
-      "label": "PostgreSQL Database"
+    "27017": {
+      "label": "MongoDB Database"
+    },
+    "28017": {
+      "label": "MongoDB Database"
     },
     "9000": {
       "label": "MinIO Server"

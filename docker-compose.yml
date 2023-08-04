@@ -27,14 +27,14 @@ services:
     command: server /data
 
   db:
-    image: postgres:13
+    image: mongo:4
     restart: unless-stopped
+    command: --replSet rs0 # <--- this startup command enables the replicaset.
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/data/db
 
   app:
     image: aryaniyaps/securechat:latest

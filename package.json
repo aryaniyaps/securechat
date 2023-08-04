@@ -8,7 +8,6 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "db:migrate": "prisma migrate deploy",
     "cypress": "cypress open"
   },
   "dependencies": {

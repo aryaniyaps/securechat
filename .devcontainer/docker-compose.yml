@@ -29,16 +29,17 @@ services:
       - 9001:9001
 
   db:
-    image: postgres:13
+    image: mongo:4
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - db_data:/var/lib/postgresql/data
+    command: --replSet rs0 # <--- this startup command enables the replicaset.
     ports:
-      - 5432:5432
+      - "27017:27017"
+      - "28017:28017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - db_data:/data/db
 
   app:
     build:
