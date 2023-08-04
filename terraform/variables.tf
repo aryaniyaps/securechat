@@ -139,18 +139,14 @@ variable "pusher_port" {
   default     = "6001"
 }
 
-variable "postgres_user" {
-  description = "Postgres User"
+variable "mongo_password" {
+  description = "MongoDB Password"
   type        = string
+  sensitive   = true
 }
 
-variable "postgres_db" {
-  description = "Postgres Database"
-  type        = string
-}
-
-variable "postgres_password" {
-  description = "Postgres Password"
+variable "mongo_replica_set_key" {
+  description = "MongoDB Replica Set Key"
   type        = string
   sensitive   = true
 }

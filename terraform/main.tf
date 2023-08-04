@@ -62,9 +62,8 @@ resource "digitalocean_droplet" "web" {
       "echo 'PUSHER_USE_TLS=${var.pusher_use_tls}' >> /root/.env",
       "echo 'PUSHER_HOST=${var.pusher_host}' >> /root/.env",
       "echo 'PUSHER_PORT=${var.pusher_port}' >> /root/.env",
-      "echo 'POSTGRES_USER=${var.postgres_user}' >> /root/.env",
-      "echo 'POSTGRES_DB=${var.postgres_db}' >> /root/.env",
-      "echo 'POSTGRES_PASSWORD=${var.postgres_password}' >> /root/.env",
+      "echo 'MONGO_REPLICA_SET_KEY=${var.mongo_replica_set_key}' >> /root/.env",
+      "echo 'MONGO_PASSWORD=${var.mongo_password}' >> /root/.env",
       "echo 'PUSHER_SCHEME=${var.pusher_scheme}' >> /root/.env",
       "echo 'MINIO_SERVER_URL=${var.minio_server_url}' >> /root/.env",
     ]

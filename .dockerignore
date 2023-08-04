@@ -6,5 +6,5 @@ node_modules
 README.md
 .git
 .next
+caddy
 npm-debug.log
-Caddyfile

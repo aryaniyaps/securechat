@@ -26,15 +26,17 @@ services:
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data
 
-  db:
-    image: mongo:4
+  mongodb-primary:
+    image: bitnami/mongodb:6.0
     restart: unless-stopped
-    command: --replSet rs0 # <--- this startup command enables the replicaset.
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+      - MONGODB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGODB_ROOT_USER=${MONGO_USER}
+      - MONGODB_REPLICA_SET_KEY=${MONGO_REPLICA_SET_KEY}
     volumes:
-      - db_data:/data/db
+      - mongodb_primary_data:/bitnami/mongodb
 
   app:
     image: aryaniyaps/securechat:latest
@@ -69,7 +71,7 @@ services:
       PUSHER_PORT: "${PUSHER_PORT}"
 
     depends_on:
-      - db
+      - mongodb-primary
       - minio
       - soketi
 
@@ -90,5 +92,6 @@ services:
 
 volumes:
   minio_data:
-  db_data:
   caddy_data:
+  mongodb_primary_data:
+    driver: local
