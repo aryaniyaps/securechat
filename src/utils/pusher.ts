@@ -1,6 +1,7 @@
 import Pusher from "pusher-js";
 import { env } from "~/env.mjs";
 
+console.log("PUSHER FORCE TLS", env.NEXT_PUBLIC_PUSHER_FORCE_TLS);
 export const pusher = new Pusher(env.NEXT_PUBLIC_PUSHER_APP_KEY, {
   cluster: env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
   forceTLS: env.NEXT_PUBLIC_PUSHER_FORCE_TLS,

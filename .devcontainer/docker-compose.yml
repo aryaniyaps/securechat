@@ -28,19 +28,19 @@ services:
       - 9000:9000
       - 9001:9001
 
-  mongodb-primary:
+  mongodb:
     image: bitnami/mongodb:6.0
     restart: unless-stopped
     environment:
       - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb
       - MONGODB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGODB_ROOT_USER=${MONGO_USER}
       - MONGODB_REPLICA_SET_KEY=${MONGO_REPLICA_SET_KEY}
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_primary_data:/bitnami/mongodb
+      - mongodb_data:/bitnami/mongodb
 
   app:
     build:
@@ -60,7 +60,7 @@ services:
     volumes:
       - ..:/workspace
     depends_on:
-      - mongodb-primary
+      - mongodb
       - minio
       - soketi
     environment:
@@ -116,5 +116,5 @@ services:
 volumes:
   minio_data:
   caddy_data:
-  mongodb_primary_data:
+  mongodb_data:
     driver: local

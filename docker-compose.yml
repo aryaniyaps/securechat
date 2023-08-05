@@ -26,17 +26,17 @@ services:
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
     command: server /data
 
-  mongodb-primary:
+  mongodb:
     image: bitnami/mongodb:6.0
     restart: unless-stopped
     environment:
       - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb
       - MONGODB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGODB_ROOT_USER=${MONGO_USER}
       - MONGODB_REPLICA_SET_KEY=${MONGO_REPLICA_SET_KEY}
     volumes:
-      - mongodb_primary_data:/bitnami/mongodb
+      - mongodb_data:/bitnami/mongodb
 
   app:
     image: aryaniyaps/securechat:latest
@@ -71,7 +71,7 @@ services:
       PUSHER_PORT: "${PUSHER_PORT}"
 
     depends_on:
-      - mongodb-primary
+      - mongodb
       - minio
       - soketi
 
@@ -93,5 +93,5 @@ services:
 volumes:
   minio_data:
   caddy_data:
-  mongodb_primary_data:
+  mongodb_data:
     driver: local

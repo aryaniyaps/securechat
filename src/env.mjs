@@ -27,8 +27,18 @@ export const env = createEnv({
     EMAIL_SERVER: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
     MINIO_END_POINT: z.string().min(1),
-    MINIO_PORT: z.coerce.number(),
-    MINIO_USE_SSL: z.coerce.boolean(),
+    MINIO_PORT: z
+      .string()
+      // transform to number
+      .transform((s) => parseInt(s, 10))
+      // make sure transform worked
+      .pipe(z.number()),
+    MINIO_USE_SSL: z
+      .string()
+      // only allow "true" or "false"
+      .refine((s) => s === "true" || s === "false")
+      // transform to boolean
+      .transform((s) => s === "true"),
     MINIO_ACCESS_KEY: z.string().min(1),
     MINIO_SECRET_KEY: z.string().min(1),
     MINIO_BUCKET_NAME: z.string().min(1),
@@ -36,7 +46,12 @@ export const env = createEnv({
     PUSHER_APP_KEY: z.string().min(1),
     PUSHER_SECRET: z.string().min(1),
     PUSHER_CLUSTER: z.string().min(1),
-    PUSHER_USE_TLS: z.coerce.boolean(),
+    PUSHER_USE_TLS: z
+      .string()
+      // only allow "true" or "false"
+      .refine((s) => s === "true" || s === "false")
+      // transform to boolean
+      .transform((s) => s === "true"),
     PUSHER_HOST: z.string().min(1),
     PUSHER_PORT: z.string().min(1),
   },
@@ -52,9 +67,19 @@ export const env = createEnv({
     NEXT_PUBLIC_MINIO_BUCKET: z.string().min(1),
     NEXT_PUBLIC_PUSHER_APP_KEY: z.string().min(1),
     NEXT_PUBLIC_PUSHER_APP_CLUSTER: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_FORCE_TLS: z.coerce.boolean(),
+    NEXT_PUBLIC_PUSHER_FORCE_TLS: z
+      .string()
+      // only allow "true" or "false"
+      .refine((s) => s === "true" || s === "false")
+      // transform to boolean
+      .transform((s) => s === "true"),
     NEXT_PUBLIC_PUSHER_WS_HOST: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_WS_PORT: z.coerce.number(),
+    NEXT_PUBLIC_PUSHER_WS_PORT: z
+      .string()
+      // transform to number
+      .transform((s) => parseInt(s, 10))
+      // make sure transform worked
+      .pipe(z.number()),
   },
 
   /**
