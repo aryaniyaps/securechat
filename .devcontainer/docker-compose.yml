@@ -97,18 +97,18 @@ services:
 
   soketi:
     restart: unless-stopped
-    image: "quay.io/soketi/soketi:0.17-16-alpine"
+    image: "quay.io/soketi/soketi:1.6-16-alpine"
     environment:
-      SOKETI_DEBUG: "0"
+      SOKETI_DEBUG: "1"
       METRICS_SERVER_PORT: 9601
       DEFAULT_APP_ENABLE_CLIENT_MESSAGES: false
-      DEFAULT_APP_ID: "${PUSHER_APP_ID}"
-      DEFAULT_APP_KEY: "${PUSHER_APP_KEY}"
-      DEFAULT_APP_SECRET: "${PUSHER_SECRET}"
-      PUSHER_HOST: "${PUSHER_HOST}"
-      PUSHER_PORT: "${PUSHER_PORT}"
-      PUSHER_SCHEME: "${PUSHER_SCHEME}"
-      PUSHER_CLUSTER: "${PUSHER_CLUSTER}"
+      DEFAULT_APP_ID: ${PUSHER_APP_ID}
+      DEFAULT_APP_KEY: ${PUSHER_APP_KEY}
+      DEFAULT_APP_SECRET: ${PUSHER_SECRET}
+      PUSHER_HOST: ${PUSHER_HOST}
+      PUSHER_PORT: ${PUSHER_PORT}
+      PUSHER_SCHEME: ${PUSHER_SCHEME}
+      PUSHER_CLUSTER: ${PUSHER_CLUSTER}
     ports:
       - 6001:6001
       - 9601:9601

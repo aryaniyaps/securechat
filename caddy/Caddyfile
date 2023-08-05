@@ -10,8 +10,6 @@ vnadi.com {
     reverse_proxy app:3000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
     }
 }
 
@@ -26,8 +24,6 @@ https://minio.vnadi.com {
     reverse_proxy minio:9000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
     }
 }
 
@@ -42,11 +38,14 @@ https://socket.vnadi.com {
     reverse_proxy soketi:6001 {
         header_up Host {host}
         header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
         header_up Connection {http.upgrade}
         header_up Upgrade {http.upgrade}
     }
+
+    header X-Frame-Options "SAMEORIGIN"
+    header X-XSS-Protection "1; mode=block"
+    header X-Content-Type-Options "nosniff"
+
     log {
         output file /var/log/caddy/socket.vnadi.com.log
     }
