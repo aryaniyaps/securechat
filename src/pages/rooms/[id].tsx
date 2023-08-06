@@ -12,6 +12,7 @@ import MessageList from "~/components/room/message-list";
 import { withAuth } from "~/components/with-auth";
 import { useRoom } from "~/hooks/use-room";
 import { type Message } from "~/schemas/message";
+import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { centrifuge } from "~/utils/centrifugo";
 import { APP_NAME } from "~/utils/constants";
@@ -73,9 +74,12 @@ function RoomPage({
 
       sub.subscribe();
 
+      centrifuge.connect();
+
       // Unsubscribe when the component unmounts
       return () => {
         sub.unsubscribe();
+        centrifuge.disconnect();
         setRoomId(null);
       };
     }
@@ -107,7 +111,7 @@ function RoomPage({
 
 export default withAuth(RoomPage);
 
-export const getServerSideProps = (
+export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: string }>
 ) => {
   const id = context.params?.id;
@@ -123,13 +127,13 @@ export const getServerSideProps = (
   // TODO: return room as a cache here
   // For now, using SSGHelper requires setting environment variables on server side during build time
   // whereas we are only going to fetch during runtime
-  // const room = await prisma.room.findUnique({ where: { id } });
+  const room = await prisma.room.findUnique({ where: { id } });
 
-  // if (!room) {
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
+  if (!room) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
