@@ -1,8 +1,4 @@
 # Production Configuration
-http://vnadi.com {
-    redir https://vnadi.com{uri}
-}
-
 vnadi.com {
     tls {
         dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
@@ -13,11 +9,7 @@ vnadi.com {
     }
 }
 
-http://minio.vnadi.com {
-    redir https://minio.vnadi.com{uri}
-}
-
-https://minio.vnadi.com {
+minio.vnadi.com {
     tls {
         dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
     }
@@ -27,11 +19,7 @@ https://minio.vnadi.com {
     }
 }
 
-http://socket.vnadi.com {
-    redir https://socket.vnadi.com{uri}
-}
-
-https://socket.vnadi.com {
+socket.vnadi.com {
     tls {
         dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
     }

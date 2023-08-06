@@ -62,6 +62,7 @@ resource "digitalocean_droplet" "web" {
       "echo 'CENTRIFUGO_ADMIN_SECRET=${var.centrifugo_admin_secret}' >> /root/.env",
       "echo 'MONGO_REPLICA_SET_KEY=${var.mongo_replica_set_key}' >> /root/.env",
       "echo 'MONGO_PASSWORD=${var.mongo_password}' >> /root/.env",
+      "echo 'MONGO_USER=${var.mongo_user}' >> /root/.env",
       "echo 'MINIO_SERVER_URL=${var.minio_server_url}' >> /root/.env",
     ]
   }

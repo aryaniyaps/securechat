@@ -135,6 +135,11 @@ variable "mongo_password" {
   sensitive   = true
 }
 
+variable "mongo_user" {
+  description = "MongoDB User"
+  type        = string
+}
+
 variable "mongo_replica_set_key" {
   description = "MongoDB Replica Set Key"
   type        = string
