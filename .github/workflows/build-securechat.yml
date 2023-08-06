@@ -25,7 +25,6 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://vnadi.com
           NEXT_PUBLIC_MINIO_ENDPOINT: https://minio.vnadi.com
           NEXT_PUBLIC_MINIO_BUCKET: avatars
-          # Centrifugo Public Information
           NEXT_PUBLIC_CENTRIFUGO_URL: wss://socket.vnadi.com/connection/websocket
         with:
           context: .

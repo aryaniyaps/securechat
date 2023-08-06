@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { centrifuge } from "~/server/config/centrifugo";
+import { centrifugeServer } from "~/server/config/centrifugo";
 
 export const messageRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -79,7 +79,7 @@ export const messageRouter = createTRPCRouter({
         },
       });
       // broadcast message here
-      await centrifuge.publish(`room-${input.roomId}`, {
+      await centrifugeServer.publish(`room-${input.roomId}`, {
         type: "message:create",
         payload: message,
       });
@@ -120,7 +120,7 @@ export const messageRouter = createTRPCRouter({
         },
       });
       // broadcast message here
-      await centrifuge.publish(`room-${message.roomId}`, {
+      await centrifugeServer.publish(`room-${message.roomId}`, {
         type: "message:delete",
         payload: message,
       });
