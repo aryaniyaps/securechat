@@ -1,7 +1,7 @@
 import { Centrifuge } from "centrifuge";
 import WebSocket from "ws";
+import { env } from "~/env.mjs";
 
-export const centrifuge = new Centrifuge(
-  "ws://centrifugo:8000/connection/websocket",
-  { websocket: WebSocket }
-);
+export const centrifuge = new Centrifuge(env.CENTRIFUGO_URL, {
+  websocket: WebSocket,
+});
