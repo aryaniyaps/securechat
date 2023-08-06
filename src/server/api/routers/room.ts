@@ -46,14 +46,6 @@ export const roomRouter = createTRPCRouter({
         ...(input.cursor && {
           cursor: { id: input.cursor },
         }),
-        orderBy: {
-          createdAt: "desc",
-        },
-        ...(input.search && {
-          where: {
-            name: { search: input.search.trim().split(" ").join(" & ") },
-          },
-        }),
         include: {
           owner: {
             select: {
@@ -63,6 +55,14 @@ export const roomRouter = createTRPCRouter({
             },
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
+        ...(input.search && {
+          where: {
+            name: { contains: input.search.trim(), mode: "insensitive" },
+          },
+        }),
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;
