@@ -10,8 +10,8 @@ http://localhost {
 		header_up X-Real-IP {remote}
 		header_up Connection {http.upgrade}
 		header_up Upgrade {http.upgrade}
-     	header_up Cache-Control "no-cache"
-    }
+		header_up Cache-Control "no-cache"
+	}
 }
 
 http://minio.localhost {
