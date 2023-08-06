@@ -70,11 +70,13 @@ services:
       - centrifugo
 
   centrifugo:
-    container_name: centrifugo
     image: centrifugo/centrifugo:v5
-    volumes:
-      - ./.devcontainer/config.json:/centrifugo/config.json
-    command: centrifugo -c config.json
+    environment:
+      CENTRIFUGO_ALLOWED_ORIGINS: ${CENTRIFUGO_ALLOWED_ORIGINS}
+      CENTRIFUGO_SECRET: ${CENTRIFUGO_SECRET}
+      CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD}
+      CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET}
+    command: centrifugo
     ports:
       - 8000:8000
     ulimits:
