@@ -105,10 +105,28 @@ variable "centrifugo_url" {
   default     = "wss://socket.vnadi.com/connection/websocket"
 }
 
+variable "centrifugo_proxy_connect_endpoint" {
+  description = "Centrifugo Proxy Connect Endpoint"
+  type        = string
+  default     = "http://app:3000/api/centrifugo/connect"
+}
+
 variable "centrifugo_allowed_origins" {
   description = "Centrifugo Allowed Origins"
   type        = string
   default     = "https://vnadi.com"
+}
+
+variable "centrifugo_token_hmac_secret_key" {
+  description = "Centrifugo Token HMAC Secret Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "centrifugo_api_key" {
+  description = "Centrifugo API Key"
+  type        = string
+  sensitive    = true
 }
 
 variable "centrifugo_secret" {
@@ -127,6 +145,12 @@ variable "centrifugo_admin_secret" {
   description = "Centrifugo Admin Secret"
   type        = string
   sensitive   = true
+}
+
+variable "centrifugo_allow_subscribe_for_client" {
+  description = "Enable Subscriptions for Centrifugo clients"
+  type        = string
+  default     = "true"
 }
 
 variable "mongo_password" {

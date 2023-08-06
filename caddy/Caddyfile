@@ -7,6 +7,14 @@ vnadi.com {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
 	}
+
+	reverse_proxy /connection/* centrifugo:8000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote}
+		header_up Connection {http.upgrade}
+		header_up Upgrade {http.upgrade}
+     	header_up Cache-Control "no-cache"
+    }
 }
 
 minio.vnadi.com {
@@ -16,21 +24,5 @@ minio.vnadi.com {
 	reverse_proxy minio:9000 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
-	}
-}
-
-socket.vnadi.com {
-	tls {
-		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
-	}
-	reverse_proxy centrifugo:8000 {
-		header_up Host {host}
-		header_up X-Real-IP {remote}
-		header_up Connection {http.upgrade}
-		header_up Upgrade {http.upgrade}
-	}
-
-	log {
-		output file /var/log/caddy/socket.vnadi.com.log
 	}
 }
