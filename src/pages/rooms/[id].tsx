@@ -11,6 +11,7 @@ import MessageController from "~/components/room/message-controller";
 import MessageList from "~/components/room/message-list";
 import { withAuth } from "~/components/with-auth";
 import { useRoom } from "~/hooks/use-room";
+import { type Message } from "~/schemas/message";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { centrifuge } from "~/utils/centrifugo";
@@ -40,33 +41,36 @@ function RoomPage({
     if (roomId) {
       const sub = centrifuge.newSubscription(`room-${roomId}`);
 
-      sub.on("publication", function (ctx) {
-        console.log(ctx.data);
+      sub.on(
+        "publication",
+        async function (ctx: { data: { type: string; payload: Message } }) {
+          console.log(ctx.data);
 
-        // switch (ctx.data.type) {
-        //   case "message:create":
-        //     const newMessage = ctx.data.payload;
-        //     await utils.message.getAll.cancel();
+          switch (ctx.data.type) {
+            case "message:create":
+              const newMessage = ctx.data.payload;
+              await utils.message.getAll.cancel();
 
-        //     utils.message.getAll.setInfiniteData(
-        //       { limit: 10, roomId },
-        //       (oldData) => {
-        //         if (oldData == null || oldData.pages[0] == null) return;
-        //         return {
-        //           ...oldData,
-        //           pages: [
-        //             {
-        //               ...oldData.pages[0],
-        //               items: [newMessage, ...oldData.pages[0].items],
-        //             },
-        //             ...oldData.pages.slice(1),
-        //           ],
-        //         };
-        //       }
-        //     );
-        //     break;
-        // }
-      });
+              utils.message.getAll.setInfiniteData(
+                { limit: 10, roomId },
+                (oldData) => {
+                  if (oldData == null || oldData.pages[0] == null) return;
+                  return {
+                    ...oldData,
+                    pages: [
+                      {
+                        ...oldData.pages[0],
+                        items: [newMessage, ...oldData.pages[0].items],
+                      },
+                      ...oldData.pages.slice(1),
+                    ],
+                  };
+                }
+              );
+              break;
+          }
+        }
+      );
 
       sub.subscribe();
 
