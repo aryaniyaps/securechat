@@ -97,46 +97,36 @@ variable "minio_bucket_name" {
   default     = "avatars"
 }
 
-variable "pusher_app_id" {
-  description = "Pusher App ID"
+
+
+variable "centrifugo_url" {
+  description = "Centrifugo URL"
   type        = string
-  default     = "app-id"
+  default     = "wss://socket.vnadi.com/connection/websocket"
 }
 
-variable "pusher_app_key" {
-  description = "Pusher App Key"
+variable "centrifugo_allowed_origins" {
+  description = "Centrifugo Allowed Origins"
   type        = string
-  default     = "app-key"
+  default     = "https://vnadi.com"
 }
 
-variable "pusher_cluster" {
-  description = "Pusher Cluster"
-  type        = string
-  default     = "self-hosted"
-}
-
-variable "pusher_secret" {
-  description = "Pusher Secret"
+variable "centrifugo_secret" {
+  description = "Centrifugo Secret"
   type        = string
   sensitive   = true
 }
 
-variable "pusher_use_tls" {
-  description = "Pusher Use TLS"
+variable "centrifugo_admin_password" {
+  description = "Centrifugo Admin Password"
   type        = string
-  default     = "false"
+  sensitive   = true
 }
 
-variable "pusher_host" {
-  description = "Pusher Host"
+variable "centrifugo_admin_secret" {
+  description = "Centrifugo Admin Secret"
   type        = string
-  default     = "soketi"
-}
-
-variable "pusher_port" {
-  description = "Pusher Port"
-  type        = string
-  default     = "6001"
+  sensitive   = true
 }
 
 variable "mongo_password" {
@@ -149,12 +139,6 @@ variable "mongo_replica_set_key" {
   description = "MongoDB Replica Set Key"
   type        = string
   sensitive   = true
-}
-
-variable "pusher_scheme" {
-  description = "Pusher Scheme"
-  type        = string
-  default     = "https"
 }
 
 variable "minio_server_url" {
