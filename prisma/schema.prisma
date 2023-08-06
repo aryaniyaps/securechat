@@ -20,7 +20,7 @@ model Room {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String
     ownerId   String   @db.ObjectId
-    owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    owner     User     @relation(fields: [ownerId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -35,8 +35,8 @@ model Message {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-    room  Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+    owner User @relation(fields: [ownerId], references: [id])
+    room  Room @relation(fields: [roomId], references: [id])
 }
 
 // Necessary for Next auth
@@ -53,7 +53,7 @@ model Account {
     scope             String?
     id_token          String? @db.String
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user              User    @relation(fields: [userId], references: [id])
 
     @@unique([provider, providerAccountId])
 }
@@ -64,7 +64,7 @@ model Session {
     userId       String   @db.ObjectId
     expires      DateTime
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id])
 }
 
 model User {
