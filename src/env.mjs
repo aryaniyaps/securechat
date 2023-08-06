@@ -42,18 +42,7 @@ export const env = createEnv({
     MINIO_ACCESS_KEY: z.string().min(1),
     MINIO_SECRET_KEY: z.string().min(1),
     MINIO_BUCKET_NAME: z.string().min(1),
-    PUSHER_APP_ID: z.string().min(1),
-    PUSHER_APP_KEY: z.string().min(1),
-    PUSHER_SECRET: z.string().min(1),
-    PUSHER_CLUSTER: z.string().min(1),
-    PUSHER_USE_TLS: z
-      .string()
-      // only allow "true" or "false"
-      .refine((s) => s === "true" || s === "false")
-      // transform to boolean
-      .transform((s) => s === "true"),
-    PUSHER_HOST: z.string().min(1),
-    PUSHER_PORT: z.string().min(1),
+    CENTRIFUGO_URL: z.string().min(1),
   },
 
   /**
@@ -65,21 +54,7 @@ export const env = createEnv({
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
     NEXT_PUBLIC_MINIO_ENDPOINT: z.string().min(1),
     NEXT_PUBLIC_MINIO_BUCKET: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_APP_KEY: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_APP_CLUSTER: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_FORCE_TLS: z
-      .string()
-      // only allow "true" or "false"
-      .refine((s) => s === "true" || s === "false")
-      // transform to boolean
-      .transform((s) => s === "true"),
-    NEXT_PUBLIC_PUSHER_WS_HOST: z.string().min(1),
-    NEXT_PUBLIC_PUSHER_WS_PORT: z
-      .string()
-      // transform to number
-      .transform((s) => parseInt(s, 10))
-      // make sure transform worked
-      .pipe(z.number()),
+    NEXT_PUBLIC_CENTRIFUGO_URL: z.string().min(1),
   },
 
   /**
@@ -102,20 +77,10 @@ export const env = createEnv({
     MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
     MINIO_USE_SSL: process.env.MINIO_USE_SSL,
     MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME,
+    CENTRIFUGO_URL: process.env.CENTRIFUGO_URL,
     NEXT_PUBLIC_MINIO_ENDPOINT: process.env.NEXT_PUBLIC_MINIO_ENDPOINT,
     NEXT_PUBLIC_MINIO_BUCKET: process.env.NEXT_PUBLIC_MINIO_BUCKET,
-    NEXT_PUBLIC_PUSHER_APP_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
-    NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
-    NEXT_PUBLIC_PUSHER_FORCE_TLS: process.env.NEXT_PUBLIC_PUSHER_FORCE_TLS,
-    NEXT_PUBLIC_PUSHER_WS_HOST: process.env.NEXT_PUBLIC_PUSHER_WS_HOST,
-    NEXT_PUBLIC_PUSHER_WS_PORT: process.env.NEXT_PUBLIC_PUSHER_WS_PORT,
-    PUSHER_APP_ID: process.env.PUSHER_APP_ID,
-    PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
-    PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
-    PUSHER_SECRET: process.env.PUSHER_SECRET,
-    PUSHER_USE_TLS: process.env.PUSHER_USE_TLS,
-    PUSHER_HOST: process.env.PUSHER_HOST,
-    PUSHER_PORT: process.env.PUSHER_PORT,
+    NEXT_PUBLIC_CENTRIFUGO_URL: process.env.NEXT_PUBLIC_CENTRIFUGO_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

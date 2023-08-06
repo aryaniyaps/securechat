@@ -21,16 +21,12 @@ http://minio.localhost {
 
 http://socket.localhost {
 
-    reverse_proxy soketi:6001 {
+    reverse_proxy centrifugo:8000 {
         header_up Host {host}
         header_up X-Real-IP {remote}
         header_up Connection {http.upgrade}
         header_up Upgrade {http.upgrade}
     }
-
-    header X-Frame-Options "SAMEORIGIN"
-    header X-XSS-Protection "1; mode=block"
-    header X-Content-Type-Options "nosniff"
 
     log {
         output file /var/log/caddy/socket.localhost.log

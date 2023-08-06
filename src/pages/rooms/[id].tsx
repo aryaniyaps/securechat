@@ -13,8 +13,8 @@ import { withAuth } from "~/components/with-auth";
 import { useRoom } from "~/hooks/use-room";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
+import { centrifuge } from "~/utils/centrifugo";
 import { APP_NAME } from "~/utils/constants";
-import { pusher } from "~/utils/pusher";
 
 function RoomPage({
   id,
@@ -38,48 +38,41 @@ function RoomPage({
 
   useEffect(() => {
     if (roomId) {
-      // Subscribe to the channel you want to listen to
-      const channel = pusher.subscribe(`room-${roomId}`);
+      const sub = centrifuge.newSubscription(`room-${roomId}`);
 
-      channel.bind(
-        "message:create",
-        async (newMessage: {
-          id: string;
-          ownerId: string;
-          createdAt: Date;
-          updatedAt: Date;
-          owner: {
-            image: string;
-            username: string;
-            name?: string | null | undefined;
-          };
-          content: string;
-          roomId: string;
-        }) => {
-          await utils.message.getAll.cancel();
+      sub.on("publication", function (ctx) {
+        console.log(ctx.data);
 
-          utils.message.getAll.setInfiniteData(
-            { limit: 10, roomId },
-            (oldData) => {
-              if (oldData == null || oldData.pages[0] == null) return;
-              return {
-                ...oldData,
-                pages: [
-                  {
-                    ...oldData.pages[0],
-                    items: [newMessage, ...oldData.pages[0].items],
-                  },
-                  ...oldData.pages.slice(1),
-                ],
-              };
-            }
-          );
-        }
-      );
+        // switch (ctx.data.type) {
+        //   case "message:create":
+        //     const newMessage = ctx.data.payload;
+        //     await utils.message.getAll.cancel();
+
+        //     utils.message.getAll.setInfiniteData(
+        //       { limit: 10, roomId },
+        //       (oldData) => {
+        //         if (oldData == null || oldData.pages[0] == null) return;
+        //         return {
+        //           ...oldData,
+        //           pages: [
+        //             {
+        //               ...oldData.pages[0],
+        //               items: [newMessage, ...oldData.pages[0].items],
+        //             },
+        //             ...oldData.pages.slice(1),
+        //           ],
+        //         };
+        //       }
+        //     );
+        //     break;
+        // }
+      });
+
+      sub.subscribe();
 
       // Unsubscribe when the component unmounts
       return () => {
-        pusher.unsubscribe(`room-${roomId}`);
+        sub.unsubscribe();
         setRoomId(null);
       };
     }

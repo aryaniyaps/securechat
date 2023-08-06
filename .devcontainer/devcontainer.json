@@ -9,6 +9,7 @@
     27017,
     9000,
     9001,
+    8000,
     6001,
     9601
   ],
@@ -27,6 +28,9 @@
     },
     "9001": {
       "label": "MinIO Console"
+    },
+    "8000":{
+      "label": "Centrifugo Server"
     },
     "6001": {
       "label": "Soketi Server"
