@@ -76,3 +76,43 @@ resource "digitalocean_droplet" "web" {
     ]
   }
 }
+
+
+# resource "digitalocean_floating_ip" "web_ip" {
+#   region = "blr1" # Ensure the region matches the region of the droplet.
+# }
+
+# resource "digitalocean_floating_ip_assignment" "web_ip_assignment" {
+#   ip_address = digitalocean_floating_ip.web_ip.ip_address
+#   droplet_id = digitalocean_droplet.web.id
+# }
+
+# resource "digitalocean_domain" "vnadi" {
+#   name      = "vnadi.com" # replace with your domain name
+#   ip_address = digitalocean_floating_ip.web_ip.ip_address
+# }
+
+# resource "digitalocean_record" "www" {
+#   domain = digitalocean_domain.vnadi.name
+#   type   = "A"
+#   name   = "www"
+#   value  = digitalocean_floating_ip.web_ip.ip_address
+#   ttl    = 3600
+# }
+
+# resource "digitalocean_record" "socket" {
+#   domain = digitalocean_domain.vnadi.name
+#   type   = "A"
+#   name   = "socket"
+#   value  = digitalocean_floating_ip.web_ip.ip_address
+#   ttl    = 3600
+# }
+
+# resource "digitalocean_record" "minio" {
+#   domain = digitalocean_domain.vnadi.name
+#   type   = "A"
+#   name   = "minio"
+#   value  = digitalocean_floating_ip.web_ip.ip_address
+#   ttl    = 3600
+# }
+

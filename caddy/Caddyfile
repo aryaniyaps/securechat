@@ -1,36 +1,36 @@
 # Production Configuration
 vnadi.com {
-    tls {
-        dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
-    }
-    reverse_proxy app:3000 {
-        header_up Host {host}
-        header_up X-Real-IP {remote}
-    }
+	tls {
+		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
+	}
+	reverse_proxy app:3000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote}
+	}
 }
 
 minio.vnadi.com {
-    tls {
-        dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
-    }
-    reverse_proxy minio:9000 {
-        header_up Host {host}
-        header_up X-Real-IP {remote}
-    }
+	tls {
+		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
+	}
+	reverse_proxy minio:9000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote}
+	}
 }
 
 socket.vnadi.com {
-    tls {
-        dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
-    }
-    reverse_proxy centrifugo:8000 {
-        header_up Host {host}
-        header_up X-Real-IP {remote}
-        header_up Connection {http.upgrade}
-        header_up Upgrade {http.upgrade}
-    }
+	tls {
+		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
+	}
+	reverse_proxy centrifugo:8000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote}
+		header_up Connection {http.upgrade}
+		header_up Upgrade {http.upgrade}
+	}
 
-    log {
-        output file /var/log/caddy/socket.vnadi.com.log
-    }
+	log {
+		output file /var/log/caddy/socket.vnadi.com.log
+	}
 }
