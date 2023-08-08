@@ -1,3 +1,4 @@
+import { type Subscription } from "centrifuge";
 import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
@@ -38,8 +39,12 @@ function RoomPage({
   }, [id, setRoomId]);
 
   useEffect(() => {
+    let sub: Subscription | null;
     if (roomId) {
-      const sub = centrifuge.newSubscription(`rooms:${roomId}`);
+      sub = centrifuge.getSubscription(`rooms:${roomId}`);
+      if (sub === null) {
+        sub = centrifuge.newSubscription(`rooms:${roomId}`);
+      }
 
       sub.on(
         "publication",
@@ -78,7 +83,9 @@ function RoomPage({
 
       // Unsubscribe when the component unmounts
       return () => {
-        sub.unsubscribe();
+        if (sub) {
+          sub.unsubscribe();
+        }
         centrifuge.disconnect();
         setRoomId(null);
       };
