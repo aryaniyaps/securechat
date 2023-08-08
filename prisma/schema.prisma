@@ -35,7 +35,7 @@ model Message {
     updatedAt DateTime @updatedAt
 
     owner User @relation(fields: [ownerId], references: [id])
-    room  Room @relation(fields: [roomId], references: [id])
+    room  Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
