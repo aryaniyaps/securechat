@@ -80,7 +80,7 @@ export const messageRouter = createTRPCRouter({
       });
       // broadcast message here
       await centrifugeApi.post("/publish", {
-        channel: `room-${input.roomId}`,
+        channel: `rooms:${input.roomId}`,
         data: {
           type: "message:create",
           payload: message,
@@ -124,7 +124,7 @@ export const messageRouter = createTRPCRouter({
       });
       // broadcast message here
       await centrifugeApi.post("/publish", {
-        channel: `room-${message.roomId}`,
+        channel: `rooms:${message.roomId}`,
         data: {
           type: "message:delete",
           payload: message,

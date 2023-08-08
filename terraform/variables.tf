@@ -103,18 +103,6 @@ variable "centrifugo_url" {
   default     = "http://centrifugo:8000/api"
 }
 
-variable "centrifugo_proxy_connect_endpoint" {
-  description = "Centrifugo Proxy Connect Endpoint"
-  type        = string
-  default     = "http://app:3000/api/centrifugo/connect"
-}
-
-variable "centrifugo_allowed_origins" {
-  description = "Centrifugo Allowed Origins"
-  type        = string
-  default     = "https://vnadi.com"
-}
-
 variable "centrifugo_api_key" {
   description = "Centrifugo API Key"
   type        = string
@@ -131,12 +119,6 @@ variable "centrifugo_admin_secret" {
   description = "Centrifugo Admin Secret"
   type        = string
   sensitive   = true
-}
-
-variable "centrifugo_allow_subscribe_for_client" {
-  description = "Enable Subscriptions for Centrifugo clients"
-  type        = string
-  default     = "true"
 }
 
 variable "mongo_password" {

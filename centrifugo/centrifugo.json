@@ -1,0 +1,22 @@
+{
+    "admin": false,
+    "allowed_origins": [
+        "https://vnadi.com"
+    ],
+    "proxy_connect_endpoint": "http://app:3000/api/centrifugo/connect",
+    "proxy_http_headers": [
+        "Origin",
+        "User-Agent",
+        "Cookie",
+        "Authorization",
+        "X-Real-Ip",
+        "X-Forwarded-For",
+        "X-Request-Id"
+    ],
+    "namespaces": [
+        {
+            "name": "rooms",
+            "allow_subscribe_for_client": true
+        }
+    ]
+  }

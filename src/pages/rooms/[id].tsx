@@ -39,7 +39,7 @@ function RoomPage({
 
   useEffect(() => {
     if (roomId) {
-      const sub = centrifuge.newSubscription(`room-${roomId}`);
+      const sub = centrifuge.newSubscription(`rooms:${roomId}`);
 
       sub.on(
         "publication",
