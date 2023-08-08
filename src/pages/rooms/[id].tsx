@@ -44,38 +44,37 @@ function RoomPage({
       sub = centrifuge.getSubscription(`rooms:${roomId}`);
       if (sub === null) {
         sub = centrifuge.newSubscription(`rooms:${roomId}`);
-      }
+        sub.on(
+          "publication",
+          async function (ctx: { data: { type: string; payload: Message } }) {
+            console.log(ctx.data);
 
-      sub.on(
-        "publication",
-        async function (ctx: { data: { type: string; payload: Message } }) {
-          console.log(ctx.data);
+            switch (ctx.data.type) {
+              case "message:create":
+                const newMessage = ctx.data.payload;
+                await utils.message.getAll.cancel();
 
-          switch (ctx.data.type) {
-            case "message:create":
-              const newMessage = ctx.data.payload;
-              await utils.message.getAll.cancel();
-
-              utils.message.getAll.setInfiniteData(
-                { limit: 10, roomId },
-                (oldData) => {
-                  if (oldData == null || oldData.pages[0] == null) return;
-                  return {
-                    ...oldData,
-                    pages: [
-                      {
-                        ...oldData.pages[0],
-                        items: [newMessage, ...oldData.pages[0].items],
-                      },
-                      ...oldData.pages.slice(1),
-                    ],
-                  };
-                }
-              );
-              break;
+                utils.message.getAll.setInfiniteData(
+                  { limit: 10, roomId },
+                  (oldData) => {
+                    if (oldData == null || oldData.pages[0] == null) return;
+                    return {
+                      ...oldData,
+                      pages: [
+                        {
+                          ...oldData.pages[0],
+                          items: [newMessage, ...oldData.pages[0].items],
+                        },
+                        ...oldData.pages.slice(1),
+                      ],
+                    };
+                  }
+                );
+                break;
+            }
           }
-        }
-      );
+        );
+      }
 
       sub.subscribe();
 
