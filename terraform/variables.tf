@@ -117,22 +117,10 @@ variable "centrifugo_allowed_origins" {
   default     = "https://vnadi.com"
 }
 
-variable "centrifugo_token_hmac_secret_key" {
-  description = "Centrifugo Token HMAC Secret Key"
-  type        = string
-  sensitive   = true
-}
-
 variable "centrifugo_api_key" {
   description = "Centrifugo API Key"
   type        = string
   sensitive    = true
-}
-
-variable "centrifugo_secret" {
-  description = "Centrifugo Secret"
-  type        = string
-  sensitive   = true
 }
 
 variable "centrifugo_admin_password" {
