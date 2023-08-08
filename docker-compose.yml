@@ -63,6 +63,7 @@ services:
 
       # Centrifugo Configuration
       CENTRIFUGO_URL: ${CENTRIFUGO_URL}
+      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
 
     depends_on:
       - mongodb

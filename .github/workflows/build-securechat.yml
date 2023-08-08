@@ -25,7 +25,7 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://vnadi.com
           NEXT_PUBLIC_MINIO_ENDPOINT: https://minio.vnadi.com
           NEXT_PUBLIC_MINIO_BUCKET: avatars
-          NEXT_PUBLIC_CENTRIFUGO_URL: wss://vnadi.com/centrifugo/connection/websocket
+          NEXT_PUBLIC_CENTRIFUGO_URL: wss://vnadi.com/connection/websocket
         with:
           context: .
           push: true

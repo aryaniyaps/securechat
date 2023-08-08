@@ -1,7 +1,10 @@
-import { Centrifuge } from "centrifuge";
-import WebSocket from "ws";
+import axios from "axios";
 import { env } from "~/env.mjs";
 
-export const centrifugeServer = new Centrifuge(env.CENTRIFUGO_URL, {
-  websocket: WebSocket,
+export const centrifugeApi = axios.create({
+  baseURL: env.CENTRIFUGO_URL,
+  headers: {
+    "Content-Type": "application/json",
+    "X-API-Key": env.CENTRIFUGO_API_KEY,
+  },
 });

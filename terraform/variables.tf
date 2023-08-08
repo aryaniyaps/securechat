@@ -97,12 +97,10 @@ variable "minio_bucket_name" {
   default     = "avatars"
 }
 
-
-
 variable "centrifugo_url" {
   description = "Centrifugo URL"
   type        = string
-  default     = "wss://socket.vnadi.com/connection/websocket"
+  default     = "http://centrifugo:8000/api"
 }
 
 variable "centrifugo_proxy_connect_endpoint" {

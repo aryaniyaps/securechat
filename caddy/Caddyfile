@@ -4,27 +4,11 @@ vnadi.com {
 		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
 	}
 
-	handle_path /centrifugo/connection* {
-        uri strip_prefix /centrifugo
-        reverse_proxy centrifugo:8000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote}
-            header_up X-Scheme {scheme}
-            header_up Upgrade {http.upgrade}
-            header_up Connection {http.upgrade} # Assumes http.upgrade is "upgrade" for WebSocket
-            # transport http {
-            #     read_buffer_size 8192 # This is optional, depending on your needs.
-            # }
-        }
-    }
-
-	handle_path /centrifugo/* {
-        uri strip_prefix /centrifugo
-        reverse_proxy centrifugo:8000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote}
-            header_up X-Scheme {scheme}
-        }
+	reverse_proxy /connection/* centrifugo:8000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up Upgrade WebSocket
+        header_up Connection Upgrade
     }
 
 	reverse_proxy app:3000 {

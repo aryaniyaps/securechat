@@ -2,12 +2,16 @@ version: "3.7"
 
 services:
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2.7-alpine
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data/caddy
     ports:
       - 80:80
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     depends_on:
       - app
       - minio
@@ -57,7 +61,6 @@ services:
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
     volumes:
       - ..:/workspace
-      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - mongodb
       - minio
@@ -85,12 +88,14 @@ services:
 
       # Centrifugo Configuration
       CENTRIFUGO_URL: ${CENTRIFUGO_URL}
+      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
     ports:
       - 3000:3000
 
   centrifugo:
     image: centrifugo/centrifugo:v5
     environment:
+      CENTRIFUGO_LOG_LEVEL: "debug"
       CENTRIFUGO_PROXY_CONNECT_ENDPOINT: ${CENTRIFUGO_PROXY_CONNECT_ENDPOINT}
       CENTRIFUGO_PROXY_HTTP_HEADERS: "Origin User-Agent Cookie Authorization X-Real-Ip X-Forwarded-For X-Request-Id"
       CENTRIFUGO_ALLOWED_ORIGINS: ${CENTRIFUGO_ALLOWED_ORIGINS}
