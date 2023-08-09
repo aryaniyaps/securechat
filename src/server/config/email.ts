@@ -1,6 +1,5 @@
 import Email from "email-templates";
 import { createTransport } from "nodemailer";
-import path from "path";
 import { env } from "~/env.mjs";
 import { APP_DESCRIPTION, APP_NAME } from "~/utils/constants";
 
@@ -9,13 +8,11 @@ const transport = createTransport(env.EMAIL_SERVER, {
 });
 
 export const email = new Email({
-  message: {
-    from: env.EMAIL_FROM,
-  },
-
   transport,
+  send: true,
+  preview: env.NODE_ENV !== "production",
+  subjectPrefix: env.NODE_ENV === "production" ? false : "[DEV] ",
   views: {
-    root: path.resolve(__dirname, "..", "emails"),
     locals: {
       appName: APP_NAME,
       appDescription: APP_DESCRIPTION,

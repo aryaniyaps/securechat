@@ -1,0 +1,46 @@
+doctype html
+html
+  head
+    block head
+      meta(charset="utf-8")
+      meta(name="viewport", content="width=device-width")
+      meta(http-equiv="X-UA-Compatible", content="IE=edge")
+      meta(name="x-apple-disable-message-reformatting")
+      style
+        include ../style.css
+  body
+    span.preheader This is preheader text. Some clients will show this text as a preview.
+    table.body(role="presentation", border="0", cellpadding="0", cellspacing="0")
+      tr
+        td &nbsp;
+        td.container
+          .content
+            table.main(role="presentation")
+              tr
+                td.wrapper
+                  table(role="presentation", border="0", cellpadding="0", cellspacing="0")
+                    tr
+                      td
+                        p Hey there,
+                        p We received a request to change your #{appName} email to this email address.
+                        table.btn.btn-primary(role="presentation", border="0", cellpadding="0", cellspacing="0")
+                          tbody
+                            tr
+                              td(align="left")
+                                table(role="presentation", border="0", cellpadding="0", cellspacing="0")
+                                  tbody
+                                    tr
+                                      td
+                                        a(href=changeUrl, target="_blank") Change email address
+                        p If this wasn't you, this email can be safely ignored.
+                        p Cheers,
+                        p Team #{appName}
+            .footer
+              table(role="presentation", border="0", cellpadding="0", cellspacing="0")
+                tr
+                  td.content-block
+                    span.apple-link #{appName} 2023
+                    br
+                    | #{appDescription}
+
+
