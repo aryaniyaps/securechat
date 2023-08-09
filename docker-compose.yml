@@ -16,15 +16,15 @@ services:
       - centrifugo
 
   minio:
-    image: minio/minio
+    image: bitnami/minio:2023
     restart: unless-stopped
     volumes:
       - minio_data:/data
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
-    command: server /data
 
   mongodb:
     image: bitnami/mongodb:6.0

@@ -1,7 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import fs from "fs";
 import { nanoid } from "nanoid";
-import path from "path";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -27,64 +25,6 @@ export const userRouter = createTRPCRouter({
       const fileName = `${ctx.session.user.id}/avatar-${nanoid(
         6
       )}.${extension}`;
-
-      // Ensure bucket exists
-      if (!(await minioClient.bucketExists(env.MINIO_BUCKET_NAME))) {
-        try {
-          console.log("making bucket...");
-          await minioClient.makeBucket(env.MINIO_BUCKET_NAME);
-          //allow everyone to GET from bucket
-          await minioClient.setBucketPolicy(
-            env.MINIO_BUCKET_NAME,
-            `{
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Action": [
-          "s3:GetBucketLocation",
-          "s3:ListBucket"
-        ],
-        "Effect": "Allow",
-        "Principal": {
-          "AWS": [
-            "*"
-          ]
-        },
-        "Resource": [
-          "arn:aws:s3:::${env.MINIO_BUCKET_NAME}"
-        ],
-        "Sid": ""
-      },
-      {
-        "Action": [
-          "s3:GetObject"
-        ],
-        "Effect": "Allow",
-        "Principal": {
-          "AWS": [
-            "*"
-          ]
-        },
-        "Resource": [
-          "arn:aws:s3:::${env.MINIO_BUCKET_NAME}/*"
-        ],
-        "Sid": ""
-      }
-    ]
-  }`
-          );
-          // add default avatar
-          const filePath = path.join(process.cwd(), "assets", "avatar.jpg");
-          const fileData = fs.readFileSync(filePath);
-          await minioClient.putObject(
-            env.MINIO_BUCKET_NAME,
-            "avatar.jpg",
-            fileData
-          );
-        } catch {
-          await minioClient.removeBucket(env.MINIO_BUCKET_NAME);
-        }
-      }
 
       // Upload file
       await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file, {

@@ -71,7 +71,7 @@ model User {
     name              String?
     email             String?   @unique
     emailVerified     DateTime?
-    image             String    @default("avatar.jpg")
+    image             String?
     username          String    @unique @default(nanoid(8))
     emailChange       String?
     emailChangeToken  String?

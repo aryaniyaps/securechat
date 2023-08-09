@@ -106,7 +106,10 @@ export default function MessageList({ roomId }: { roomId: string }) {
                 <div className="flex items-center gap-2">
                   <Avatar className="h-4 w-4">
                     <AvatarImage
-                      src={getAvatarUrl(message.owner.image)}
+                      src={getAvatarUrl(
+                        message.owner.image,
+                        message.owner.username
+                      )}
                       loading="eager"
                       alt={message.owner.name || message.owner.username}
                     />

@@ -51,6 +51,7 @@ resource "digitalocean_droplet" "web" {
       "echo 'EMAIL_FROM=${var.email_from}' >> /root/.env",
       "echo 'MINIO_ACCESS_KEY=${var.minio_access_key}' >> /root/.env",
       "echo 'MINIO_SECRET_KEY=${var.minio_secret_key}' >> /root/.env",
+      "echo 'MINIO_DEFAULT_BUCKETS=${var.minio_default_buckets}' >> /root/.env",
       "echo 'MINIO_END_POINT=${var.minio_end_point}' >> /root/.env",
       "echo 'MINIO_PORT=${var.minio_port}' >> /root/.env",
       "echo 'MINIO_USE_SSL=${var.minio_use_ssl}' >> /root/.env",

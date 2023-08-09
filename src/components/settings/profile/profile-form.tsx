@@ -122,7 +122,10 @@ export default function ProfileForm({ session }: { session: Session }) {
               <FormControl>
                 <AvatarUpload
                   placeholder={session.user.name || session.user.username}
-                  avatarURL={getAvatarUrl(session.user.image)}
+                  avatarURL={getAvatarUrl(
+                    session.user.image,
+                    session.user.username
+                  )}
                   onAvatarChange={onChange}
                   disabled={form.formState.isSubmitting}
                 />

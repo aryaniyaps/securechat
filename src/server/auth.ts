@@ -24,7 +24,7 @@ declare module "next-auth" {
       id: string;
       // ...other properties
       // role: UserRole;
-      image: string;
+      image: string | null;
       emailVerified: Date | null;
       username: string;
     } & DefaultSession["user"];
@@ -34,7 +34,7 @@ declare module "next-auth" {
     id: string;
     // ...other properties
     // role: UserRole;
-    image: string;
+    image: string | null;
     emailVerified: Date | null;
     username: string;
   }

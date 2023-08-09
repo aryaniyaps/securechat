@@ -58,7 +58,7 @@ function getColumns(session: Session | null) {
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
               <AvatarImage
-                src={getAvatarUrl(value.image)}
+                src={getAvatarUrl(value.image, value.username)}
                 loading="eager"
                 alt={value.name || value.username}
               />

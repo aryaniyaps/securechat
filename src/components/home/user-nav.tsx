@@ -10,7 +10,7 @@ export default function UserNav({ session }: { session: Session }) {
     <Link href="/settings" className="flex items-center gap-4">
       <Avatar className="h-8 w-8">
         <AvatarImage
-          src={getAvatarUrl(session.user.image)}
+          src={getAvatarUrl(session.user.image, session.user.username)}
           loading="eager"
           alt={session.user.name || session.user.username}
         />

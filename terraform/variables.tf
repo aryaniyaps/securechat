@@ -73,6 +73,12 @@ variable "minio_secret_key" {
   sensitive   = true
 }
 
+variable "minio_default_buckets" {
+  description = "MinIO Default Buckets"
+  type        = string
+  default     = "avatars:public"
+}
+
 variable "minio_end_point" {
   description = "MinIO Endpoint"
   type        = string
