@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    block head
+      meta(charset="utf-8")
+      meta(name="viewport", content="width=device-width")
+      meta(http-equiv="X-UA-Compatible", content="IE=edge")
+      meta(name="x-apple-disable-message-reformatting")
+      link(rel="stylesheet", href="style.css", data-inline)
+  body
+    span.preheader Click on this link to change your #{appName} email.
+    table.body(role="presentation", border="0", cellpadding="0", cellspacing="0")
+      tr
+      td &nbsp;
+      td.container
+        .content
+        table.main(role="presentation")
+          tr
+          td.wrapper
+            table(role="presentation", border="0", cellpadding="0", cellspacing="0")
+            tr
+              td
+              p Please click the link below to change your email.
+              table.btn.btn-primary(role="presentation", border="0", cellpadding="0", cellspacing="0")
+                tbody
+                tr
+                  td(align="left")
+                  table(role="presentation", border="0", cellpadding="0", cellspacing="0")
+                    tbody
+                    tr
+                      td
+                      a(href=url, target="_blank") Change your #{appName} email
+
+        .footer
+          table(role="presentation", border="0", cellpadding="0", cellspacing="0")
+          tr
+            td.content-block
+            a(href=appUrl) #{appName}
+            | #{appDescription}
+

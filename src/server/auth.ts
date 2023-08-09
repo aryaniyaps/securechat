@@ -10,6 +10,7 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+import { email } from "./config/email";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -61,6 +62,15 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: env.EMAIL_SERVER,
       from: env.EMAIL_FROM,
+      async sendVerificationRequest({ identifier, url }) {
+        await email.send({
+          template: "verification",
+          message: { to: identifier },
+          locals: {
+            url,
+          },
+        });
+      },
     }),
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

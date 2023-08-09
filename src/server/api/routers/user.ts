@@ -5,7 +5,7 @@ import path from "path";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { transport } from "~/server/config/email";
+import { email } from "~/server/config/email";
 import { minioClient } from "~/server/config/minio";
 
 export const userRouter = createTRPCRouter({
@@ -131,6 +131,7 @@ export const userRouter = createTRPCRouter({
         where: { id: ctx.session.user.id },
       });
     }),
+
   requestEmailChange: protectedProcedure
     .input(z.object({ newEmail: z.string().email() }))
     .mutation(async ({ ctx, input }) => {
@@ -148,12 +149,15 @@ export const userRouter = createTRPCRouter({
       const changeUrl = new URL("/auth/email/change", env.NEXTAUTH_URL);
       changeUrl.searchParams.append("changeToken", changeToken);
       changeUrl.searchParams.append("newEmail", input.newEmail);
-      await transport.sendMail({
-        to: input.newEmail,
-        subject: "Email Change Request",
-        text: `To confirm your email change, please visit the following link: ${changeUrl.toString()}`,
-        html: `To confirm your email change, please <a href="${changeUrl.toString()}">click here</a>.`,
+
+      await email.send({
+        template: "email-change",
+        message: { to: input.newEmail },
+        locals: {
+          changeUrl: changeUrl.toString(),
+        },
       });
+
       await ctx.prisma.user.update({
         where: { id: ctx.session.user.id },
         data: {
@@ -163,6 +167,7 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
   changeEmail: protectedProcedure
     .input(z.object({ changeToken: z.string(), newEmail: z.string().email() }))
     .mutation(async ({ ctx, input }) => {

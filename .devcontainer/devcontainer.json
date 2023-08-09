@@ -9,9 +9,7 @@
     27017,
     9000,
     9001,
-    8000,
-    6001,
-    9601
+    8000
   ],
   "portsAttributes": {
 		"80": {
@@ -31,12 +29,6 @@
     },
     "8000":{
       "label": "Centrifugo Server"
-    },
-    "6001": {
-      "label": "Soketi Server"
-    },
-    "9601": {
-      "label": "Soketi Metrics"
     }
   },
   "customizations": {
@@ -60,7 +52,8 @@
         "christian-kohler.path-intellisense",
         "bradlc.vscode-tailwindcss",
         "pmneo.tsimporter",
-        "redhat.vscode-yaml"
+        "redhat.vscode-yaml",
+        "alexbabichev.formatter-pug"
       ]
     }
   }
