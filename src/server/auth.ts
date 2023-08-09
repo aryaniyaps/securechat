@@ -1,4 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import type Email from "email-templates";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -10,7 +11,16 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
-import { email } from "./config/email";
+
+let emailInstance: Email;
+
+export const loadEmailConfig = async () => {
+  if (!emailInstance) {
+    const emailConfig = await import("~/server/config/email");
+    emailInstance = emailConfig.email;
+  }
+  return emailInstance;
+};
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -63,6 +73,7 @@ export const authOptions: NextAuthOptions = {
       server: env.EMAIL_SERVER,
       from: env.EMAIL_FROM,
       async sendVerificationRequest({ identifier, url }) {
+        const email = await loadEmailConfig();
         await email.send({
           template: "verification",
           message: { to: identifier },
