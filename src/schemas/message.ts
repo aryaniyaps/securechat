@@ -10,7 +10,7 @@ export const messageSchema = z.object({
   owner: z.object({
     name: z.string().nullish(),
     username: z.string(),
-    image: z.string(),
+    image: z.string().nullable(),
   }),
 });
 
