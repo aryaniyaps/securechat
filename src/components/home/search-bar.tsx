@@ -10,6 +10,7 @@ export default function SearchBar() {
       value={searchQuery}
       onChange={(event) => setSearchQuery(event.target.value)}
       placeholder="search rooms here..."
+      data-testid="search-bar-input"
     />
   );
 }

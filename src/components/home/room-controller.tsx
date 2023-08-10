@@ -67,7 +67,7 @@ export default function RoomController() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} data-testid="room-controller">
       <DialogTrigger asChild>
         <Button variant="outline" className="min-w-fit">
           Create Room

@@ -7,7 +7,11 @@ import { getAvatarUrl } from "~/utils/avatar";
 
 export default function UserNav({ session }: { session: Session }) {
   return (
-    <Link href="/settings" className="flex items-center gap-4">
+    <Link
+      href="/settings"
+      className="flex items-center gap-4"
+      data-testid="user-nav"
+    >
       <Avatar className="h-8 w-8">
         <AvatarImage
           src={getAvatarUrl(session.user.image, session.user.username)}
