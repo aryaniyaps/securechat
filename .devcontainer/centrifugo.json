@@ -12,7 +12,8 @@
     "namespaces": [
         {
             "name": "rooms",
-            "allow_subscribe_for_client": true
+            "allow_subscribe_for_client": true,
+            "allow_presence_for_subscriber": true
         }
     ]
-  }
+}

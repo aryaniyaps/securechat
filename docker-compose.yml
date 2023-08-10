@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   caddy:
-    image: aryaniyaps/securechat-proxy:latest
+    image: aryaniyaps/securechat-caddy:latest
     volumes:
       - caddy_data:/data/caddy
     environment:
@@ -30,11 +30,11 @@ services:
     image: bitnami/mongodb:6.0
     restart: unless-stopped
     environment:
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ADVERTISED_HOSTNAME=mongodb
-      - MONGODB_ROOT_PASSWORD=${MONGO_PASSWORD}
-      - MONGODB_ROOT_USER=${MONGO_USER}
-      - MONGODB_REPLICA_SET_KEY=${MONGO_REPLICA_SET_KEY}
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_ADVERTISED_HOSTNAME: mongodb
+      MONGODB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGODB_ROOT_USER: ${MONGO_USER}
+      MONGODB_REPLICA_SET_KEY: ${MONGO_REPLICA_SET_KEY}
     volumes:
       - mongodb_data:/bitnami/mongodb
 

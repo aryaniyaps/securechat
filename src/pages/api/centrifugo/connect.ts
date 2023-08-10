@@ -8,7 +8,16 @@ export default async function handler(
   const session = await getServerAuthSession({ req, res });
 
   if (session) {
-    res.json({ result: { user: session.user.id } });
+    res.json({
+      result: {
+        user: session.user.id,
+        info: {
+          image: session.user.image,
+          name: session.user.name,
+          username: session.user.username,
+        },
+      },
+    });
   } else {
     res.json({
       disconnect: {

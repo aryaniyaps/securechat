@@ -1,4 +1,4 @@
-name: Build and Push SecureChat Proxy Docker Image
+name: Build and Push Caddy Docker Image
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - caddy/**
 
 jobs:
-  build_securechat_proxy:
+  build_securechat_caddy:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,9 +25,9 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push SecureChat Proxy Docker image
+      - name: Build and push SecureChat Caddy Docker image
         uses: docker/build-push-action@v2
         with:
           context: ./caddy
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/securechat-proxy:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/securechat-caddy:latest

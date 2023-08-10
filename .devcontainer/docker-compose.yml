@@ -36,13 +36,13 @@ services:
     image: bitnami/mongodb:6.0
     restart: unless-stopped
     environment:
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ADVERTISED_HOSTNAME=mongodb
-      - MONGODB_ROOT_PASSWORD=${MONGO_PASSWORD}
-      - MONGODB_ROOT_USER=${MONGO_USER}
-      - MONGODB_REPLICA_SET_KEY=${MONGO_REPLICA_SET_KEY}
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_ADVERTISED_HOSTNAME: mongodb
+      MONGODB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGODB_ROOT_USER: ${MONGO_USER}
+      MONGODB_REPLICA_SET_KEY: ${MONGO_REPLICA_SET_KEY}
     ports:
-      - "27017:27017"
+      - 27017:27017
     volumes:
       - mongodb_data:/bitnami/mongodb
 
