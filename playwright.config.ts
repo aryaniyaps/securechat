@@ -18,6 +18,8 @@ const config: PlaywrightTestConfig = {
   // Artifacts folder where screenshots, videos, and traces are stored.
   outputDir: "test-results/",
 
+  globalSetup: "./e2e/config/globalSetup.ts",
+
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: {
@@ -40,6 +42,7 @@ const config: PlaywrightTestConfig = {
     // contextOptions: {
     //   ignoreHTTPSErrors: true,
     // },
+    storageState: "./e2e/config/storageState.json",
   },
 
   projects: [

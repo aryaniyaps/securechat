@@ -38,9 +38,6 @@ export const test = baseTest.extend<{
     const submitButton = page.locator('button:has-text("Create room")');
     await submitButton.click();
 
-    // Wait for navigation
-    await page.waitForNavigation();
-
     const room = await prisma.room.findFirstOrThrow({
       include: {
         owner: {
@@ -53,6 +50,9 @@ export const test = baseTest.extend<{
       },
       where: { name: roomName },
     });
+
+    // wait for Room page URL
+    await page.waitForURL(`/rooms/${room.id}`);
 
     await use(room);
 
