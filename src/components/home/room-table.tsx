@@ -139,7 +139,7 @@ function RoomActions({
   });
 
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-end" data-testid="room-actions">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -220,7 +220,7 @@ export default function RoomTable({ session }: { session: Session }) {
 
   return table.getRowModel().rows?.length ? (
     <>
-      <Table className="flex-grow">
+      <Table className="flex-grow" data-testid="room-table">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -261,6 +261,8 @@ export default function RoomTable({ session }: { session: Session }) {
       )}
     </>
   ) : (
-    <div className="w-full text-center">No results.</div>
+    <div className="w-full text-center" data-testid="room-table">
+      No rooms found.
+    </div>
   );
 }

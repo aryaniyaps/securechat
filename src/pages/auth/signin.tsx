@@ -202,10 +202,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerAuthSession(context);
 
   // If the user is already logged in, redirect.
-  // Note: Make sure not to redirect to the same page
-  // To avoid an infinite loop!
+  let redirectUrl = String(context.query.callbackUrl || "/");
+
+  if (redirectUrl === "/signin") {
+    // Note: Make sure not to redirect to the same page
+    // To avoid an infinite loop!
+    redirectUrl = "/";
+  }
+
   if (session) {
-    return { redirect: { destination: "/" } };
+    return { redirect: { destination: redirectUrl } };
   }
 
   const csrfToken = await getCsrfToken(context);

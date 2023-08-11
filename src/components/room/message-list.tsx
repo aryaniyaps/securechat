@@ -81,7 +81,10 @@ export default function MessageList({ roomId }: { roomId: string }) {
   if (isLoading) return;
 
   return (
-    <div className="relative flex flex-grow justify-end overflow-y-auto">
+    <div
+      className="relative flex flex-grow justify-end overflow-y-auto"
+      data-testid="message-list"
+    >
       <div
         ref={scrollContainerRef}
         className="flex flex-grow flex-col-reverse gap-8 overflow-y-auto"

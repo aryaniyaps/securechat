@@ -109,7 +109,7 @@ export default function ProfileForm({ session }: { session: Session }) {
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} data-testid="profile-form">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex items-start gap-4"

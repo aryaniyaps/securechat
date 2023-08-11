@@ -60,7 +60,7 @@ services:
         # Centrifugo Public Information
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
     volumes:
-      - ..:/workspace
+      - ..:/workspace:cached
     depends_on:
       - mongodb
       - minio

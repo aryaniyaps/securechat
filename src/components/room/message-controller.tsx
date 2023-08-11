@@ -30,7 +30,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} data-testid="message-controller">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex w-full gap-4"

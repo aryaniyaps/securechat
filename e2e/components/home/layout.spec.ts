@@ -1,5 +1,6 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { APP_NAME } from "~/utils/constants";
+import { test } from "../../fixtures/room.fixture";
 
 test.describe("HomeLayout", () => {
   test.beforeEach(async ({ page }) => {
@@ -12,13 +13,16 @@ test.describe("HomeLayout", () => {
     expect(titleText).toBe(APP_NAME);
   });
 
-  test("should display the custom title when provided", async ({ page }) => {
-    // Navigate to a different page that uses HomeLayout with a custom title or simulate a change in the title prop
-    await page.goto("/rooms/"); // Replace with the appropriate route
+  test("should display the custom title when provided", async ({
+    page,
+    room,
+  }) => {
+    // The room object is now available via the room fixture
+    await page.goto(`/rooms/${room.id}`);
 
     const titleElement = await page.$("h1");
     const titleText = await titleElement?.textContent();
-    expect(titleText).toBe("Your Custom Title"); // Replace with the expected custom title
+    expect(titleText).toBe(room.name); // Use the name of the room as the expected title
   });
 
   test("should render the UserNav", async ({ page }) => {

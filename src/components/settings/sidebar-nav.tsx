@@ -27,6 +27,7 @@ export default function SidebarNav({
         "flex h-full w-full items-start justify-between space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1",
         className
       )}
+      data-testid="sidebar-nav"
       {...props}
     >
       <div className="flex h-full w-full space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">

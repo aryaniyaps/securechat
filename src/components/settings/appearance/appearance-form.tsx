@@ -33,7 +33,7 @@ export default function AppearanceForm() {
   });
 
   return (
-    <Form {...form}>
+    <Form {...form} data-testid="appearance-form">
       <form className="flex w-6/12 flex-col gap-4">
         <FormField
           control={form.control}

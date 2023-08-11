@@ -63,7 +63,7 @@ export default function AccountForm({ session, ...props }: AccountFormProps) {
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} data-testid="account-form">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex w-6/12 flex-col gap-4"
