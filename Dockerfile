@@ -70,17 +70,18 @@ RUN \
 ##### DEVELOPMENT
 
 FROM --platform=linux/amd64 node:16-alpine3.17 AS development
+
 WORKDIR /app
+
+# Install git
+RUN apk update && apk add git
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
+# Use the --chown option to set file ownership to nextjs for both COPY commands
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 

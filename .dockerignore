@@ -1,7 +1,5 @@
-docker-compose.yml
-docker-compose.dev.yml
+docker-compose.yaml
 Dockerfile
-.dockerignore
 node_modules
 README.md
 .git

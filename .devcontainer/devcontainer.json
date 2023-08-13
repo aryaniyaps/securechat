@@ -1,60 +1,61 @@
 {
-  "name": "SecureChat",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "app",
-  "workspaceFolder": "/app",
-  "forwardPorts": [
-    80,
-    3000,
-    27017,
-    9000,
-    9001,
-    8000
-  ],
-  "portsAttributes": {
-    "80": {
-      "label": "Caddy Server"
-    },
-    "3000": {
-      "label": "Next.js Application"
-    },
-    "27017": {
-      "label": "MongoDB Database"
-    },
-    "9000": {
-      "label": "MinIO Server"
-    },
-    "9001": {
-      "label": "MinIO Console"
-    },
-    "8000": {
-      "label": "Centrifugo Server"
-    }
-  },
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash",
-        "editor.codeActionsOnSave": {
-          "source.organizeImports": true
+    "name": "SecureChat",
+    "dockerComposeFile": "docker-compose.yaml",
+    "service": "app",
+    "workspaceFolder": "/app",
+    "forwardPorts": [
+        80,
+        3000,
+        27017,
+        9000,
+        9001,
+        8000
+    ],
+    "portsAttributes": {
+        "80": {
+            "label": "Caddy Server"
         },
-        "editor.formatOnSave": true
-      },
-      "extensions": [
-        "mutantdino.resourcemonitor",
-        "ms-azuretools.vscode-docker",
-        "zamerick.vscode-caddyfile-syntax",
-        "github.vscode-github-actions",
-        "hashicorp.terraform",
-        "ZainChen.json",
-        "esbenp.prettier-vscode",
-        "Prisma.prisma",
-        "christian-kohler.path-intellisense",
-        "bradlc.vscode-tailwindcss",
-        "pmneo.tsimporter",
-        "redhat.vscode-yaml",
-        "alexbabichev.formatter-pug"
-      ]
+        "3000": {
+            "label": "Next.js Application"
+        },
+        "27017": {
+            "label": "MongoDB Database"
+        },
+        "9000": {
+            "label": "MinIO Server"
+        },
+        "9001": {
+            "label": "MinIO Console"
+        },
+        "8000": {
+            "label": "Centrifugo Server"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": true
+                },
+                "editor.formatOnSave": true
+            },
+            "extensions": [
+                "donjayamanne.git-extension-pack",
+                "mutantdino.resourcemonitor",
+                "ms-azuretools.vscode-docker",
+                "zamerick.vscode-caddyfile-syntax",
+                "github.vscode-github-actions",
+                "hashicorp.terraform",
+                "ZainChen.json",
+                "esbenp.prettier-vscode",
+                "Prisma.prisma",
+                "christian-kohler.path-intellisense",
+                "bradlc.vscode-tailwindcss",
+                "pmneo.tsimporter",
+                "redhat.vscode-yaml",
+                "alexbabichev.formatter-pug"
+            ]
+        }
     }
-  }
 }

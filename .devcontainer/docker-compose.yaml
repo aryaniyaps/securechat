@@ -28,9 +28,9 @@ services:
       MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
       MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL}
-    ports:
-      - 9000:9000
-      - 9001:9001
+    expose:
+      - 9000
+      - 9001
 
   mongodb:
     image: bitnami/mongodb:6.0
@@ -41,15 +41,15 @@ services:
       MONGODB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGODB_ROOT_USER: ${MONGO_USER}
       MONGODB_REPLICA_SET_KEY: ${MONGO_REPLICA_SET_KEY}
-    ports:
-      - 27017:27017
+    expose:
+      - 27017
     volumes:
       - mongodb_data:/bitnami/mongodb
 
   app:
     platform: "linux/amd64"
     build:
-      context: ./
+      context: ../
       dockerfile: Dockerfile
       target: development
       args:
@@ -60,8 +60,9 @@ services:
         # Centrifugo Public Information
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
     working_dir: /app
-    stdin_open: true
     volumes:
+      - ..:/app
+      - /app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - mongodb
@@ -91,8 +92,8 @@ services:
       # Centrifugo Configuration
       CENTRIFUGO_URL: ${CENTRIFUGO_URL}
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
-    ports:
-      - 3000:3000
+    expose:
+      - 3000
 
   centrifugo:
     image: centrifugo/centrifugo:v5
@@ -101,8 +102,8 @@ services:
       CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD}
       CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET}
     command: centrifugo -c config.json
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     volumes:
       - ./centrifugo.json:/centrifugo/config.json
     ulimits:
