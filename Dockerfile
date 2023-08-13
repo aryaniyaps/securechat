@@ -67,9 +67,9 @@ RUN \
     else echo "Lockfile not found." && exit 1; \
     fi
 
-##### DEVELOPMENT
+##### DEV CONTAINER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS development
+FROM --platform=linux/amd64 node:16-alpine3.17 AS dev-container
 
 WORKDIR /app
 
