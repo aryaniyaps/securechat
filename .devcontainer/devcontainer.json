@@ -2,8 +2,15 @@
   "name": "SecureChat",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace",
-  "forwardPorts": [80, 3000, 27017, 9000, 9001, 8000],
+  "workspaceFolder": "/app",
+  "forwardPorts": [
+    80,
+    3000,
+    27017,
+    9000,
+    9001,
+    8000
+  ],
   "portsAttributes": {
     "80": {
       "label": "Caddy Server"
@@ -49,6 +56,5 @@
         "alexbabichev.formatter-pug"
       ]
     }
-  },
-  "remoteUser": "vscode"
+  }
 }

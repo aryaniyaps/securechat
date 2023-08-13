@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM node:18-alpine AS deps
+FROM --platform=linux/amd64 node:16-alpine3.17 AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN \
 
 ##### BUILDER
 
-FROM node:18-alpine AS builder
+FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
 
 # Prisma
 ARG DATABASE_URL
@@ -69,11 +69,18 @@ RUN \
 
 ##### DEVELOPMENT
 
-FROM node:18-alpine AS development
+FROM --platform=linux/amd64 node:16-alpine3.17 AS development
 WORKDIR /app
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
@@ -81,7 +88,7 @@ CMD ["npm", "run", "dev"]
 
 ##### PRODUCTION
 
-FROM node:18-alpine AS production
+FROM --platform=linux/amd64 node:16-alpine3.17 AS production
 WORKDIR /app
 
 ENV NODE_ENV production

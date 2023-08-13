@@ -1,0 +1,14 @@
+{
+  "admin": true,
+  "log_level": "debug",
+  "allowed_origins": ["http://localhost", "http://localhost:3000"],
+  "proxy_connect_endpoint": "http://app:3000/api/centrifugo/connect",
+  "proxy_http_headers": ["Cookie"],
+  "namespaces": [
+    {
+      "name": "rooms",
+      "allow_subscribe_for_client": true,
+      "allow_presence_for_subscriber": true
+    }
+  ]
+}

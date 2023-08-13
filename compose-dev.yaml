@@ -2,14 +2,16 @@ version: "3.7"
 
 services:
   caddy:
-    image: aryaniyaps/securechat-caddy:latest
+    image: caddy:2.7-alpine
     volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data/caddy
-    environment:
-      DIGITALOCEAN_API_TOKEN: ${DIGITALOCEAN_API_TOKEN}
     ports:
       - 80:80
-      - 443:443
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     depends_on:
       - app
       - minio
@@ -25,6 +27,10 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
       MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
+      MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL}
+    ports:
+      - 9000:9000
+      - 9001:9001
 
   mongodb:
     image: bitnami/mongodb:6.0
@@ -35,12 +41,32 @@ services:
       MONGODB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGODB_ROOT_USER: ${MONGO_USER}
       MONGODB_REPLICA_SET_KEY: ${MONGO_REPLICA_SET_KEY}
+    ports:
+      - 27017:27017
     volumes:
       - mongodb_data:/bitnami/mongodb
 
   app:
     platform: "linux/amd64"
-    image: aryaniyaps/securechat:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: development
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        # MINIO Public Information
+        NEXT_PUBLIC_MINIO_ENDPOINT: ${NEXT_PUBLIC_MINIO_ENDPOINT}
+        NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
+        # Centrifugo Public Information
+        NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
+    working_dir: /app
+    stdin_open: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mongodb
+      - minio
+      - centrifugo
     environment:
       # Prisma
       DATABASE_URL: ${DATABASE_URL}
@@ -65,18 +91,20 @@ services:
       # Centrifugo Configuration
       CENTRIFUGO_URL: ${CENTRIFUGO_URL}
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
-
-    depends_on:
-      - mongodb
-      - minio
-      - centrifugo
+    ports:
+      - 3000:3000
 
   centrifugo:
-    image: aryaniyaps/securechat-centrifugo:latest
+    image: centrifugo/centrifugo:v5
     environment:
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
       CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD}
       CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET}
+    command: centrifugo -c config.json
+    ports:
+      - 8000:8000
+    volumes:
+      - ./centrifugo.json:/centrifugo/config.json
     ulimits:
       nofile:
         soft: 65535

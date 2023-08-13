@@ -47,6 +47,7 @@ services:
       - mongodb_data:/bitnami/mongodb
 
   app:
+    platform: "linux/amd64"
     build:
       context: ../
       dockerfile: Dockerfile
@@ -59,8 +60,9 @@ services:
 
         # Centrifugo Public Information
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
+    working_dir: /app
     volumes:
-      - ..:/workspace:cached
+      - ..:/app:cached
     depends_on:
       - mongodb
       - minio
