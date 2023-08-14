@@ -21,4 +21,4 @@ FROM caddy:2.7-alpine as production
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
 # Copy your Caddyfile into the image
-COPY ./Caddyfile /etc/caddy/Caddyfile
+COPY ./prod.Caddyfile /etc/caddy/Caddyfile

@@ -12,7 +12,7 @@ CMD ["centrifugo", "-c", "config.json"]
 FROM centrifugo/centrifugo:v5 as production
 
 # Copy your Centrifugo Config into the image
-COPY ./centrifugo.json /centrifugo/config.json
+COPY ./prod.centrifugo.json /centrifugo/config.json
 
 # Set default command to run on container start
 CMD ["centrifugo", "-c", "config.json"]
