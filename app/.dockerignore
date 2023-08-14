@@ -1,8 +1,5 @@
-docker-compose.yaml
-Dockerfile
 node_modules
 README.md
 .git
 .next
-caddy
 npm-debug.log

@@ -2,9 +2,11 @@ version: "3.7"
 
 services:
   caddy:
-    image: caddy:2.7-alpine
+    build:
+      context: ../caddy
+      dockerfile: Dockerfile
+      target: dev-container
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data/caddy
     ports:
       - 80:80
@@ -49,7 +51,7 @@ services:
   app:
     platform: "linux/amd64"
     build:
-      context: ../
+      context: ../app
       dockerfile: Dockerfile
       target: dev-container
       args:
@@ -61,7 +63,7 @@ services:
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
     working_dir: /app
     volumes:
-      - ..:/app
+      - ../app:/app
       - /app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -96,16 +98,16 @@ services:
       - 3000
 
   centrifugo:
-    image: centrifugo/centrifugo:v5
+    build:
+      context: ../centrifugo
+      dockerfile: Dockerfile
+      target: dev-container
     environment:
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
       CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD}
       CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET}
-    command: centrifugo -c config.json
     expose:
       - 8000
-    volumes:
-      - ./centrifugo.json:/centrifugo/config.json
     ulimits:
       nofile:
         soft: 65535

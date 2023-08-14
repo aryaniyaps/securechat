@@ -45,6 +45,7 @@
                 "mutantdino.resourcemonitor",
                 "ms-azuretools.vscode-docker",
                 "zamerick.vscode-caddyfile-syntax",
+                "ms-playwright.playwright",
                 "github.vscode-github-actions",
                 "hashicorp.terraform",
                 "ZainChen.json",
