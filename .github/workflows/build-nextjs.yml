@@ -27,7 +27,7 @@ jobs:
           NEXT_PUBLIC_MINIO_BUCKET: avatars
           NEXT_PUBLIC_CENTRIFUGO_URL: wss://vnadi.com/connection/websocket
         with:
-          context: .
+          context: ./app
           push: true
           target: production
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/securechat:latest
