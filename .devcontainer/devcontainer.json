@@ -2,7 +2,7 @@
     "name": "SecureChat",
     "dockerComposeFile": "docker-compose.yaml",
     "service": "app",
-    "workspaceFolder": "/app",
+    "workspaceFolder": "/workspace",
     "forwardPorts": [
         80,
         3000,

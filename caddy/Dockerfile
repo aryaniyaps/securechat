@@ -8,9 +8,6 @@ RUN xcaddy build \
 # Start from the base Caddy image
 FROM caddy:2.7-alpine as dev-container
 
-# Copy the custom-built Caddy binary
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-
 # Copy your Caddyfile into the image
 COPY ./dev.Caddyfile /etc/caddy/Caddyfile
 

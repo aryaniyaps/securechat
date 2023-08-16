@@ -1,3 +1,5 @@
+.env
+.dockerignore
 node_modules
 README.md
 .git

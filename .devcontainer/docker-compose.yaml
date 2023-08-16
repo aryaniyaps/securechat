@@ -61,10 +61,10 @@ services:
         NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
         # Centrifugo Public Information
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
-    working_dir: /app
+    working_dir: /workspace/app
     volumes:
-      - ../app:/app
-      - /app/node_modules
+      - ../:/workspace:cached
+      - /workspace/app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - mongodb

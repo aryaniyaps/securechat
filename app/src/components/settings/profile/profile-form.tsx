@@ -89,7 +89,7 @@ export default function ProfileForm({ session }: { session: Session }) {
         await updateUser.mutateAsync({
           username: values.username,
           name: values.name,
-        });
+        });     
       }
 
       form.reset({ username: values.username, name: values.name });

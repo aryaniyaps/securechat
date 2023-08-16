@@ -71,7 +71,7 @@ RUN \
 
 FROM --platform=linux/amd64 node:16-alpine3.17 AS dev-container
 
-WORKDIR /app
+WORKDIR /workspace/app
 
 # Install git
 RUN apk update && apk add git
