@@ -39,7 +39,6 @@ services:
       - mongodb_data:/bitnami/mongodb
 
   app:
-    platform: "linux/amd64"
     image: aryaniyaps/securechat:latest
     environment:
       # Prisma

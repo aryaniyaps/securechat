@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS deps
+FROM node:18-alpine3.17 AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN \
 
 ##### BUILDER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
+FROM node:18-alpine3.17 AS builder
 
 # Prisma
 ARG DATABASE_URL
@@ -69,7 +69,7 @@ RUN \
 
 ##### DEV CONTAINER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS dev-container
+FROM node:18-alpine3.17 AS dev-container
 
 WORKDIR /workspace/app
 
@@ -89,7 +89,7 @@ CMD ["npm", "run", "dev"]
 
 ##### PRODUCTION
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS production
+FROM node:18-alpine3.17 AS production
 WORKDIR /app
 
 ENV NODE_ENV production

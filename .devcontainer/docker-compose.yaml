@@ -49,7 +49,6 @@ services:
       - mongodb_data:/bitnami/mongodb
 
   app:
-    platform: "linux/amd64"
     build:
       context: ../app
       dockerfile: Dockerfile
