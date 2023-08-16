@@ -1,6 +1,6 @@
 {
     "name": "SecureChat",
-    "dockerComposeFile": "docker-compose.yaml",
+    "dockerComposeFile": "compose.yaml",
     "service": "app",
     "workspaceFolder": "/workspace",
     "forwardPorts": [

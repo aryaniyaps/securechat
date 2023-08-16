@@ -34,8 +34,8 @@ resource "digitalocean_droplet" "web" {
 
 
   provisioner "file" {
-    source      = "../docker-compose.yaml"
-    destination = "/root/docker-compose.yaml"
+    source      = "../compose.yaml"
+    destination = "/root/compose.yaml"
   }
 
   provisioner "remote-exec" {
