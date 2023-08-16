@@ -8,8 +8,8 @@ services:
     environment:
       DIGITALOCEAN_API_TOKEN: ${DIGITALOCEAN_API_TOKEN}
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     depends_on:
       - app
       - minio
@@ -81,10 +81,40 @@ services:
         soft: 65535
         hard: 65535
 
+  mailserver:
+    build:
+      context: ../mailserver
+      dockerfile: Dockerfile
+      args:
+        EMAIL_USERNAME: ${EMAIL_USERNAME}
+        EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+    environment:
+      ENABLE_RSPAMD: 1
+      ENABLE_CLAMAV: 1
+      ENABLE_FAIL2BAN: 1
+    # Provide the FQDN of your mail server here (Your DNS MX record should point to this value)
+    hostname: mail.vnadi.com
+    ports:
+      - "25:25"
+      - "465:465"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - mailserver_data:/var/mailserver/
+      - mailserver_config:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    cap_add:
+      - NET_ADMIN # For Fail2Ban to work
+    restart: always
+
 volumes:
   minio_data:
     driver: local
   caddy_data:
     driver: local
   mongodb_data:
+    driver: local
+  mailserver_data:
+    driver: local
+  mailserver_config:
     driver: local

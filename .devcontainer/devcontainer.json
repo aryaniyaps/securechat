@@ -9,7 +9,9 @@
         27017,
         9000,
         9001,
-        8000
+        8000,
+        1025,
+        8025
     ],
     "portsAttributes": {
         "80": {
@@ -29,6 +31,12 @@
         },
         "8000": {
             "label": "Centrifugo Server"
+        },
+        "1025": {
+            "label": "MailHog SMTP Port"
+        },
+        "8025": {
+            "label": "MailHog Web Interface"
         }
     },
     "customizations": {
@@ -42,6 +50,7 @@
             },
             "extensions": [
                 "donjayamanne.git-extension-pack",
+                "mikestead.dotenv",
                 "mutantdino.resourcemonitor",
                 "ms-azuretools.vscode-docker",
                 "zamerick.vscode-caddyfile-syntax",

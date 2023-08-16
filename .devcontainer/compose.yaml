@@ -9,7 +9,7 @@ services:
     volumes:
       - caddy_data:/data/caddy
     ports:
-      - 80:80
+      - "80:80"
     ulimits:
       nofile:
         soft: 65535
@@ -30,9 +30,9 @@ services:
       MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
       MINIO_SERVER_URL: ${MINIO_SERVER_URL}
       MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL}
-    expose:
-      - 9000
-      - 9001
+    ports:
+      - "9000:9000"
+      - "9001:9001"
 
   mongodb:
     image: bitnami/mongodb:6.0
@@ -43,8 +43,8 @@ services:
       MONGODB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGODB_ROOT_USER: ${MONGO_USER}
       MONGODB_REPLICA_SET_KEY: ${MONGO_REPLICA_SET_KEY}
-    expose:
-      - 27017
+    ports:
+      - "27017:27017"
     volumes:
       - mongodb_data:/bitnami/mongodb
 
@@ -93,8 +93,8 @@ services:
       # Centrifugo Configuration
       CENTRIFUGO_URL: ${CENTRIFUGO_URL}
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
-    expose:
-      - 3000
+    ports:
+      - "3000:3000"
 
   centrifugo:
     build:
@@ -105,12 +105,18 @@ services:
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
       CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD}
       CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET}
-    expose:
-      - 8000
+    ports:
+      - "8000:8000"
     ulimits:
       nofile:
         soft: 65535
         hard: 65535
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   minio_data:
