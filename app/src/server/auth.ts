@@ -101,6 +101,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
     verifyRequest: "/auth/verify-request",
     signOut: "/auth/signout",
+    error: "/auth/error"
   },
 };
 
