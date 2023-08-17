@@ -64,11 +64,6 @@ resource "digitalocean_droplet" "web" {
       "echo 'MONGO_PASSWORD=${var.mongo_password}' >> /root/.env",
       "echo 'MONGO_USER=${var.mongo_user}' >> /root/.env",
       "echo 'MINIO_SERVER_URL=${var.minio_server_url}' >> /root/.env",
-      "echo 'MADDY_USERNAME=${var.maddy_username}' >> /root/.env",
-      "echo 'MADDY_PASSWORD=${var.maddy_password}' >> /root/.env",
-      "echo 'MADDY_HOSTNAME=${var.maddy_hostname}' >> /root/.env",
-      "echo 'MADDY_DOMAIN=${var.maddy_domain}' >> /root/.env",
-      "echo 'MADDY_ACME_EMAIL=${var.maddy_acme_email}' >> /root/.env",
     ]
   }
 

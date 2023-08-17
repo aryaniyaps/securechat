@@ -112,7 +112,7 @@ variable "centrifugo_url" {
 variable "centrifugo_api_key" {
   description = "Centrifugo API Key"
   type        = string
-  sensitive    = true
+  sensitive   = true
 }
 
 variable "centrifugo_admin_password" {
@@ -148,34 +148,4 @@ variable "minio_server_url" {
   description = "MinIO Server URL"
   type        = string
   default     = "https://minio.vnadi.com"
-}
-
-variable "maddy_username" {
-  description = "Maddy Username"
-  type        = string
-  default     = "noreply@vnadi.com"
-}
-
-variable "maddy_password" {
-  description = "Maddy Password"
-  type        = string
-  sensitive   = true
-}
-
-variable "maddy_hostname" {
-  description = "Maddy Hostname"
-  type        = string
-  default     = "mail.vnadi.com"
-}
-
-variable "maddy_domain" {
-  description = "Maddy Domain"
-  type        = string
-  default     = "vnadi.com"
-}
-
-variable "maddy_acme_email" {
-  description = "Maddy ACME Email"
-  type        = string
-  sensitive   = true
 }
