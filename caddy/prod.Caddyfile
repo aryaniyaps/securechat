@@ -25,11 +25,3 @@ minio.vnadi.com {
 		header_up X-Real-IP {remote}
 	}
 }
-
-mail.vnadi.com {
-	tls {
-		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
-	}
-    reverse_proxy smtp://maddy:25
-    reverse_proxy imap://maddy:143
-}

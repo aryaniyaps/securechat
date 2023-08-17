@@ -59,7 +59,7 @@ variable "email_server" {
 variable "email_from" {
   description = "Email From"
   type        = string
-  default     = "Aryan Iyappan aryaniyaps@vnadi.com"
+  default     = "noreply@vnadi.com"
 }
 
 variable "minio_access_key" {
