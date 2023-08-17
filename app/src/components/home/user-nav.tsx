@@ -22,7 +22,7 @@ export default function UserNav({ session }: { session: Session }) {
           {(session.user.name || session.user.username).slice(0, 2)}
         </AvatarFallback>
       </Avatar>
-      <p className="text-sm font-semibold leading-none">
+      <p className="text-sm font-semibold leading-none hidden sm:block">
         {session.user.name || session.user.username}
       </p>
     </Link>

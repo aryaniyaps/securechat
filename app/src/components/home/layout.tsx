@@ -13,7 +13,7 @@ export default function HomeLayout({
   title?: string;
 }) {
   return (
-    <main className="flex h-full min-w-full flex-col">
+    <main className="flex h-full w-full flex-col">
       <div className="border-b py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
           <Link href="/">
