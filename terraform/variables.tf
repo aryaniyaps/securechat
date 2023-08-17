@@ -150,3 +150,32 @@ variable "minio_server_url" {
   default     = "https://minio.vnadi.com"
 }
 
+variable "maddy_username" {
+  description = "Maddy Username"
+  type        = string
+  default     = "noreply@vnadi.com"
+}
+
+variable "maddy_password" {
+  description = "Maddy Password"
+  type        = string
+  sensitive   = true
+}
+
+variable "maddy_hostname" {
+  description = "Maddy Hostname"
+  type        = string
+  default     = "mail.vnadi.com"
+}
+
+variable "maddy_domain" {
+  description = "Maddy Domain"
+  type        = string
+  default     = "vnadi.com"
+}
+
+variable "maddy_acme_email" {
+  description = "Maddy ACME Email"
+  type        = string
+  sensitive   = true
+}

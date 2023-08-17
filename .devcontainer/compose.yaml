@@ -118,43 +118,10 @@ services:
       - "1025:1025"
       - "8025:8025"
 
-  mailserver:
-    build:
-      context: ../mailserver
-      dockerfile: Dockerfile
-      args:
-        EMAIL_USERNAME: ${EMAIL_USERNAME}
-        EMAIL_PASSWORD: ${EMAIL_PASSWORD}
-    environment:
-      ENABLE_RSPAMD: 1
-      ENABLE_AMAVIS: 0
-      ENABLE_OPENDKIM: 0
-      ENABLE_OPENDMARC: 0
-      ENABLE_CLAMAV: 1
-      ENABLE_FAIL2BAN: 1
-    hostname: mail.vnadi.com
-    ports:
-      - "25:25"
-      - "465:465"
-      - "587:587"
-      - "993:993"
-    volumes:
-      - mailserver_data:/var/mail
-      - mailserver_state:/var/mail-state
-      - ./config/:/tmp/docker-mailserver/
-      - /etc/localtime:/etc/localtime:ro
-    cap_add:
-      - NET_ADMIN # For Fail2Ban to work
-    restart: always
-
 volumes:
   minio_data:
     driver: local
   caddy_data:
     driver: local
   mongodb_data:
-    driver: local
-  mailserver_data:
-    driver: local
-  mailserver_state:
     driver: local
