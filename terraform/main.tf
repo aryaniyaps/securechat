@@ -4,7 +4,7 @@ provider "digitalocean" {
 
 resource "digitalocean_droplet" "web" {
   image    = "ubuntu-20-04-x64"
-  name     = "web-server"
+  name     = "vnadi.com"
   region   = "blr1"
   size     = "s-1vcpu-1gb"
   ssh_keys = [var.ssh_fingerprint]
