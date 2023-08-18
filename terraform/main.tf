@@ -66,4 +66,11 @@ resource "digitalocean_droplet" "nomad_server" {
     content     = data.template_file.nomad_server_config.rendered
     destination = "/etc/nomad.d/server.hcl"
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo systemctl enable nomad",
+      "sudo systemctl start nomad"
+    ]
+  }
 }
