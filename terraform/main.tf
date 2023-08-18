@@ -2,13 +2,51 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-resource "digitalocean_droplet" "web" {
+provider "nomad" {
+  address = "http://${digitalocean_droplet.nomad_server.ipv4_address}:4646"
+}
+
+resource "nomad_job" "caddy" {
+  jobspec = file("${path.root}/nomad/jobs/caddy.hcl")
+  depends_on = [nomad_job.app, nomad_job.minio, nomad_job.centrifugo]
+}
+
+resource "nomad_job" "mongodb" {
+  jobspec    = file("${path.root}/nomad/jobs/mongodb.hcl")
+}
+
+resource "nomad_job" "minio" {
+  jobspec    = file("${path.root}/nomad/jobs/minio.hcl")
+}
+
+resource "nomad_job" "centrifugo" {
+  jobspec    = file("${path.root}/nomad/jobs/centrifugo.hcl")
+}
+
+resource "nomad_job" "app" {
+  jobspec    = file("${path.root}/nomad/jobs/app.hcl")
+  depends_on = [nomad_job.mongodb, nomad_job.minio, nomad_job.centrifugo]
+}
+
+data "template_file" "nomad_server_config" {
+    template = file("${path.module}/templates/server_config.hcl.tpl")
+
+    vars = {
+        nomad_server_bootstrap_expect = "1"
+        nomad_data_dir                = "/tmp/nomad"
+        nomad_bind_addr               = digitalocean_droplet.nomad_server.ipv4_address # IP of the Nomad server droplet
+    }
+}
+
+
+resource "digitalocean_droplet" "nomad_server" {
+  count    = 1
   image    = "ubuntu-20-04-x64"
-  name     = "vnadi.com"
+  name     = "nomad-server-${count.index}"
   region   = "blr1"
   size     = "s-1vcpu-1gb"
   ssh_keys = [var.ssh_fingerprint]
-
+  
   connection {
     type        = "ssh"
     user        = "root"
@@ -18,61 +56,14 @@ resource "digitalocean_droplet" "web" {
 
   provisioner "remote-exec" {
     inline = [
-      "export DEBIAN_FRONTEND=noninteractive",
-      "sleep 10", # add a delay to ensure no other apt processes are running
-      "apt-get update",
-      "apt-get install -y apt-transport-https ca-certificates curl software-properties-common",
-      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -",
-      "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
-      "apt-get update",
-      "apt-get install -y docker-ce",
-      "systemctl start docker", # Start the Docker service
-      "curl -L \"https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
-      "chmod +x /usr/local/bin/docker-compose"
+      "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
+      "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
+      "sudo apt-get update && sudo apt-get install -y nomad"
     ]
   }
-
 
   provisioner "file" {
-    source      = "../compose.yaml"
-    destination = "/root/compose.yaml"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo 'DIGITALOCEAN_API_TOKEN=${var.do_token}' >> /root/.env",
-      "echo 'DATABASE_URL=${var.database_url}' >> /root/.env",
-      "echo 'NEXTAUTH_SECRET=${var.nextauth_secret}' >> /root/.env",
-      "echo 'NEXTAUTH_URL=${var.nextauth_url}' >> /root/.env",
-      "echo 'NEXTAUTH_URL_INTERNAL=${var.nextauth_url_internal}' >> /root/.env",
-      "echo 'GOOGLE_CLIENT_ID=${var.google_client_id}' >> /root/.env",
-      "echo 'GOOGLE_CLIENT_SECRET=${var.google_client_secret}' >> /root/.env",
-      "echo 'EMAIL_SERVER=${var.email_server}' >> /root/.env",
-      "echo 'EMAIL_FROM=${var.email_from}' >> /root/.env",
-      "echo 'MINIO_ACCESS_KEY=${var.minio_access_key}' >> /root/.env",
-      "echo 'MINIO_SECRET_KEY=${var.minio_secret_key}' >> /root/.env",
-      "echo 'MINIO_DEFAULT_BUCKETS=${var.minio_default_buckets}' >> /root/.env",
-      "echo 'MINIO_END_POINT=${var.minio_end_point}' >> /root/.env",
-      "echo 'MINIO_PORT=${var.minio_port}' >> /root/.env",
-      "echo 'MINIO_USE_SSL=${var.minio_use_ssl}' >> /root/.env",
-      "echo 'MINIO_BUCKET_NAME=${var.minio_bucket_name}' >> /root/.env",
-      "echo 'CENTRIFUGO_URL=${var.centrifugo_url}' >> /root/.env",
-      "echo 'CENTRIFUGO_API_KEY=${var.centrifugo_api_key}' >> /root/.env",
-      "echo 'CENTRIFUGO_ADMIN_PASSWORD=${var.centrifugo_admin_password}' >> /root/.env",
-      "echo 'CENTRIFUGO_ADMIN_SECRET=${var.centrifugo_admin_secret}' >> /root/.env",
-      "echo 'MONGO_REPLICA_SET_KEY=${var.mongo_replica_set_key}' >> /root/.env",
-      "echo 'MONGO_PASSWORD=${var.mongo_password}' >> /root/.env",
-      "echo 'MONGO_USER=${var.mongo_user}' >> /root/.env",
-      "echo 'MINIO_SERVER_URL=${var.minio_server_url}' >> /root/.env",
-    ]
-  }
-
-
-  provisioner "remote-exec" {
-    inline = [
-      "cd /root",
-      "docker-compose pull",
-      "docker-compose up -d"
-    ]
+    content     = data.template_file.nomad_server_config.rendered
+    destination = "/etc/nomad.d/server.hcl"
   }
 }

@@ -54,6 +54,7 @@
                 "mutantdino.resourcemonitor",
                 "ms-azuretools.vscode-docker",
                 "zamerick.vscode-caddyfile-syntax",
+                "hashicorp.hcl",
                 "ms-playwright.playwright",
                 "github.vscode-github-actions",
                 "hashicorp.terraform",
