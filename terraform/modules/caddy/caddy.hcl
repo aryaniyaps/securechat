@@ -27,7 +27,6 @@ job "caddy" {
       resources {
         cpu    = 300 # Modify based on your needs
         memory = 256 # Modify based on your needs
-
         network {
           port "http" {
             static = 80
@@ -37,6 +36,7 @@ job "caddy" {
           }
         }
       }
+
 
       service {
         name = "caddy"

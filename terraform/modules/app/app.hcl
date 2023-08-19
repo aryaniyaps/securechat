@@ -9,6 +9,10 @@ job "app" {
 
       config {
         image = "aryaniyaps/securechat:latest"
+
+        port_map {
+          web = 3000
+        }
       }
 
       env {
@@ -33,15 +37,15 @@ job "app" {
       resources {
         cpu    = 500 # Modify based on your needs
         memory = 512 # Modify based on your needs
-
         network {
-          mbits = 10
+          port "web" {}
         }
       }
 
       service {
         name = "app"
         tags = ["app"]
+        port = "web"
         
         check {
           name     = "alive"

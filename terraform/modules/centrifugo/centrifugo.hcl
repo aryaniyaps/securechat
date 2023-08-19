@@ -24,7 +24,6 @@ job "centrifugo" {
       resources {
         cpu    = 500 # Modify based on your needs
         memory = 512 # Modify based on your needs
-
         network {
           port "web" {}
         }
