@@ -74,25 +74,6 @@ module "mongodb" {
   }
 }
 
-data "template_file" "nomad_config" {
-  template = file("${path.module}/nomad_config.hcl")
-
-  vars = {
-    nomad_server_bootstrap_expect = "1"
-    nomad_data_dir                = "/var/lib/nomad"
-    nomad_bind_addr               = "0.0.0.0" # IP of the Nomad server droplet
-    consul_address                = "127.0.0.1"
-  }
-}
-
-data "template_file" "consul_config" {
-  template = file("${path.module}/consul_config.hcl")
-
-  vars = {
-    bind_address = "0.0.0.0"
-  }
-}
-
 
 resource "digitalocean_droplet" "server" {
   image    = "ubuntu-20-04-x64"
@@ -111,8 +92,6 @@ resource "digitalocean_droplet" "server" {
   provisioner "remote-exec" {
     inline = [
       "export DEBIAN_FRONTEND=noninteractive",
-      "sudo mkdir -p /etc/nomad/",
-      "sudo mkdir -p /etc/consul/",
       "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
       "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
       "sudo apt-get update && sudo apt-get install -y nomad consul",
@@ -126,13 +105,29 @@ resource "digitalocean_droplet" "server" {
   }
 
   provisioner "file" {
-    content     = data.template_file.nomad_config.rendered
+    content = templatefile(
+      "${path.module}/config/nomad.hcl",
+      {
+        nomad_server_bootstrap_expect = "1"
+        data_dir                      = "/var/lib/nomad"
+        bind_address                  = "0.0.0.0" # IP of the server droplet
+        consul_address                = "127.0.0.1"
+      }
+    )
     destination = "/etc/nomad/server.hcl"
   }
 
   provisioner "file" {
-    content     = data.template_file.consul_config.rendered
-    destination = "/etc/consul/config.hcl"
+    content = templatefile(
+      "${path.module}/config/consul.hcl",
+      {
+        data_dir                       = "/var/consul"
+        consul_server_bootstrap_expect = "1"
+        bind_address                   = "0.0.0.0"
+        advertise_address              = self.ipv4_address # IP of the server droplet
+      }
+    )
+    destination = "/etc/consul.d/config.hcl"
   }
 
   provisioner "remote-exec" {
@@ -143,5 +138,5 @@ resource "digitalocean_droplet" "server" {
       "sudo systemctl start nomad"
     ]
   }
-
 }
+

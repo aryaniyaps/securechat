@@ -1,5 +1,5 @@
-data_dir  = "${nomad_data_dir}"
-bind_addr = "${nomad_bind_addr}"
+data_dir  = "${data_dir}"
+bind_addr = "${bind_address}"
 
 server {
     enabled = true
@@ -15,8 +15,4 @@ consul {
 
   # Enable automatic syncing of Consul services with Nomad
   auto_advertise = true
-
-  # Directs the client to use the servers for reads and not the local Consul agent
-  server_service_name = "nomad"
-  client_service_name = "nomad-client"
 }
