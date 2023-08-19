@@ -110,7 +110,7 @@ resource "digitalocean_droplet" "server" {
   provisioner "remote-exec" {
     inline = [
       "sudo mkdir -p /etc/nomad/",
-      "sudo mkdir -p /etc/consul.d/",
+      "sudo mkdir -p /etc/consul/",
       "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
       "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
       "sudo apt-get update && sudo apt-get install -y nomad consul",
@@ -124,7 +124,7 @@ resource "digitalocean_droplet" "server" {
 
   provisioner "file" {
     content     = data.template_file.consul_config.rendered
-    destination = "/etc/consul.d/config.hcl"
+    destination = "/etc/consul/config.hcl"
   }
 
   provisioner "remote-exec" {
