@@ -20,7 +20,7 @@ job "caddy" {
         ]
 
         env {
-          DIGITALOCEAN_API_TOKEN = "${DIGITALOCEAN_API_TOKEN}"
+          DIGITALOCEAN_API_TOKEN = "${do_token}"
         }
       }
 

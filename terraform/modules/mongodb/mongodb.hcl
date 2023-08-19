@@ -21,9 +21,9 @@ job "mongodb" {
         env {
           MONGODB_REPLICA_SET_MODE = "primary"
           MONGODB_ADVERTISED_HOSTNAME = "mongodb"
-          MONGODB_ROOT_PASSWORD = "${MONGO_PASSWORD}"
-          MONGODB_ROOT_USER = "${MONGO_USER}"
-          MONGODB_REPLICA_SET_KEY = "${MONGO_REPLICA_SET_KEY}"
+          MONGODB_ROOT_PASSWORD = "${mongo_password}"
+          MONGODB_ROOT_USER = "${mongo_user}"
+          MONGODB_REPLICA_SET_KEY = "${mongo_replica_set_key}"
         }
       }
 

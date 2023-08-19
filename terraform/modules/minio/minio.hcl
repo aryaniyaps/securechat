@@ -19,10 +19,10 @@ job "minio" {
         ]
 
         env {
-          MINIO_ROOT_USER = "${MINIO_ACCESS_KEY}"
-          MINIO_ROOT_PASSWORD = "${MINIO_SECRET_KEY}"
-          MINIO_DEFAULT_BUCKETS = "${MINIO_DEFAULT_BUCKETS}"
-          MINIO_SERVER_URL = "${MINIO_SERVER_URL}"
+          MINIO_ROOT_USER = "${minio_access_key}"
+          MINIO_ROOT_PASSWORD = "${minio_secret_key}"
+          MINIO_DEFAULT_BUCKETS = "${minio_default_buckets}"
+          MINIO_SERVER_URL = "${minio_server_url}"
         }
       }
 

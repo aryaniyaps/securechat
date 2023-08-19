@@ -15,9 +15,9 @@ job "centrifugo" {
         }
 
         env {
-          CENTRIFUGO_API_KEY = "${CENTRIFUGO_API_KEY}"
-          CENTRIFUGO_ADMIN_PASSWORD = "${CENTRIFUGO_ADMIN_PASSWORD}"
-          CENTRIFUGO_ADMIN_SECRET = "${CENTRIFUGO_ADMIN_SECRET}"
+          CENTRIFUGO_API_KEY = "${centrifugo_api_key}"
+          CENTRIFUGO_ADMIN_PASSWORD = "${centrifugo_admin_password}"
+          CENTRIFUGO_ADMIN_SECRET = "${centrifugo_admin_secret}"
         }
       }
 
