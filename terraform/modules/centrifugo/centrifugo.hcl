@@ -13,12 +13,12 @@ job "centrifugo" {
         port_map {
           web = 8000  # Assuming default Centrifugo port is 8000, adjust if needed
         }
+      }
 
-        env {
-          CENTRIFUGO_API_KEY = "${centrifugo_api_key}"
-          CENTRIFUGO_ADMIN_PASSWORD = "${centrifugo_admin_password}"
-          CENTRIFUGO_ADMIN_SECRET = "${centrifugo_admin_secret}"
-        }
+      env {
+        CENTRIFUGO_API_KEY = "${centrifugo_api_key}"
+        CENTRIFUGO_ADMIN_PASSWORD = "${centrifugo_admin_password}"
+        CENTRIFUGO_ADMIN_SECRET = "${centrifugo_admin_secret}"
       }
 
       resources {

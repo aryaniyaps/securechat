@@ -13,13 +13,11 @@ variable "nextauth_secret" {
 variable "nextauth_url" {
   description = "NextAuth URL"
   type        = string
-  default     = "https://vnadi.com"
 }
 
 variable "nextauth_url_internal" {
   description = "NextAuth Internal URL"
   type        = string
-  default     = "http://app:3000"
 }
 
 variable "google_client_id" {
@@ -42,7 +40,6 @@ variable "email_server" {
 variable "email_from" {
   description = "Email From"
   type        = string
-  default     = "noreply@vnadi.com"
 }
 
 variable "minio_access_key" {
@@ -59,31 +56,26 @@ variable "minio_secret_key" {
 variable "minio_end_point" {
   description = "MinIO Endpoint"
   type        = string
-  default     = "minio"
 }
 
 variable "minio_port" {
   description = "MinIO Port"
   type        = string
-  default     = "9000"
 }
 
 variable "minio_use_ssl" {
   description = "MinIO Use SSL"
   type        = string
-  default     = "false"
 }
 
 variable "minio_bucket_name" {
   description = "MinIO Bucket Name"
   type        = string
-  default     = "avatars"
 }
 
 variable "centrifugo_url" {
   description = "Centrifugo URL"
   type        = string
-  default     = "http://centrifugo:8000/api"
 }
 
 variable "centrifugo_api_key" {

@@ -18,10 +18,10 @@ job "caddy" {
         volumes = [
           "caddy_data:/data/caddy"
         ]
+      }
 
-        env {
-          DIGITALOCEAN_API_TOKEN = "${do_token}"
-        }
+      env {
+        DIGITALOCEAN_API_TOKEN = "${do_token}"
       }
 
       resources {

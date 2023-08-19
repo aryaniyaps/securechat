@@ -17,14 +17,14 @@ job "mongodb" {
         volumes = [
           "mongodb_data:/bitnami/mongodb"
         ]
+      }
 
-        env {
-          MONGODB_REPLICA_SET_MODE = "primary"
-          MONGODB_ADVERTISED_HOSTNAME = "mongodb"
-          MONGODB_ROOT_PASSWORD = "${mongo_password}"
-          MONGODB_ROOT_USER = "${mongo_user}"
-          MONGODB_REPLICA_SET_KEY = "${mongo_replica_set_key}"
-        }
+      env {
+        MONGODB_REPLICA_SET_MODE = "primary"
+        MONGODB_ADVERTISED_HOSTNAME = "mongodb.service.consul"
+        MONGODB_ROOT_PASSWORD = "${mongo_password}"
+        MONGODB_ROOT_USER = "${mongo_user}"
+        MONGODB_REPLICA_SET_KEY = "${mongo_replica_set_key}"
       }
 
       resources {

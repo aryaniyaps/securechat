@@ -17,13 +17,13 @@ job "minio" {
         volumes = [
           "minio_data:/data"
         ]
+      }
 
-        env {
-          MINIO_ROOT_USER = "${minio_access_key}"
-          MINIO_ROOT_PASSWORD = "${minio_secret_key}"
-          MINIO_DEFAULT_BUCKETS = "${minio_default_buckets}"
-          MINIO_SERVER_URL = "${minio_server_url}"
-        }
+      env {
+        MINIO_ROOT_USER = "${minio_access_key}"
+        MINIO_ROOT_PASSWORD = "${minio_secret_key}"
+        MINIO_DEFAULT_BUCKETS = "${minio_default_buckets}"
+        MINIO_SERVER_URL = "${minio_server_url}"
       }
 
       resources {

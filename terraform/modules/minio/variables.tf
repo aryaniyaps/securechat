@@ -18,5 +18,4 @@ variable "minio_default_buckets" {
 variable "minio_server_url" {
   description = "MinIO Server URL"
   type        = string
-  default     = "https://minio.vnadi.com"
 }

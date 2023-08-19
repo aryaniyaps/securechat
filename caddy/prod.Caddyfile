@@ -3,14 +3,14 @@ vnadi.com {
 		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
 	}
 
-	reverse_proxy /connection/* centrifugo:8000 {
+	reverse_proxy /connection/* centrifugo.service.consul:8000 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
 		header_up Upgrade WebSocket
 		header_up Connection Upgrade
 	}
 
-	reverse_proxy app:3000 {
+	reverse_proxy app.service.consul:3000 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
 	}
@@ -20,7 +20,7 @@ minio.vnadi.com {
 	tls {
 		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
 	}
-	reverse_proxy minio:9000 {
+	reverse_proxy minio.service.consul:9000 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
 	}
