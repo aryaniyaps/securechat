@@ -31,7 +31,9 @@ job "mongodb" {
         cpu    = 500 # Modify based on your needs
         memory = 300 # Modify based on your needs
         network {
-          port "db" {}
+          port "db" {
+            static = 27017
+          }
         }
       }
 

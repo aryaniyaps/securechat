@@ -91,16 +91,24 @@ resource "digitalocean_droplet" "server" {
 
   provisioner "remote-exec" {
     inline = [
+      # Setup Nomad and Consul
       "export DEBIAN_FRONTEND=noninteractive",
       "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
       "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
       "sudo apt-get update && sudo apt-get install -y nomad consul",
+      # Setup Docker
       "sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common",
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
       "UBUNTU_VERSION=$(lsb_release -cs) && echo \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_VERSION stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io",
       "sudo systemctl start docker",
-      "sudo systemctl enable docker"
+      "sudo systemctl enable docker",
+      # Setup dnsmasq for Consul
+      "sudo apt-get update",
+      "sudo apt-get install -y dnsmasq",
+      "echo 'server=/consul/127.0.0.1#8600' | sudo tee /etc/dnsmasq.d/consul",
+      "sudo systemctl restart dnsmasq",
+      "echo 'nameserver 127.0.0.1' | sudo tee /etc/resolv.conf"
     ]
   }
 
