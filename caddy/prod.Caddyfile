@@ -1,6 +1,6 @@
 vnadi.com {
-	tls {env.ACME_EMAIL} {
-		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
+	tls {$ACME_EMAIL} {
+		dns digitalocean {$DIGITALOCEAN_API_TOKEN}
 	}
 
 	reverse_proxy /connection/* centrifugo.service.consul:8000 {
@@ -17,8 +17,8 @@ vnadi.com {
 }
 
 minio.vnadi.com {
-	tls {env.ACME_EMAIL} {
-		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
+	tls {$ACME_EMAIL} {
+		dns digitalocean {$DIGITALOCEAN_API_TOKEN}
 	}
 	reverse_proxy minio.service.consul:9000 {
 		header_up Host {host}
