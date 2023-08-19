@@ -33,7 +33,8 @@ module "app" {
 module "caddy" {
   source = "./modules/caddy"
 
-  do_token = var.do_token
+  do_token   = var.do_token
+  acme_email = var.acme_email
   providers = {
     nomad = nomad
   }
@@ -109,11 +110,18 @@ resource "digitalocean_droplet" "server" {
 
   provisioner "remote-exec" {
     inline = [
+      "export DEBIAN_FRONTEND=noninteractive",
       "sudo mkdir -p /etc/nomad/",
       "sudo mkdir -p /etc/consul/",
       "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
       "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
       "sudo apt-get update && sudo apt-get install -y nomad consul",
+      "sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common",
+      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+      "UBUNTU_VERSION=$(lsb_release -cs) && echo \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_VERSION stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
+      "sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io",
+      "sudo systemctl start docker",
+      "sudo systemctl enable docker"
     ]
   }
 

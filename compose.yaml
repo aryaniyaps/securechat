@@ -7,6 +7,7 @@ services:
       - caddy_data:/data/caddy
     environment:
       DIGITALOCEAN_API_TOKEN: ${DIGITALOCEAN_API_TOKEN}
+      ACME_EMAIL: ${ACME_EMAIL}
     ports:
       - "80:80"
       - "443:443"

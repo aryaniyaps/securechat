@@ -14,6 +14,9 @@ COPY ./dev.Caddyfile /etc/caddy/Caddyfile
 # Start from the base Caddy image
 FROM caddy:2.7-alpine as production
 
+ARG DIGITALOCEAN_API_TOKEN
+ARG ACME_EMAIL
+
 # Copy the custom-built Caddy binary
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 

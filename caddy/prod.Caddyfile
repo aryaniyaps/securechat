@@ -1,5 +1,5 @@
 vnadi.com {
-	tls {
+	tls {env.ACME_EMAIL} {
 		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
 	}
 
@@ -17,7 +17,7 @@ vnadi.com {
 }
 
 minio.vnadi.com {
-	tls {
+	tls {env.ACME_EMAIL} {
 		dns digitalocean {env.DIGITALOCEAN_API_TOKEN}
 	}
 	reverse_proxy minio.service.consul:9000 {

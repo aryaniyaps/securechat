@@ -22,11 +22,12 @@ job "caddy" {
 
       env {
         DIGITALOCEAN_API_TOKEN = "${do_token}"
+        ACME_EMAIL = "${acme_email}"
       }
 
       resources {
-        cpu    = 300 # Modify based on your needs
-        memory = 256 # Modify based on your needs
+        cpu    = 100 # Modify based on your needs
+        memory = 50 # Modify based on your needs
         network {
           port "http" {
             static = 80
