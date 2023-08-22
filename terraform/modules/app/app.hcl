@@ -50,7 +50,7 @@ job "app" {
 
       resources {
         cpu    = 500 # Modify based on your needs
-        memory = 400 # Modify based on your needs
+        memory = 300 # Modify based on your needs
       }
     }
   }

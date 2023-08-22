@@ -44,7 +44,7 @@ job "caddy" {
 
       resources {
         cpu    = 300 # Modify based on your needs
-        memory = 200 # Modify based on your needs
+        memory = 100 # Modify based on your needs
       }
     }
 
