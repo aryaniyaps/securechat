@@ -1,3 +1,6 @@
+# for networking checkout:
+# https://developer.hashicorp.com/nomad/docs/networking
+
 vnadi.com {
 	tls {$ACME_EMAIL} {
 		dns digitalocean {$DIGITALOCEAN_API_TOKEN}

@@ -6,6 +6,16 @@ provider "nomad" {
   address = "http://${digitalocean_droplet.server.ipv4_address}:4646"
 }
 
+provider "vault" {
+  address = "http://${digitalocean_droplet.server.ipv4_address}:8200"
+  token   = var.vault_token
+}
+
+resource "vault_mount" "kv" {
+  type = "kv-v2"
+  path = "secret"
+}
+
 module "app" {
   source = "./modules/app"
 
@@ -27,6 +37,7 @@ module "app" {
   centrifugo_api_key    = var.centrifugo_api_key
   providers = {
     nomad = nomad
+    vault = vault
   }
 }
 
@@ -37,6 +48,7 @@ module "caddy" {
   acme_email = var.acme_email
   providers = {
     nomad = nomad
+    vault = vault
   }
 }
 
@@ -48,6 +60,7 @@ module "centrifugo" {
   centrifugo_admin_secret   = var.centrifugo_admin_secret
   providers = {
     nomad = nomad
+    vault = vault
   }
 }
 
@@ -60,6 +73,7 @@ module "minio" {
   minio_server_url      = var.minio_server_url
   providers = {
     nomad = nomad
+    vault = vault
   }
 }
 
@@ -71,6 +85,7 @@ module "mongodb" {
   mongo_replica_set_key = var.mongo_replica_set_key
   providers = {
     nomad = nomad
+    vault = vault
   }
 }
 
@@ -91,24 +106,18 @@ resource "digitalocean_droplet" "server" {
 
   provisioner "remote-exec" {
     inline = [
-      # Setup Nomad and Consul
+      # Setup Nomad, Consul and Vault
       "export DEBIAN_FRONTEND=noninteractive",
       "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
       "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
-      "sudo apt-get update && sudo apt-get install -y nomad consul",
+      "sudo apt-get update && sudo apt-get install -y nomad consul vault",
       # Setup Docker
       "sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common",
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
       "UBUNTU_VERSION=$(lsb_release -cs) && echo \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_VERSION stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
       "sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io",
       "sudo systemctl start docker",
-      "sudo systemctl enable docker",
-      # Setup dnsmasq for Consul
-      "sudo apt-get update",
-      "sudo apt-get install -y dnsmasq",
-      "echo 'server=/consul/127.0.0.1#8600' | sudo tee /etc/dnsmasq.d/consul",
-      "sudo systemctl restart dnsmasq",
-      "echo 'nameserver 127.0.0.1' | sudo tee /etc/resolv.conf"
+      "sudo systemctl enable docker"
     ]
   }
 
@@ -138,8 +147,22 @@ resource "digitalocean_droplet" "server" {
     destination = "/etc/consul.d/config.hcl"
   }
 
+  provisioner "file" {
+    content = templatefile(
+      "${path.module}/config/vault.hcl",
+      {
+        consul_address : "127.0.0.1",
+        bind_address = "0.0.0.0",
+        api_address  = self.ipv4_address # IP of the server droplet
+      }
+    )
+    destination = "/etc/vault.d/config.hcl"
+  }
+
   provisioner "remote-exec" {
     inline = [
+      "sudo systemctl enable vault",
+      "sudo systemctl start vault",
       "sudo systemctl enable consul",
       "sudo systemctl start consul",
       "sudo systemctl enable nomad",
