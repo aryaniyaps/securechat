@@ -4,6 +4,12 @@ job "mongodb" {
   group "mongo-group" {
     count = 1
 
+    volume "mongodb" {
+      type      = "host"
+      read_only = false
+      source    = "mongodb"
+    }
+
     network {
       mode = "bridge"
       port "db" {
@@ -25,12 +31,19 @@ job "mongodb" {
     task "mongodb" {
       driver = "docker"
 
+      // the error is most likely due to incorrect TLS config here
+      user = "root"
+
+      volume_mount {
+        volume      = "mongodb"
+        destination = "/bitnami/mongodb"
+        read_only   = false
+      }
+
       config {
         image = "bitnami/mongodb:6.0"
 
-        volumes = [
-          "mongodb_data:/bitnami/mongodb"
-        ]
+        ports = ["db"]
       }
 
       env {
@@ -45,12 +58,6 @@ job "mongodb" {
         cpu    = 500 # Modify based on your needs
         memory = 400 # Modify based on your needs
       }
-    }
-
-    volume "mongodb_data" {
-      type      = "host"
-      read_only = false
-      source    = "mongodb_data"
     }
   }
 }

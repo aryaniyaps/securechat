@@ -27,6 +27,8 @@ job "app" {
 
       config {
         image = "aryaniyaps/securechat:latest"
+
+        ports = ["web"]
       }
 
       env {

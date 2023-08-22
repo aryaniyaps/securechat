@@ -4,6 +4,12 @@ job "minio" {
   group "minio-group" {
     count = 1
 
+    volume "minio" {
+      type      = "host"
+      read_only = false
+      source    = "minio"
+    }
+
     network {
       mode = "bridge"
       port "web" {
@@ -24,13 +30,20 @@ job "minio" {
 
     task "minio" {
       driver = "docker"
+      // the error is most likely due to incorrect TLS config here
+      // https://github.com/bitnami/containers/issues/22216
+      user = "root"
+
+      volume_mount {
+        volume      = "minio"
+        destination = "/data"
+        read_only   = false
+      }
 
       config {
         image = "bitnami/minio:2023"
 
-        volumes = [
-          "minio_data:/data"
-        ]
+        ports = ["web"]
       }
 
       env {
@@ -44,12 +57,6 @@ job "minio" {
         cpu    = 300 # Modify based on your needs
         memory = 200 # Modify based on your needs
       }
-    }
-
-    volume "minio_data" {
-      type      = "host"
-      read_only = false
-      source    = "minio_data"
     }
   }
 }

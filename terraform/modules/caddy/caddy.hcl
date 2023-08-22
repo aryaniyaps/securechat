@@ -4,6 +4,12 @@ job "caddy" {
   group "caddy-group" {
     count = 1
 
+    volume "caddy" {
+      type      = "host"
+      read_only = false
+      source    = "caddy"
+    }
+
     network {
       mode = "bridge"
       port "http" {
@@ -29,12 +35,18 @@ job "caddy" {
     task "caddy" {
       driver = "docker"
 
+      user = "root"
+
+      volume_mount {
+        volume      = "caddy"
+        destination = "/data/caddy"
+        read_only   = false
+      }
+
       config {
         image = "aryaniyaps/securechat-caddy:latest"
 
-        volumes = [
-          "caddy_data:/data/caddy"
-        ]
+        ports = ["http", "https"]
       }
 
       env {
@@ -46,12 +58,6 @@ job "caddy" {
         cpu    = 300 # Modify based on your needs
         memory = 100 # Modify based on your needs
       }
-    }
-
-    volume "caddy_data" {
-      type      = "host"
-      read_only = false
-      source    = "caddy_data"
     }
   }
 }

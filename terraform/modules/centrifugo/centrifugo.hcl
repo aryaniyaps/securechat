@@ -27,6 +27,8 @@ job "centrifugo" {
 
       config {
         image = "aryaniyaps/securechat-centrifugo:latest"
+
+        ports = ["web"]
       }
 
       env {

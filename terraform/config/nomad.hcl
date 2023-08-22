@@ -12,15 +12,18 @@ server {
 
 client {
   enabled = true
-  host_volume "caddy_data" {
+
+  host_volume "caddy" {
     path      = "/var/lib/caddy"
     read_only = false
   }
-  host_volume "minio_data" {
+  
+  host_volume "minio" {
     path      = "/var/lib/minio"
     read_only = false
   }
-  host_volume "mongodb_data" {
+  
+  host_volume "mongodb" {
     path      = "/var/lib/mongodb"
     read_only = false
   }
