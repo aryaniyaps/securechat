@@ -100,18 +100,6 @@ resource "digitalocean_droplet" "server" {
       "sudo flock /var/lib/apt/lists/lock apt-get update",
       "sudo flock /var/lib/apt/lists/lock apt-get install -y docker-ce docker-ce-cli containerd.io",
 
-      // Create directory for CNI plugins if it doesn't exist
-      "sudo mkdir -p /opt/cni/bin",
-
-      // Download CNI plugins
-      "curl -L -o cni-plugins.tgz 'https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz'",
-
-      // Extract CNI plugins to the directory
-      "sudo tar -xvf cni-plugins.tgz -C /opt/cni/bin",
-
-      // Optionally, remove the downloaded tar file
-      "rm cni-plugins.tgz",
-
       // Setup Nomad and Consul
       "wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg",
       "echo \"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" | sudo tee /etc/apt/sources.list.d/hashicorp.list",
@@ -122,7 +110,29 @@ resource "digitalocean_droplet" "server" {
       "sudo mkdir -p /var/lib/mongodb",
       "sudo mkdir -p /var/lib/caddy",
       "sudo mkdir -p /var/lib/minio",
+
+      // Download CNI plugins
+      "curl -L -o cni-plugins.tgz 'https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz'",
+
+      // Create directory for CNI plugins if it doesn't exist
+      "sudo mkdir -p /opt/cni/bin",
+
+      // Extract CNI plugins to the directory
+      "sudo tar -xvf cni-plugins.tgz -C /opt/cni/bin",
+
+      // Optionally, remove the downloaded tar file
+      "rm cni-plugins.tgz",
+
+      // Ensure your Linux operating system distribution has been configured to allow container traffic through the bridge network to be routed via iptables. 
+      "echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables",
+      "echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables",
+      "echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables",
     ]
+  }
+
+  provisioner "file" {
+    content     = file("${path.module}/config/bridge.conf")
+    destination = "/etc/sysctl.d/bridge.conf"
   }
 
   provisioner "file" {
@@ -153,8 +163,8 @@ resource "digitalocean_droplet" "server" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo systemctl start docker",
       "sudo systemctl enable docker",
+      "sudo systemctl start docker",
       "sudo systemctl enable consul",
       "sudo systemctl start consul",
       "sudo systemctl enable nomad",
