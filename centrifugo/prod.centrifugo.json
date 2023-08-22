@@ -3,7 +3,7 @@
   "allowed_origins": [
     "https://vnadi.com"
   ],
-  "proxy_connect_endpoint": "http://app.service.consul:3000/api/centrifugo/connect",
+  "proxy_connect_endpoint": "http://app:3000/api/centrifugo/connect",
   "proxy_http_headers": [
     "Cookie"
   ],
