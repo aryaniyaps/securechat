@@ -41,7 +41,7 @@ variable "nextauth_url" {
 variable "nextauth_url_internal" {
   description = "NextAuth Internal URL"
   type        = string
-  default     = "http://app.service.consul"
+  default     = "http://app"
 }
 
 variable "google_client_id" {
@@ -87,7 +87,7 @@ variable "minio_default_buckets" {
 variable "minio_end_point" {
   description = "MinIO Endpoint"
   type        = string
-  default     = "minio.service.consul"
+  default     = "minio"
 }
 
 variable "minio_port" {
@@ -111,7 +111,7 @@ variable "minio_bucket_name" {
 variable "centrifugo_url" {
   description = "Centrifugo URL"
   type        = string
-  default     = "http://centrifugo.service.consul/api"
+  default     = "http://centrifugo/api"
 }
 
 variable "centrifugo_api_key" {

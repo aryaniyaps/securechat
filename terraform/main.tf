@@ -41,6 +41,7 @@ resource "digitalocean_droplet" "web" {
   provisioner "remote-exec" {
     inline = [
       "echo 'DIGITALOCEAN_API_TOKEN=${var.do_token}' >> /root/.env",
+      "echo 'ACME_EMAIL=${var.acme_email}' >> /root/.env",
       "echo 'DATABASE_URL=${var.database_url}' >> /root/.env",
       "echo 'NEXTAUTH_SECRET=${var.nextauth_secret}' >> /root/.env",
       "echo 'NEXTAUTH_URL=${var.nextauth_url}' >> /root/.env",
