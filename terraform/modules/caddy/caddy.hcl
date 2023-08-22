@@ -21,22 +21,6 @@ job "caddy" {
       tags = ["caddy"]
       port = "http"
 
-      check {
-        name     = "http-alive"
-        type     = "http"
-        path     = "/"
-        interval = "10s"
-        timeout  = "2s"
-      }
-
-      check {
-        name     = "https-alive"
-        type     = "tcp"
-        port     = "https"
-        interval = "10s"
-        timeout  = "2s"
-      }
-
       connect {
         sidecar_service {}
       }
@@ -45,32 +29,22 @@ job "caddy" {
     task "caddy" {
       driver = "docker"
 
-      template {
-        data = <<EOH
-        DIGITALOCEAN_API_TOKEN={{ with secret "secret/data/caddy" }}{{ .Data.data.do_token }}{{ end }}
-        ACME_EMAIL={{ with secret "secret/data/caddy" }}{{ .Data.data.acme_email }}{{ end }}
-        EOH
-
-        destination = "secrets/env"
-        env = true
-      }
-
       config {
         image = "aryaniyaps/securechat-caddy:latest"
-
-        port_map {
-          http = 80
-          https = 443
-        }
 
         volumes = [
           "caddy_data:/data/caddy"
         ]
       }
 
+      env {
+        DIGITALOCEAN_API_TOKEN = "${do_token}"
+        ACME_EMAIL = "${acme_email}"
+      }
+
       resources {
-        cpu    = 100 # Modify based on your needs
-        memory = 50 # Modify based on your needs
+        cpu    = 300 # Modify based on your needs
+        memory = 200 # Modify based on your needs
       }
     }
 

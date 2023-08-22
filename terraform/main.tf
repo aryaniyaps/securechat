@@ -6,16 +6,6 @@ provider "nomad" {
   address = "http://${digitalocean_droplet.server.ipv4_address}:4646"
 }
 
-provider "vault" {
-  address = "http://${digitalocean_droplet.server.ipv4_address}:8200"
-  token   = var.vault_token
-}
-
-resource "vault_mount" "kv" {
-  type = "kv-v2"
-  path = "secret"
-}
-
 module "app" {
   source = "./modules/app"
 
@@ -37,7 +27,6 @@ module "app" {
   centrifugo_api_key    = var.centrifugo_api_key
   providers = {
     nomad = nomad
-    vault = vault
   }
 }
 
@@ -48,7 +37,6 @@ module "caddy" {
   acme_email = var.acme_email
   providers = {
     nomad = nomad
-    vault = vault
   }
 }
 
@@ -60,7 +48,6 @@ module "centrifugo" {
   centrifugo_admin_secret   = var.centrifugo_admin_secret
   providers = {
     nomad = nomad
-    vault = vault
   }
 }
 
@@ -73,7 +60,6 @@ module "minio" {
   minio_server_url      = var.minio_server_url
   providers = {
     nomad = nomad
-    vault = vault
   }
 }
 
@@ -85,7 +71,6 @@ module "mongodb" {
   mongo_replica_set_key = var.mongo_replica_set_key
   providers = {
     nomad = nomad
-    vault = vault
   }
 }
 
@@ -94,7 +79,7 @@ resource "digitalocean_droplet" "server" {
   image    = "ubuntu-20-04-x64"
   name     = "vnadi.com"
   region   = "blr1"
-  size     = "s-1vcpu-1gb"
+  size     = "s-1vcpu-2gb"
   ssh_keys = [var.ssh_fingerprint]
 
   connection {
@@ -106,18 +91,37 @@ resource "digitalocean_droplet" "server" {
 
   provisioner "remote-exec" {
     inline = [
-      # Setup Nomad, Consul and Vault
       "export DEBIAN_FRONTEND=noninteractive",
-      "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
-      "sudo apt-add-repository \"deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
-      "sudo apt-get update && sudo apt-get install -y nomad consul vault",
-      # Setup Docker
+      "sleep 20", // wait 20 seconds
+      // Setup Docker
       "sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common",
       "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
       "UBUNTU_VERSION=$(lsb_release -cs) && echo \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_VERSION stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null",
-      "sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io",
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker"
+      "sudo flock /var/lib/apt/lists/lock apt-get update",
+      "sudo flock /var/lib/apt/lists/lock apt-get install -y docker-ce docker-ce-cli containerd.io",
+
+      // Create directory for CNI plugins if it doesn't exist
+      "sudo mkdir -p /opt/cni/bin",
+
+      // Download CNI plugins
+      "curl -L -o cni-plugins.tgz 'https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz'",
+
+      // Extract CNI plugins to the directory
+      "sudo tar -xvf cni-plugins.tgz -C /opt/cni/bin",
+
+      // Optionally, remove the downloaded tar file
+      "rm cni-plugins.tgz",
+
+      // Setup Nomad and Consul
+      "wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg",
+      "echo \"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" | sudo tee /etc/apt/sources.list.d/hashicorp.list",
+      "sudo flock /var/lib/apt/lists/lock apt-get update",
+      "sudo flock /var/lib/apt/lists/lock apt-get install -y nomad consul",
+
+      // Create Host Volume Directories,
+      "sudo mkdir -p /var/lib/mongodb",
+      "sudo mkdir -p /var/lib/caddy",
+      "sudo mkdir -p /var/lib/minio",
     ]
   }
 
@@ -131,7 +135,7 @@ resource "digitalocean_droplet" "server" {
         consul_address                = "127.0.0.1"
       }
     )
-    destination = "/etc/nomad/server.hcl"
+    destination = "/etc/nomad.d/config.hcl"
   }
 
   provisioner "file" {
@@ -147,22 +151,10 @@ resource "digitalocean_droplet" "server" {
     destination = "/etc/consul.d/config.hcl"
   }
 
-  provisioner "file" {
-    content = templatefile(
-      "${path.module}/config/vault.hcl",
-      {
-        consul_address : "127.0.0.1",
-        bind_address = "0.0.0.0",
-        api_address  = self.ipv4_address # IP of the server droplet
-      }
-    )
-    destination = "/etc/vault.d/config.hcl"
-  }
-
   provisioner "remote-exec" {
     inline = [
-      "sudo systemctl enable vault",
-      "sudo systemctl start vault",
+      "sudo systemctl start docker",
+      "sudo systemctl enable docker",
       "sudo systemctl enable consul",
       "sudo systemctl start consul",
       "sudo systemctl enable nomad",

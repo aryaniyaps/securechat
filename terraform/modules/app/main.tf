@@ -1,7 +1,7 @@
-resource "vault_generic_secret" "app" {
-  path = "secret/data/app"
+data "template_file" "app_job" {
+  template = file("${path.module}/app.hcl")
 
-  data_json = jsonencode({
+  vars = {
     database_url          = var.database_url
     nextauth_secret       = var.nextauth_secret
     nextauth_url          = var.nextauth_url
@@ -18,9 +18,9 @@ resource "vault_generic_secret" "app" {
     minio_bucket_name     = var.minio_bucket_name
     centrifugo_url        = var.centrifugo_url
     centrifugo_api_key    = var.centrifugo_api_key
-  })
+  }
 }
 
 resource "nomad_job" "app" {
-  jobspec = file("${path.module}/app.hcl")
+  jobspec = data.template_file.app_job.rendered
 }

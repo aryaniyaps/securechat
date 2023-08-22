@@ -1,13 +1,13 @@
-resource "vault_generic_secret" "mongodb" {
-  path = "secret/data/mongodb"
+data "template_file" "mongodb_job" {
+  template = file("${path.module}/mongodb.hcl")
 
-  data_json = jsonencode({
-    username        = var.mongo_user
-    password        = var.mongo_password
-    replica_set_key = var.mongo_replica_set_key
-  })
+  vars = {
+    mongo_password        = var.mongo_password
+    mongo_user            = var.mongo_user
+    mongo_replica_set_key = var.mongo_replica_set_key
+  }
 }
 
 resource "nomad_job" "mongodb" {
-  jobspec = file("${path.module}/mongodb.hcl")
+  jobspec = data.template_file.mongodb_job.rendered
 }

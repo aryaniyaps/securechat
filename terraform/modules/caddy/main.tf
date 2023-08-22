@@ -1,13 +1,13 @@
-resource "vault_generic_secret" "caddy" {
-  path = "secret/data/caddy"
+data "template_file" "caddy_job" {
+  template = file("${path.module}/caddy.hcl")
 
-  data_json = jsonencode({
+  vars = {
     do_token   = var.do_token
     acme_email = var.acme_email
-  })
+  }
 }
 
 
 resource "nomad_job" "caddy" {
-  jobspec = file("${path.module}/caddy.hcl")
+  jobspec = data.template_file.caddy_job.rendered
 }

@@ -9,11 +9,6 @@ variable "acme_email" {
   type        = string
 }
 
-variable "vault_token" {
-  description = "The token to use for Vault authentication"
-  type        = string
-}
-
 variable "ssh_fingerprint" {
   description = "SSH key fingerprint"
   type        = string
