@@ -41,7 +41,7 @@ variable "nextauth_url" {
 variable "nextauth_url_internal" {
   description = "NextAuth Internal URL"
   type        = string
-  default     = "http://app"
+  default     = "http://app:3000"
 }
 
 variable "google_client_id" {
@@ -111,7 +111,7 @@ variable "minio_bucket_name" {
 variable "centrifugo_url" {
   description = "Centrifugo URL"
   type        = string
-  default     = "http://centrifugo/api"
+  default     = "http://centrifugo:8000/api"
 }
 
 variable "centrifugo_api_key" {
