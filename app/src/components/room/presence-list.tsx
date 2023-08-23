@@ -1,4 +1,5 @@
 import { ClientInfo, PresenceResult, PresenceStatsResult } from "centrifuge";
+import pluralize from "pluralize";
 import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -41,7 +42,10 @@ export default function PresenceList({
     >
       <div className="flex items-center gap-2 px-6 text-sm font-medium">
         <Icons.users size={20} className="h-5 w-5" />
-        <p>{presenceStats.numUsers} users connected</p>
+        <p>
+          {presenceStats.numUsers} {pluralize("user", presenceStats.numUsers)}{" "}
+          connected
+        </p>
       </div>
       <Separator />
       <div className="flex flex-1 flex-col gap-6 px-6">
