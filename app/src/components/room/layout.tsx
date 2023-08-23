@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { APP_NAME } from "~/utils/constants";
+import { Icons } from "../icons";
+import { Button } from "../ui/button";
 
 export default function RoomLayout({
   children,
@@ -15,7 +17,18 @@ export default function RoomLayout({
           <Link href="/">
             <h1 className="font-semibold">{APP_NAME}</h1>
           </Link>
-          {title}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.toString());
+              }}
+            >
+              <Icons.copy size={20} className="h-5 w-5" />
+            </Button>
+
+            <p className="font-semibold">{title}</p>
+          </div>
         </div>
       </div>
       <div className="flex flex-1 overflow-y-hidden py-6">
