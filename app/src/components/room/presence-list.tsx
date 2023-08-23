@@ -22,7 +22,7 @@ export default function PresenceList({
   if (!presence || !presenceStats) {
     return (
       <div
-        className="flex w-64 flex-col gap-6 py-6 pb-6"
+        className="hidden w-64 flex-col gap-6 py-6 pb-6 md:flex"
         data-testid="presence-list"
       >
         <div className="flex items-center gap-2 px-6 text-sm font-medium">
@@ -37,7 +37,7 @@ export default function PresenceList({
 
   return (
     <div
-      className="flex w-64 flex-col gap-6 py-6 pb-6"
+      className="hidden w-64 flex-col gap-6 py-6 pb-6 md:flex"
       data-testid="presence-list"
     >
       <div className="flex items-center gap-2 px-6 text-sm font-medium">

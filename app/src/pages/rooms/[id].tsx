@@ -134,7 +134,7 @@ function RoomPage({
             <MessageList roomId={room.id} />
             <MessageController roomId={room.id} />
           </div>
-          <Separator orientation="vertical" />
+          <Separator className="hidden md:block" orientation="vertical" />
           <PresenceList presence={presence} presenceStats={presenceStats} />
         </div>
       </RoomLayout>
