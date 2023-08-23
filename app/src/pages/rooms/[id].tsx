@@ -6,8 +6,8 @@ import {
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect } from "react";
-import HomeLayout from "~/components/home/layout";
 import LoadingScreen from "~/components/loading-screen";
+import RoomLayout from "~/components/room/layout";
 import MessageController from "~/components/room/message-controller";
 import MessageList from "~/components/room/message-list";
 import { withAuth } from "~/components/with-auth";
@@ -104,13 +104,13 @@ function RoomPage({
         </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <HomeLayout title={room.name} session={session}>
+      <RoomLayout title={room.name}>
         {/* TODO: add edit button here if user is owner */}
         <div className="flex min-h-full min-w-full flex-col gap-8 px-4">
           <MessageList roomId={room.id} />
           <MessageController roomId={room.id} />
         </div>
-      </HomeLayout>
+      </RoomLayout>
     </>
   );
 }

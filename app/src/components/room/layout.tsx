@@ -1,14 +1,12 @@
-import { type Session } from "next-auth";
 import Link from "next/link";
 import { APP_NAME } from "~/utils/constants";
-import UserNav from "./user-nav";
 
-export default function HomeLayout({
+export default function RoomLayout({
   children,
-  session,
+  title,
 }: {
   children: React.ReactNode;
-  session: Session;
+  title: string;
 }) {
   return (
     <main className="flex h-full w-full flex-col">
@@ -17,7 +15,7 @@ export default function HomeLayout({
           <Link href="/">
             <h1 className="font-semibold">{APP_NAME}</h1>
           </Link>
-          <UserNav session={session} />
+          {title}
         </div>
       </div>
       <div className="flex flex-1 overflow-y-hidden py-6">

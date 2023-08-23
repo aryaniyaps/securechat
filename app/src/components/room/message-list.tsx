@@ -105,29 +105,37 @@ export default function MessageList({ roomId }: { roomId: string }) {
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
             page.items.map((message) => (
-              <div key={message.id} className="flex w-full flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-4 w-4">
-                    <AvatarImage
-                      src={getAvatarUrl(
-                        message.owner.image,
-                        message.owner.username
-                      )}
-                      loading="eager"
-                      alt={message.owner.name || message.owner.username}
-                    />
-                    <AvatarFallback>
-                      {(message.owner.name || message.owner.username).slice(
-                        0,
-                        2
-                      )}
-                    </AvatarFallback>
-                  </Avatar>
-                  <h3 className="text-xs font-medium text-primary">
-                    {message.owner.name || message.owner.username}
-                  </h3>
+              <div key={message.id} className="flex w-full gap-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={getAvatarUrl(
+                      message.owner.image,
+                      message.owner.username
+                    )}
+                    loading="eager"
+                    alt={message.owner.name || message.owner.username}
+                  />
+                  <AvatarFallback>
+                    {(message.owner.name || message.owner.username).slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <h3 className="text-xs font-semibold text-primary">
+                      {message.owner.name || message.owner.username}
+                    </h3>
+                    <p className="text-xs font-thin">
+                      {new Date(message.createdAt).toLocaleString(undefined, {
+                        month: "2-digit",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </p>
+                  </div>
+                  <p>{message.content}</p>
                 </div>
-                <p>{message.content}</p>
               </div>
             ))
           )}
