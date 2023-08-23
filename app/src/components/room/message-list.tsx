@@ -4,6 +4,11 @@ import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 
 const SCROLL_THRESHOLD = 250;
 
@@ -87,7 +92,7 @@ export default function MessageList({ roomId }: { roomId: string }) {
     >
       <div
         ref={scrollContainerRef}
-        className="flex w-full flex-col-reverse gap-8 overflow-y-auto"
+        className="flex w-full flex-col-reverse gap-10 overflow-y-auto"
         onScroll={handleScroll}
       >
         {/* Add this Button component right below the main div */}
@@ -105,7 +110,7 @@ export default function MessageList({ roomId }: { roomId: string }) {
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
             page.items.map((message) => (
-              <div key={message.id} className="flex w-full gap-2">
+              <div key={message.id} className="flex w-full gap-4">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
                     src={getAvatarUrl(
@@ -119,11 +124,71 @@ export default function MessageList({ roomId }: { roomId: string }) {
                     {(message.owner.name || message.owner.username).slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
+
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2">
-                    <h3 className="text-xs font-semibold text-primary">
-                      {message.owner.name || message.owner.username}
-                    </h3>
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <h3 className="text-xs font-semibold text-primary">
+                          {message.owner.name || message.owner.username}
+                        </h3>
+                      </HoverCardTrigger>
+                      <HoverCardContent side="right">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-16 w-16">
+                            <AvatarImage
+                              src={getAvatarUrl(
+                                message.owner.image,
+                                message.owner.username
+                              )}
+                              loading="eager"
+                              alt={message.owner.name || message.owner.username}
+                            />
+                            <AvatarFallback>
+                              {(
+                                message.owner.name || message.owner.username
+                              ).slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          {message.owner.name ? (
+                            <div className="space-y-1">
+                              <h4 className="text-sm font-bold">
+                                {message.owner.name}
+                              </h4>
+                              <p className="text-sm font-semibold">
+                                @{message.owner.username}
+                              </p>
+                              <p className="text-xs font-thin">
+                                Joined on{" "}
+                                {new Date(
+                                  message.owner.createdAt
+                                ).toLocaleString(undefined, {
+                                  day: "numeric",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="space-y-1">
+                              <h4 className="text-sm font-semibold">
+                                @{message.owner.username}
+                              </h4>
+                              <p className="text-xs font-thin">
+                                Joined on{" "}
+                                {new Date(
+                                  message.owner.createdAt
+                                ).toLocaleString(undefined, {
+                                  day: "numeric",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
                     <p className="text-xs font-thin">
                       {new Date(message.createdAt).toLocaleString(undefined, {
                         month: "2-digit",

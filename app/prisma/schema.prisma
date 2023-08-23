@@ -52,6 +52,10 @@ model Account {
     scope             String?
     id_token          String? @db.String
     session_state     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     user              User    @relation(fields: [userId], references: [id])
 
     @@unique([provider, providerAccountId])
@@ -76,6 +80,9 @@ model User {
     emailChange       String?
     emailChangeToken  String?
     emailChangeSentAt DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     accounts Account[]
     sessions Session[]

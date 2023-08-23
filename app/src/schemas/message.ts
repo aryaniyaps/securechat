@@ -11,6 +11,7 @@ export const messageSchema = z.object({
     name: z.string().nullish(),
     username: z.string(),
     image: z.string().nullable(),
+    createdAt: z.date(),
   }),
 });
 
