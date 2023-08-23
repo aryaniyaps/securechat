@@ -17,17 +17,17 @@ export default function RoomLayout({
           <Link href="/">
             <h1 className="font-semibold">{APP_NAME}</h1>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            <p className="font-semibold">{title}</p>
             <Button
               variant="ghost"
+              aria-label="Copy Room URL"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.toString());
               }}
             >
               <Icons.copy size={20} className="h-5 w-5" />
             </Button>
-
-            <p className="font-semibold">{title}</p>
           </div>
         </div>
       </div>

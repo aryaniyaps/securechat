@@ -82,7 +82,7 @@ export default function MessageList({ roomId }: { roomId: string }) {
 
   return (
     <div
-      className="relative flex flex-grow justify-end overflow-y-auto"
+      className="relative flex flex-grow overflow-y-hidden"
       data-testid="message-list"
     >
       <div
