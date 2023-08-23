@@ -1,15 +1,21 @@
-import { type Subscription } from "centrifuge";
+import {
+  PresenceResult,
+  PresenceStatsResult,
+  type Subscription,
+} from "centrifuge";
 import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
 } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LoadingScreen from "~/components/loading-screen";
 import RoomLayout from "~/components/room/layout";
 import MessageController from "~/components/room/message-controller";
 import MessageList from "~/components/room/message-list";
+import PresenceList from "~/components/room/presence-list";
+import { Separator } from "~/components/ui/separator";
 import { withAuth } from "~/components/with-auth";
 import { useRoom } from "~/hooks/use-room";
 import { type Message } from "~/schemas/message";
@@ -22,6 +28,10 @@ function RoomPage({
   id,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const utils = api.useContext();
+
+  const [presence, setPresence] = useState<PresenceResult | null>(null);
+  const [presenceStats, setPresenceStats] =
+    useState<PresenceStatsResult | null>(null);
 
   const { data: session } = useSession();
 
@@ -40,6 +50,17 @@ function RoomPage({
 
   useEffect(() => {
     let sub: Subscription | null;
+
+    async function getPresence(sub: Subscription) {
+      const presence = await sub.presence();
+      setPresence(presence);
+    }
+
+    async function getPresenceStats(sub: Subscription) {
+      const presenceStats = await sub.presenceStats();
+      setPresenceStats(presenceStats);
+    }
+
     if (roomId) {
       sub = centrifuge.getSubscription(`rooms:${roomId}`);
       if (sub === null) {
@@ -80,12 +101,15 @@ function RoomPage({
 
       centrifuge.connect();
 
+      void getPresence(sub);
+      void getPresenceStats(sub);
       // Unsubscribe when the component unmounts
       return () => {
         if (sub) {
           sub.unsubscribe();
         }
         centrifuge.disconnect();
+        setPresence(null);
         setRoomId(null);
       };
     }
@@ -105,9 +129,13 @@ function RoomPage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <RoomLayout title={room.name}>
-        <div className="mx-auto flex max-w-7xl flex-1 flex-col gap-8 px-4">
-          <MessageList roomId={room.id} />
-          <MessageController roomId={room.id} />
+        <div className="mx-auto flex max-w-7xl flex-1 px-4">
+          <div className="flex flex-1 flex-col gap-8 pb-6 pr-6">
+            <MessageList roomId={room.id} />
+            <MessageController roomId={room.id} />
+          </div>
+          <Separator orientation="vertical" />
+          <PresenceList presence={presence} presenceStats={presenceStats} />
         </div>
       </RoomLayout>
     </>

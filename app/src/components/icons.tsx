@@ -26,6 +26,7 @@ import {
   Trash,
   Twitter,
   User,
+  Users,
   X,
   type Icon as LucideIcon,
   type LucideProps,
@@ -47,6 +48,7 @@ export const Icons = {
       <circle cx="12" cy="12" r="10"></circle>
     </svg>
   ),
+  users: Users,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

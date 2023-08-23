@@ -15,6 +15,7 @@ export default async function handler(
           image: session.user.image,
           name: session.user.name,
           username: session.user.username,
+          createdAt: session.user.createdAt,
         },
       },
     });

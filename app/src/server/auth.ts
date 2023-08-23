@@ -37,6 +37,7 @@ declare module "next-auth" {
       image: string | null;
       emailVerified: Date | null;
       username: string;
+      createdAt: Date;
     } & DefaultSession["user"];
   }
 
@@ -47,6 +48,7 @@ declare module "next-auth" {
     image: string | null;
     emailVerified: Date | null;
     username: string;
+    createdAt: Date;
   }
 }
 
@@ -64,6 +66,7 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
         emailVerified: user.emailVerified,
         username: user.username,
+        createdAt: user.createdAt,
       },
     }),
   },
@@ -101,7 +104,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
     verifyRequest: "/auth/verify-request",
     signOut: "/auth/signout",
-    error: "/auth/error"
+    error: "/auth/error",
   },
 };
 

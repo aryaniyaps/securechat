@@ -51,8 +51,9 @@ export default function MessageController({ roomId }: { roomId: string }) {
           )}
         />
         <Button
-          variant="ghost"
+          variant="secondary"
           type="submit"
+          className="py-6"
           disabled={!form.formState.isValid}
         >
           <Icons.send size={20} className="h-4 w-4" />
