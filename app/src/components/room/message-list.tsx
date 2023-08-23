@@ -82,12 +82,12 @@ export default function MessageList({ roomId }: { roomId: string }) {
 
   return (
     <div
-      className="relative flex flex-grow overflow-y-hidden"
+      className="relative flex flex-1 overflow-hidden"
       data-testid="message-list"
     >
       <div
         ref={scrollContainerRef}
-        className="flex flex-grow flex-col-reverse gap-8 overflow-y-auto"
+        className="flex w-full flex-col-reverse gap-8 overflow-y-auto"
         onScroll={handleScroll}
       >
         {/* Add this Button component right below the main div */}
@@ -134,7 +134,9 @@ export default function MessageList({ roomId }: { roomId: string }) {
                       })}
                     </p>
                   </div>
-                  <p>{message.content}</p>
+                  <p className="whitespace-normal break-all">
+                    {message.content}
+                  </p>
                 </div>
               </div>
             ))

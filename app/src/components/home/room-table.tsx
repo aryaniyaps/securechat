@@ -21,6 +21,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -253,12 +254,15 @@ export default function RoomTable({ session }: { session: Session }) {
             </TableRow>
           ))}
         </TableBody>
+
+        {hasNextPage && (
+          <TableCaption>
+            <Button variant="link" onClick={() => fetchNextPage()}>
+              Load More
+            </Button>
+          </TableCaption>
+        )}
       </Table>
-      {hasNextPage && (
-        <Button variant="link" onClick={() => fetchNextPage()}>
-          Load More
-        </Button>
-      )}
     </>
   ) : (
     <div className="w-full text-center" data-testid="room-table">

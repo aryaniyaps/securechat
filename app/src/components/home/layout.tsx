@@ -20,11 +20,7 @@ export default function HomeLayout({
           <UserNav session={session} />
         </div>
       </div>
-      <div className="flex flex-1 overflow-y-hidden py-6">
-        <div className="mx-auto flex max-w-7xl flex-1">
-          <div className="flex flex-1">{children}</div>
-        </div>
-      </div>
+      <div className="flex flex-grow overflow-hidden py-6">{children}</div>
     </main>
   );
 }

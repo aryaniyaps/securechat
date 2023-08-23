@@ -81,8 +81,9 @@
   body,
   #__next {
     @apply min-h-screen;
-    @apply w-full h-full;
-    @apply overflow-hidden;
+    @apply h-full w-full;
+    @apply overflow-x-hidden;
+    @apply whitespace-normal;
   }
 
   /* Custom Scrollbar Styles */
@@ -97,7 +98,7 @@
   ::-webkit-scrollbar-thumb {
     @apply bg-secondary;
     @apply rounded-xl;
-    @apply border-transparent border-solid border-4;
+    @apply border-4 border-solid border-transparent;
     @apply bg-clip-padding;
   }
 }

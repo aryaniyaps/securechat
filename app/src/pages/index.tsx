@@ -24,9 +24,8 @@ function HomePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HomeLayout session={session}>
-        {/* Render your rooms here */}
         <SearchProvider>
-          <div className="flex flex-1 flex-col gap-6 px-2">
+          <div className="mx-auto flex max-w-7xl flex-1 flex-col gap-6 px-4">
             <div className="flex justify-between gap-4">
               <SearchBar />
               <RoomController />

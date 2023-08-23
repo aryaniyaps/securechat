@@ -105,8 +105,7 @@ function RoomPage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <RoomLayout title={room.name}>
-        {/* TODO: add edit button here if user is owner */}
-        <div className="flex flex-1 flex-col gap-8 px-4">
+        <div className="mx-auto flex max-w-7xl flex-1 flex-col gap-8 px-4">
           <MessageList roomId={room.id} />
           <MessageController roomId={room.id} />
         </div>
