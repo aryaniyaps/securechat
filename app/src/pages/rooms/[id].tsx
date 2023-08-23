@@ -130,7 +130,7 @@ function RoomPage({
       </Head>
       <RoomLayout title={room.name}>
         <div className="mx-auto flex max-w-7xl flex-1 px-4">
-          <div className="flex flex-1 flex-col gap-8 pb-6 pr-6">
+          <div className="flex flex-1 flex-col gap-8 py-6 pr-6">
             <MessageList roomId={room.id} />
             <MessageController roomId={room.id} />
           </div>
