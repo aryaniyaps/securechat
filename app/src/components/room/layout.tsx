@@ -31,7 +31,7 @@ export default function RoomLayout({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 overflow-y-hidden py-6">
+      <div className="flex flex-grow overflow-y-hidden py-6">
         <div className="mx-auto flex max-w-7xl flex-1">
           <div className="flex flex-1">{children}</div>
         </div>

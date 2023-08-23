@@ -48,6 +48,8 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.45.0",
     "react-image-crop": "^10.1.5",
+    "slate": "^0.94.1",
+    "slate-react": "^0.98.1",
     "superjson": "1.12.2",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
