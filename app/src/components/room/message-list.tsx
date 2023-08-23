@@ -111,25 +111,29 @@ export default function MessageList({ roomId }: { roomId: string }) {
           messagesPages.pages.flatMap((page) =>
             page.items.map((message) => (
               <div key={message.id} className="flex w-full gap-4">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={getAvatarUrl(
-                      message.owner.image,
-                      message.owner.username
-                    )}
-                    loading="eager"
-                    alt={message.owner.name || message.owner.username}
-                  />
-                  <AvatarFallback>
-                    {(message.owner.name || message.owner.username).slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <HoverCard>
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={getAvatarUrl(
+                          message.owner.image,
+                          message.owner.username
+                        )}
+                        loading="eager"
+                        alt={message.owner.name || message.owner.username}
+                      />
+                      <AvatarFallback>
+                        {(message.owner.name || message.owner.username).slice(
+                          0,
+                          2
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                  </HoverCardTrigger>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
                       <HoverCardTrigger asChild>
-                        <h3 className="text-xs font-semibold text-primary">
+                        <h3 className="text-xs font-semibold text-primary hover:cursor-default">
                           {message.owner.name || message.owner.username}
                         </h3>
                       </HoverCardTrigger>
@@ -151,7 +155,7 @@ export default function MessageList({ roomId }: { roomId: string }) {
                             </AvatarFallback>
                           </Avatar>
                           {message.owner.name ? (
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                               <h4 className="text-sm font-bold">
                                 {message.owner.name}
                               </h4>
@@ -170,7 +174,7 @@ export default function MessageList({ roomId }: { roomId: string }) {
                               </p>
                             </div>
                           ) : (
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                               <h4 className="text-sm font-semibold">
                                 @{message.owner.username}
                               </h4>
@@ -188,21 +192,21 @@ export default function MessageList({ roomId }: { roomId: string }) {
                           )}
                         </div>
                       </HoverCardContent>
-                    </HoverCard>
-                    <p className="text-xs font-thin">
-                      {new Date(message.createdAt).toLocaleString(undefined, {
-                        month: "2-digit",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
+                      <p className="text-xs font-thin">
+                        {new Date(message.createdAt).toLocaleString(undefined, {
+                          month: "2-digit",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </p>
+                    </div>
+                    <p className="whitespace-normal break-all">
+                      {message.content}
                     </p>
                   </div>
-                  <p className="whitespace-normal break-all">
-                    {message.content}
-                  </p>
-                </div>
+                </HoverCard>
               </div>
             ))
           )}
