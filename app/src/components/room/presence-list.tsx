@@ -1,5 +1,6 @@
-import { ClientInfo, PresenceResult, PresenceStatsResult } from "centrifuge";
+import { ClientInfo } from "centrifuge";
 import pluralize from "pluralize";
+import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -12,17 +13,13 @@ interface ConnInfo {
   createdAt: Date;
 }
 
-export default function PresenceList({
-  presence,
-  presenceStats,
-}: {
-  presence: PresenceResult | null;
-  presenceStats: PresenceStatsResult | null;
-}) {
-  if (!presence || !presenceStats) {
+export default function PresenceList() {
+  const roomStore = useCurrentRoomStore();
+
+  if (!roomStore.presence || !roomStore.presenceStats) {
     return (
       <div
-        className="hidden w-64 flex-col gap-6 py-6 pb-6 md:flex"
+        className="flex w-full flex-col gap-6 py-6 pb-6 "
         data-testid="presence-list"
       >
         <div className="flex items-center gap-2 px-6 text-sm font-medium">
@@ -37,19 +34,19 @@ export default function PresenceList({
 
   return (
     <div
-      className="hidden w-64 flex-col gap-6 py-6 pb-6 md:flex"
+      className="flex w-full flex-col gap-6 py-6 pb-6"
       data-testid="presence-list"
     >
       <div className="flex items-center gap-2 px-6 text-sm font-medium">
         <Icons.users size={20} className="h-5 w-5" />
         <p>
-          {presenceStats.numUsers} {pluralize("user", presenceStats.numUsers)}{" "}
-          connected
+          {roomStore.presenceStats.numUsers}{" "}
+          {pluralize("user", roomStore.presenceStats.numUsers)} connected
         </p>
       </div>
       <Separator />
       <div className="flex flex-1 flex-col gap-6 px-6">
-        {Object.entries(presence.clients).map(
+        {Object.entries(roomStore.presence.clients).map(
           ([key, clientInfo]: [string, ClientInfo]) => {
             const user = clientInfo.connInfo as ConnInfo;
             return (

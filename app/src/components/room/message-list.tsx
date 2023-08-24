@@ -99,10 +99,10 @@ export default function MessageList({ roomId }: { roomId: string }) {
         {showScrollButton && (
           <Button
             variant="secondary"
-            className="absolute bottom-0 right-0 mb-4 mr-8"
+            className="absolute bottom-10 right-10"
             onClick={scrollBottom}
           >
-            <Icons.arrowDown size={20} className="h-4 w-4" />
+            <Icons.arrowDown size={20} className="h-5 w-5" />
           </Button>
         )}
 
