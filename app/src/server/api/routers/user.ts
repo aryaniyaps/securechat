@@ -7,6 +7,26 @@ import { email } from "~/server/config/email";
 import { minioClient } from "~/server/config/minio";
 
 export const userRouter = createTRPCRouter({
+  createAvatarPresignedUrl: protectedProcedure
+    .input(z.object({ contentType: z.string() }))
+    .output(z.object({ preSignedUrl: z.string(), fileName: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { contentType } = input;
+
+      const extension = contentType.split("/")[1] || "jpg"; // defaults to jpg;
+
+      const fileName = `${ctx.session.user.id}/avatar-${nanoid(
+        6
+      )}.${extension}`;
+
+      const preSignedUrl = await minioClient.presignedPutObject(
+        env.MINIO_BUCKET_NAME,
+        fileName,
+        24 * 60 * 60
+      );
+
+      return { preSignedUrl, fileName };
+    }),
   uploadAvatar: protectedProcedure
     .input(
       z.object({

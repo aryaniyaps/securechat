@@ -53,7 +53,8 @@ export default function ProfileForm({ session }: { session: Session }) {
     },
   });
 
-  const uploadAvatar = api.user.uploadAvatar.useMutation();
+  const createAvatarPresignedUrl =
+    api.user.createAvatarPresignedUrl.useMutation();
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -66,30 +67,33 @@ export default function ProfileForm({ session }: { session: Session }) {
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     try {
       if (values.avatar) {
-        // convert file to base64 or another format that can be sent via JSON
-        const fileType = values.avatar.type;
-        const reader = new FileReader();
-        reader.readAsDataURL(values.avatar);
-        reader.onloadend = async function () {
-          const base64data = reader.result as string;
-          // Remove data URL scheme
-          const base64Index = base64data.indexOf("base64,") + "base64,".length;
-          // upload avatar here
-          const image = await uploadAvatar.mutateAsync({
-            avatar: base64data.substring(base64Index),
-            fileType: fileType,
+        // presignedUrl is created with minio:9000 (local docker network)
+        // instead of minio.localhost
+
+        // try some other open source fileserver which isnt necessarily compatible
+        // with amazon s3. that would work better for us (ceph, storj, riak s2 etc)
+        const { preSignedUrl, fileName } =
+          await createAvatarPresignedUrl.mutateAsync({
+            contentType: values.avatar.type,
           });
-          await updateUser.mutateAsync({
-            username: values.username,
-            name: values.name,
-            image: image,
-          });
-        };
+
+        await fetch(preSignedUrl, {
+          method: "PUT",
+          body: values.avatar,
+          headers: {
+            "Content-Type": values.avatar.type,
+          },
+        });
+        await updateUser.mutateAsync({
+          username: values.username,
+          name: values.name,
+          image: fileName,
+        });
       } else {
         await updateUser.mutateAsync({
           username: values.username,
           name: values.name,
-        });     
+        });
       }
 
       form.reset({ username: values.username, name: values.name });
@@ -98,12 +102,18 @@ export default function ProfileForm({ session }: { session: Session }) {
         description: "Your user profile is updated!",
       });
     } catch (err) {
-      // TODO: get a better way to check if error is on the username field
-      if (err instanceof TRPCClientError && err.message.includes("Username")) {
-        form.setError("username", {
-          type: "manual",
-          message: err.message,
-        });
+      if (err instanceof TRPCClientError) {
+        if (err.message.includes("Username")) {
+          form.setError("username", {
+            type: "manual",
+            message: err.message,
+          });
+        } else {
+          toast({
+            description: err.message,
+            variant: "destructive",
+          });
+        }
       }
     }
   }
