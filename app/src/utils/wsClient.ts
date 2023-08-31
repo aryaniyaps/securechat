@@ -1,3 +1,3 @@
 import { io } from "socket.io-client";
 
-export const wsClient = io();
+export const wsClient = io({path: "/gateway"});

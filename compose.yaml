@@ -14,7 +14,7 @@ services:
     depends_on:
       - app
       - minio
-      - centrifugo
+      - ws-server
 
   minio:
     image: bitnami/minio:2023
@@ -69,18 +69,7 @@ services:
     depends_on:
       - mongodb
       - minio
-      - centrifugo
-
-  centrifugo:
-    image: aryaniyaps/securechat-centrifugo:latest
-    environment:
-      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
-      CENTRIFUGO_ADMIN_PASSWORD: ${CENTRIFUGO_ADMIN_PASSWORD}
-      CENTRIFUGO_ADMIN_SECRET: ${CENTRIFUGO_ADMIN_SECRET}
-    ulimits:
-      nofile:
-        soft: 65535
-        hard: 65535
+      - ws-server
 
   ws-server:
     image: aryaniyaps/securechat-ws-server:latest

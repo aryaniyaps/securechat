@@ -108,28 +108,10 @@ variable "minio_bucket_name" {
   default     = "avatars"
 }
 
-variable "centrifugo_url" {
-  description = "Centrifugo URL"
+variable "ws_server_url" {
+  description = "WS Server URL"
   type        = string
-  default     = "http://centrifugo:8000/api"
-}
-
-variable "centrifugo_api_key" {
-  description = "Centrifugo API Key"
-  type        = string
-  sensitive   = true
-}
-
-variable "centrifugo_admin_password" {
-  description = "Centrifugo Admin Password"
-  type        = string
-  sensitive   = true
-}
-
-variable "centrifugo_admin_secret" {
-  description = "Centrifugo Admin Secret"
-  type        = string
-  sensitive   = true
+  default     = "http://ws-server:5000"
 }
 
 variable "mongo_password" {

@@ -17,10 +17,10 @@ import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
-import { type Message } from "~/schemas/message";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
+import { wsClient } from "~/utils/wsClient";
 
 function RoomPage({
   id,
@@ -38,43 +38,41 @@ function RoomPage({
     { refetchOnMount: false }
   );
 
-  const { setRoom, clearRoom, initialize } = useCurrentRoomStore();
-
-  async function eventHandler(ctx: {
-    data: { type: string; payload: Message };
-  }) {
-    switch (ctx.data.type) {
-      case "message:create":
-        const newMessage = ctx.data.payload;
-        await utils.message.getAll.cancel();
-
-        utils.message.getAll.setInfiniteData(
-          { limit: 10, roomId: id },
-          (oldData) => {
-            if (oldData == null || oldData.pages[0] == null) return;
-            return {
-              ...oldData,
-              pages: [
-                {
-                  ...oldData.pages[0],
-                  items: [newMessage, ...oldData.pages[0].items],
-                },
-                ...oldData.pages.slice(1),
-              ],
-            };
-          }
-        );
-        break;
-    }
-  }
+  const { setRoom, clearRoom } = useCurrentRoomStore();
 
   useEffect(() => {
-    initialize(eventHandler);
     void setRoom(id);
+
+    wsClient.onAny((data) => {
+      console.log("EVENT RECEIVED", data);
+    });
+
+    wsClient.on("create-message", async (newMessage) => {
+      console.log("NEW MESSAGE ARRIVED");
+      await utils.message.getAll.cancel();
+
+      utils.message.getAll.setInfiniteData(
+        { limit: 10, roomId: id },
+        (oldData) => {
+          if (oldData == null || oldData.pages[0] == null) return;
+          return {
+            ...oldData,
+            pages: [
+              {
+                ...oldData.pages[0],
+                items: [newMessage, ...oldData.pages[0].items],
+              },
+              ...oldData.pages.slice(1),
+            ],
+          };
+        }
+      );
+    });
 
     // cleanup when the component unmounts
     return () => {
       clearRoom();
+      wsClient.off("create-message");
     };
   }, [id]);
 

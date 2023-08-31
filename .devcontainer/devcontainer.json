@@ -9,7 +9,7 @@
         27017,
         9000,
         9001,
-        8000,
+        5000,
         1025,
         8025
     ],
@@ -29,8 +29,8 @@
         "9001": {
             "label": "MinIO Console"
         },
-        "8000": {
-            "label": "Centrifugo Server"
+        "5000": {
+            "label": "WS Server"
         },
         "1025": {
             "label": "MailHog SMTP Port"
@@ -50,6 +50,7 @@
             },
             "extensions": [
                 "donjayamanne.git-extension-pack",
+                "github.vscode-github-actions",
                 "mikestead.dotenv",
                 "mutantdino.resourcemonitor",
                 "ms-azuretools.vscode-docker",

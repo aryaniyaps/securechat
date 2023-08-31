@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { centrifugeApi } from "~/server/config/centrifugo";
 import { wsServerApi } from "~/server/config/wsServer";
 
 export const messageRouter = createTRPCRouter({
@@ -87,13 +86,6 @@ export const messageRouter = createTRPCRouter({
         payload: message,
         roomId: input.roomId,
       });
-      await centrifugeApi.post("/publish", {
-        channel: `rooms:${input.roomId}`,
-        data: {
-          type: "message:create",
-          payload: message,
-        },
-      });
 
       return message;
     }),
@@ -135,13 +127,6 @@ export const messageRouter = createTRPCRouter({
         type: "DELETE_MESSAGE",
         payload: message,
         roomId: message.roomId,
-      });
-      await centrifugeApi.post("/publish", {
-        channel: `rooms:${message.roomId}`,
-        data: {
-          type: "message:delete",
-          payload: message,
-        },
       });
     }),
 });

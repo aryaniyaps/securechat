@@ -11,36 +11,33 @@ const io = new Server(httpServer, { serveClient: false });
 
 io.on("connection", (socket) => {
   console.log(`New connection: ${socket.id}`);
-  socket.on("rooms:join", (room) => {
-    console.log(`Socket ${socket.id} joining room ${room}`);
-    socket.join(room);
+  socket.on("rooms:join", (roomId) => {
+    console.log(`Socket ${socket.id} joining room ${roomId}`);
+    socket.join(`rooms:${roomId}`);
   });
 
-  socket.on("rooms:leave", (room) => {
-    console.log(`Socket ${socket.id} leaving room ${room}`);
-    socket.leave(room);
+  socket.on("rooms:leave", (roomId) => {
+    console.log(`Socket ${socket.id} leaving room ${roomId}`);
+    socket.leave(`rooms:${roomId}`);
   });
 });
 
 // Add an endpoint to handle broadcasting messages
-app.post(
-  "/broadcast-event",
-  function broadcastEvent(req: Request, res: Response) {
-    const { type, payload, roomId } = req.body;
+app.post("/broadcast-event", (req: Request, res: Response) => {
+  const { type, payload, roomId } = req.body;
 
-    switch (type) {
-      case "CREATE_MESSAGE":
-        io.to(`rooms:${roomId}`).emit("create-message", payload);
-        break;
-      case "DELETE_MESSAGE":
-        io.to(`rooms:${roomId}`).emit("delete-message", payload);
-        break;
-      default:
-        break;
-    }
-
-    res.sendStatus(200);
+  switch (type) {
+    case "CREATE_MESSAGE":
+      io.to(`rooms:${roomId}`).emit("create-message", payload);
+      break;
+    case "DELETE_MESSAGE":
+      io.to(`rooms:${roomId}`).emit("delete-message", payload);
+      break;
+    default:
+      break;
   }
-);
+
+  res.sendStatus(200);
+});
 
 httpServer.listen(5000);

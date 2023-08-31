@@ -43,10 +43,6 @@ ARG MINIO_PORT
 ARG MINIO_USE_SSL
 ARG MINIO_BUCKET_NAME
 
-# Centrifugo Configuration
-ARG CENTRIFUGO_URL
-ARG CENTRIFUGO_API_KEY
-
 # WS Server Configuration
 ARG WS_SERVER_URL
 
@@ -54,10 +50,6 @@ ARG NEXT_PUBLIC_SITE_URL
 # MINIO Public Information
 ARG NEXT_PUBLIC_MINIO_ENDPOINT
 ARG NEXT_PUBLIC_MINIO_BUCKET
-# Centrifugo Public Information
-ARG NEXT_PUBLIC_CENTRIFUGO_URL
-# WS Server Public Information
-ARG NEXT_PUBLIC_WS_SERVER_URL
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
