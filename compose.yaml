@@ -82,6 +82,9 @@ services:
         soft: 65535
         hard: 65535
 
+  ws-server:
+    image: aryaniyaps/securechat-ws-server:latest
+
 volumes:
   minio_data:
     driver: local

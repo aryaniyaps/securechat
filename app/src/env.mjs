@@ -44,6 +44,7 @@ export const env = createEnv({
     MINIO_BUCKET_NAME: z.string().min(1),
     CENTRIFUGO_URL: z.string().min(1),
     CENTRIFUGO_API_KEY: z.string().min(1),
+    WS_SERVER_URL: z.string().min(1),
   },
 
   /**
@@ -56,6 +57,7 @@ export const env = createEnv({
     NEXT_PUBLIC_MINIO_ENDPOINT: z.string().min(1),
     NEXT_PUBLIC_MINIO_BUCKET: z.string().min(1),
     NEXT_PUBLIC_CENTRIFUGO_URL: z.string().min(1),
+    NEXT_PUBLIC_WS_SERVER_URL: z.string().min(1),
   },
 
   /**
@@ -80,9 +82,11 @@ export const env = createEnv({
     MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME,
     CENTRIFUGO_URL: process.env.CENTRIFUGO_URL,
     CENTRIFUGO_API_KEY: process.env.CENTRIFUGO_API_KEY,
+    WS_SERVER_URL: process.env.WS_SERVER_URL,
     NEXT_PUBLIC_MINIO_ENDPOINT: process.env.NEXT_PUBLIC_MINIO_ENDPOINT,
     NEXT_PUBLIC_MINIO_BUCKET: process.env.NEXT_PUBLIC_MINIO_BUCKET,
     NEXT_PUBLIC_CENTRIFUGO_URL: process.env.NEXT_PUBLIC_CENTRIFUGO_URL,
+    NEXT_PUBLIC_WS_SERVER_URL: process.env.NEXT_PUBLIC_WS_SERVER_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

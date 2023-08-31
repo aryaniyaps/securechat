@@ -60,6 +60,8 @@ services:
         NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
         # Centrifugo Public Information
         NEXT_PUBLIC_CENTRIFUGO_URL: ${NEXT_PUBLIC_CENTRIFUGO_URL}
+        # WS Server Public information
+        NEXT_PUBLIC_WS_SERVER_URL: ${NEXT_PUBLIC_WS_SERVER_URL}
     working_dir: /workspace/app
     volumes:
       - ../:/workspace:cached
@@ -93,6 +95,9 @@ services:
       # Centrifugo Configuration
       CENTRIFUGO_URL: ${CENTRIFUGO_URL}
       CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
+
+      # WS Server Configuration
+      WS_SERVER_URL: ${WS_SERVER_URL}
     ports:
       - "3000:3000"
 
@@ -117,6 +122,14 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  ws-server:
+    build:
+      context: ../ws-server
+      dockerfile: Dockerfile
+      target: dev-container
+    ports:
+      - "5000:5000"
 
 volumes:
   minio_data:

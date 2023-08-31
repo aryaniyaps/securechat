@@ -18,7 +18,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/utils/api";
-import { getAvatarUrl } from "../../../utils/avatar";
+import { getAvatarUrl } from "~/utils/avatar";
 
 const profileSchema = z.object({
   username: z

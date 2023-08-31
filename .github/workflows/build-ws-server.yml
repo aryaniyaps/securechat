@@ -1,0 +1,33 @@
+name: Build and Push WS Server Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ws-server/**
+
+  pull_request:
+    paths:
+      - ws-server/**
+
+jobs:
+  build_securechat_ws-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push SecureChat WS Server Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./ws-server
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/securechat-ws-server:latest

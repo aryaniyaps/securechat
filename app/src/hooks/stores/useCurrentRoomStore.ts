@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import { Message } from "~/schemas/message";
 import { centrifuge } from "~/utils/centrifugo";
+import { wsClient } from "~/utils/wsClient";
 
 type EventHandler = (ctx: { data: { type: string; payload: Message } }) => void;
 
@@ -20,6 +21,12 @@ export const useCurrentRoomStore = create(
       },
       setRoom: async (roomId: string) => {
         const { eventHandler } = get();
+
+        wsClient.emit("rooms:join", roomId);
+
+        wsClient.on("create-message", (data) => {});
+
+        wsClient.on("delete-message", (data) => {});
 
         // Create or get a subscription
         let sub: Subscription | null;

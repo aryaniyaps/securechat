@@ -3,6 +3,7 @@ import { z } from "zod";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { centrifugeApi } from "~/server/config/centrifugo";
+import { wsServerApi } from "~/server/config/wsServer";
 
 export const messageRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -81,6 +82,11 @@ export const messageRouter = createTRPCRouter({
         },
       });
       // broadcast message here
+      await wsServerApi.post("/broadcast-event", {
+        type: "CREATE_MESSAGE",
+        payload: message,
+        roomId: input.roomId,
+      });
       await centrifugeApi.post("/publish", {
         channel: `rooms:${input.roomId}`,
         data: {
@@ -125,6 +131,11 @@ export const messageRouter = createTRPCRouter({
         },
       });
       // broadcast message here
+      await wsServerApi.post("/broadcast-event", {
+        type: "DELETE_MESSAGE",
+        payload: message,
+        roomId: message.roomId,
+      });
       await centrifugeApi.post("/publish", {
         channel: `rooms:${message.roomId}`,
         data: {

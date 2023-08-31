@@ -7,6 +7,13 @@ http://localhost {
 		header_up Connection Upgrade
 	}
 
+	reverse_proxy /gateway/* ws-server:5000 {
+		header_up Host {host}
+		header_up X-Real-IP {remote}
+		header_up Upgrade WebSocket
+		header_up Connection Upgrade
+	}
+
 	reverse_proxy app:3000 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
