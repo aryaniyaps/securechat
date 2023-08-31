@@ -62,6 +62,7 @@ resource "digitalocean_droplet" "web" {
       "echo 'MONGO_PASSWORD=${var.mongo_password}' >> /root/.env",
       "echo 'MONGO_USER=${var.mongo_user}' >> /root/.env",
       "echo 'MINIO_SERVER_URL=${var.minio_server_url}' >> /root/.env",
+      "echo 'CONNECT_PROXY_URL=${var.connect_proxy_url}' >> /root/.env",
     ]
   }
 

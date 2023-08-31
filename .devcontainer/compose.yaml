@@ -104,6 +104,8 @@ services:
       context: ../ws-server
       dockerfile: Dockerfile
       target: dev-container
+    environment:
+      CONNECT_PROXY_URL: ${CONNECT_PROXY_URL}
     ports:
       - "5000:5000"
 

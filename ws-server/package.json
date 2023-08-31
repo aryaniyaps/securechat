@@ -11,9 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@t3-oss/env-core": "^0.6.1",
+    "axios": "^1.5.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",

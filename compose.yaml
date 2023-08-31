@@ -73,6 +73,8 @@ services:
 
   ws-server:
     image: aryaniyaps/securechat-ws-server:latest
+    environment:
+      CONNECT_PROXY_URL: ${CONNECT_PROXY_URL}
 
 volumes:
   minio_data:

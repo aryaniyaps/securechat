@@ -19,6 +19,7 @@ RUN \
 
 FROM node:18-alpine3.17 AS builder
 
+ARG CONNECT_PROXY_URL
 
 WORKDIR /ws-server
 COPY --from=deps /ws-server/node_modules ./node_modules

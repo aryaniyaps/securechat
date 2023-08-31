@@ -136,3 +136,9 @@ variable "minio_server_url" {
   type        = string
   default     = "https://minio.vnadi.com"
 }
+
+variable "connect_proxy_url" {
+  description = "Connect Proxy URL"
+  type        = string
+  default     = "https://app:3000/api/connect"
+}
