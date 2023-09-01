@@ -43,12 +43,7 @@ function RoomPage({
   useEffect(() => {
     void setRoom(id);
 
-    wsClient.onAny((data) => {
-      console.log("EVENT RECEIVED", data);
-    });
-
     wsClient.on("create-message", async (newMessage) => {
-      console.log("NEW MESSAGE ARRIVED");
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData(

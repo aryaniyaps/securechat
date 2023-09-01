@@ -5,6 +5,7 @@ import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
+import { Skeleton } from "../ui/skeleton";
 
 interface ConnInfo {
   name: string | null;
@@ -24,10 +25,22 @@ export default function PresenceList() {
       >
         <div className="flex items-center gap-2 px-6 text-sm font-medium">
           <Icons.users size={20} className="h-5 w-5" />
-          <p>counting users...</p>
+          <Skeleton className="h-3 w-3/4" />
         </div>
         <Separator />
-        <p className="flex-1 px-6">loading users...</p>
+        <div className="flex flex-1 flex-col gap-6 px-6">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="flex items-center space-x-4">
+              <Avatar className="h-8 w-8">
+                <Skeleton className="h-full w-full" />
+              </Avatar>
+              <div className="flex w-full flex-col space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-3/4" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

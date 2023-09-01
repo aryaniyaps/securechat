@@ -31,8 +31,9 @@ import { useSearchQuery } from "~/hooks/use-search-query";
 import { type Room } from "~/schemas/room";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
+import { Skeleton } from "../ui/skeleton";
 
-function getColumns(session: Session | null) {
+function getColumns(session: Session | null): ColumnDef<Room>[] {
   const columns: ColumnDef<Room>[] = [
     {
       accessorKey: "name",
@@ -199,11 +200,28 @@ export default function RoomTable({ session }: { session: Session }) {
     }
   );
 
-  const columns = useMemo(() => getColumns(session), [session]);
+  function skeletonColumn<T>(column: T): T {
+    return {
+      ...column,
+      cell: <Skeleton className="h-4 w-full" />,
+    } as T;
+  }
+
+  const columns = useMemo(() => {
+    const columns = getColumns(session);
+    if (isLoading) {
+      return columns.map(skeletonColumn);
+    }
+    return columns;
+  }, [session, isLoading]);
 
   const data = useMemo(() => {
-    return roomsPages ? roomsPages.pages.flatMap((page) => page.items) : [];
-  }, [roomsPages]);
+    return isLoading
+      ? Array(16)
+      : roomsPages
+      ? roomsPages.pages.flatMap((page) => page.items)
+      : [];
+  }, [roomsPages, isLoading]);
 
   const table = useReactTable({
     data,

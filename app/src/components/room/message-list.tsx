@@ -9,6 +9,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import { Skeleton } from "../ui/skeleton";
 
 const SCROLL_THRESHOLD = 250;
 
@@ -83,7 +84,47 @@ export default function MessageList({ roomId }: { roomId: string }) {
     }
   };
 
-  if (isLoading) return;
+  if (isLoading)
+    return (
+      <div
+        className="relative flex flex-1 overflow-hidden"
+        data-testid="message-list"
+      >
+        <div
+          ref={scrollContainerRef}
+          className="flex w-full flex-col-reverse gap-10 overflow-y-auto"
+          onScroll={handleScroll}
+        >
+          {/* Add this Button component right below the main div */}
+          {showScrollButton && (
+            <Button
+              variant="secondary"
+              className="absolute bottom-10 right-10"
+              onClick={scrollBottom}
+            >
+              <Icons.arrowDown size={20} className="h-5 w-5" />
+            </Button>
+          )}
+
+          <div ref={bottomChatRef} />
+          {Array.from({ length: 12 }).map((_, index) => (
+            <div key={index} className="flex w-[350px] space-x-4">
+              <Avatar className="h-8 w-8">
+                <Skeleton className="h-full w-full" />
+              </Avatar>
+              <div className="flex w-full flex-col gap-2">
+                <div className="flex w-full gap-2">
+                  <Skeleton className="h-3 w-1/2" />
+                  <Skeleton className="h-2 w-1/6" />
+                </div>
+                {/* message content */}
+                <Skeleton className="h-8 w-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
 
   return (
     <div

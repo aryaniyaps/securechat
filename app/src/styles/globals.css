@@ -96,7 +96,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-secondary;
+    @apply bg-primary-foreground;
     @apply rounded-xl;
     @apply border-4 border-solid border-transparent;
     @apply bg-clip-padding;
