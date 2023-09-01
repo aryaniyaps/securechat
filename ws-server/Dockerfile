@@ -38,7 +38,7 @@ FROM node:18-alpine3.17 AS dev-container
 
 WORKDIR /workspace/ws-server
 
-# Use the --chown option to set file ownership to nextjs for both COPY commands
+# Use the --chown option to set file ownership to socketio for both COPY commands
 COPY --from=deps /ws-server/node_modules ./node_modules
 COPY . .
 
@@ -54,8 +54,6 @@ WORKDIR /ws-server
 
 ENV NODE_ENV production
 
-ENV NEXT_TELEMETRY_DISABLED 1
-
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 socketio
 
@@ -65,4 +63,4 @@ USER socketio
 EXPOSE 5000
 ENV PORT 5000
 
-CMD ["node", "run", "start"]
+CMD ["npm", "run", "start"]
