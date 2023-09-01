@@ -62,6 +62,9 @@ services:
       MINIO_USE_SSL: ${MINIO_USE_SSL}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
 
+      # WS Server Configuration
+      WS_SERVER_URL: ${WS_SERVER_URL}
+
     depends_on:
       - mongodb
       - minio
