@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { Session } from "next-auth";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { Icons } from "../icons";
@@ -13,7 +15,137 @@ import { Skeleton } from "../ui/skeleton";
 
 const SCROLL_THRESHOLD = 250;
 
-export default function MessageList({ roomId }: { roomId: string }) {
+function MessageTile({
+  message,
+  session,
+}: {
+  message: Message;
+  session: Session;
+}) {
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+
+  const canShowDeleteButton = useMemo(() => {
+    return showDeleteButton && message.ownerId === session.user.id;
+  }, [showDeleteButton]);
+
+  const deleteMessage = api.message.delete.useMutation({});
+
+  return (
+    <div
+      className="relative flex w-full gap-4 px-2 py-4 hover:bg-primary-foreground"
+      onMouseEnter={() => setShowDeleteButton(true)}
+      onMouseLeave={() => setShowDeleteButton(false)}
+    >
+      {/* Delete Button */}
+      {canShowDeleteButton && (
+        <Button
+          variant="secondary"
+          disabled={deleteMessage.isLoading}
+          className="absolute -top-3 right-0 mr-6 text-destructive"
+          onClick={async () => {
+            await deleteMessage.mutateAsync({ id: message.id });
+          }}
+        >
+          <Icons.trash2 size={5} className="h-4 w-4" />
+        </Button>
+      )}
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <Avatar className="h-8 w-8">
+            <AvatarImage
+              src={getAvatarUrl(message.owner.image, message.owner.username)}
+              loading="eager"
+              alt={message.owner.name || message.owner.username}
+            />
+            <AvatarFallback>
+              {(message.owner.name || message.owner.username).slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+        </HoverCardTrigger>
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <HoverCardTrigger asChild>
+              <h3 className="text-xs font-semibold text-primary hover:cursor-default">
+                {message.owner.name || message.owner.username}
+              </h3>
+            </HoverCardTrigger>
+            <HoverCardContent side="right">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage
+                    src={getAvatarUrl(
+                      message.owner.image,
+                      message.owner.username
+                    )}
+                    loading="eager"
+                    alt={message.owner.name || message.owner.username}
+                  />
+                  <AvatarFallback>
+                    {(message.owner.name || message.owner.username).slice(0, 2)}
+                  </AvatarFallback>
+                </Avatar>
+                {message.owner.name ? (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-bold">{message.owner.name}</h4>
+                    <p className="text-sm font-semibold">
+                      @{message.owner.username}
+                    </p>
+                    <p className="text-xs font-thin">
+                      Joined on{" "}
+                      {new Date(message.owner.createdAt).toLocaleString(
+                        undefined,
+                        {
+                          day: "numeric",
+                          month: "2-digit",
+                          year: "2-digit",
+                        }
+                      )}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold">
+                      @{message.owner.username}
+                    </h4>
+                    <p className="text-xs font-thin">
+                      Joined on{" "}
+                      {new Date(message.owner.createdAt).toLocaleString(
+                        undefined,
+                        {
+                          day: "numeric",
+                          month: "2-digit",
+                          year: "2-digit",
+                        }
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </HoverCardContent>
+            <p className="text-xs font-thin">
+              {new Date(message.createdAt).toLocaleString(undefined, {
+                month: "2-digit",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
+          </div>
+          <p className="whitespace-normal break-all">{message.content}</p>
+        </div>
+      </HoverCard>
+    </div>
+  );
+}
+
+export default function MessageList({
+  roomId,
+  session,
+}: {
+  roomId: string;
+  session: Session;
+}) {
   const {
     data: messagesPages,
     isLoading,
@@ -151,107 +283,11 @@ export default function MessageList({ roomId }: { roomId: string }) {
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
             page.items.map((message) => (
-              <div
+              <MessageTile
                 key={message.id}
-                className="flex w-full gap-4 px-2 py-4 hover:bg-primary-foreground"
-              >
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={getAvatarUrl(
-                          message.owner.image,
-                          message.owner.username
-                        )}
-                        loading="eager"
-                        alt={message.owner.name || message.owner.username}
-                      />
-                      <AvatarFallback>
-                        {(message.owner.name || message.owner.username).slice(
-                          0,
-                          2
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                  </HoverCardTrigger>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex gap-2">
-                      <HoverCardTrigger asChild>
-                        <h3 className="text-xs font-semibold text-primary hover:cursor-default">
-                          {message.owner.name || message.owner.username}
-                        </h3>
-                      </HoverCardTrigger>
-                      <HoverCardContent side="right">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-16 w-16">
-                            <AvatarImage
-                              src={getAvatarUrl(
-                                message.owner.image,
-                                message.owner.username
-                              )}
-                              loading="eager"
-                              alt={message.owner.name || message.owner.username}
-                            />
-                            <AvatarFallback>
-                              {(
-                                message.owner.name || message.owner.username
-                              ).slice(0, 2)}
-                            </AvatarFallback>
-                          </Avatar>
-                          {message.owner.name ? (
-                            <div className="space-y-2">
-                              <h4 className="text-sm font-bold">
-                                {message.owner.name}
-                              </h4>
-                              <p className="text-sm font-semibold">
-                                @{message.owner.username}
-                              </p>
-                              <p className="text-xs font-thin">
-                                Joined on{" "}
-                                {new Date(
-                                  message.owner.createdAt
-                                ).toLocaleString(undefined, {
-                                  day: "numeric",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })}
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="space-y-2">
-                              <h4 className="text-sm font-semibold">
-                                @{message.owner.username}
-                              </h4>
-                              <p className="text-xs font-thin">
-                                Joined on{" "}
-                                {new Date(
-                                  message.owner.createdAt
-                                ).toLocaleString(undefined, {
-                                  day: "numeric",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </HoverCardContent>
-                      <p className="text-xs font-thin">
-                        {new Date(message.createdAt).toLocaleString(undefined, {
-                          month: "2-digit",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })}
-                      </p>
-                    </div>
-                    <p className="whitespace-normal break-all">
-                      {message.content}
-                    </p>
-                  </div>
-                </HoverCard>
-              </div>
+                message={message}
+                session={session}
+              />
             ))
           )}
         {hasNextPage && (

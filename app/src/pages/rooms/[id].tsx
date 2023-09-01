@@ -2,6 +2,7 @@ import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
 } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -16,6 +17,7 @@ import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
+import { Message } from "~/schemas/message";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
@@ -25,6 +27,8 @@ function RoomPage({
   id,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const utils = api.useContext();
+
+  const { data: session } = useSession();
 
   const isMobile = useMediaQuery({ query: "(max-width: 672px)" });
 
@@ -40,7 +44,7 @@ function RoomPage({
   useEffect(() => {
     void setRoom(id);
 
-    wsClient.on("create-message", async (newMessage) => {
+    wsClient.on("create-message", async (newMessage: Message) => {
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData(
@@ -61,14 +65,39 @@ function RoomPage({
       );
     });
 
+    wsClient.on("delete-message", async (deletedMessage: Message) => {
+      await utils.message.getAll.cancel();
+
+      utils.message.getAll.setInfiniteData(
+        { limit: 10, roomId: id },
+        (oldData) => {
+          if (oldData == null || oldData.pages.length === 0) return oldData;
+
+          const newData = {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              items: page.items.filter(
+                (message: Message) => message.id !== deletedMessage.id
+              ),
+            })),
+          };
+
+          return newData;
+        }
+      );
+    });
+
     // cleanup when the component unmounts
     return () => {
       clearRoom();
+      // remove all listeners
       wsClient.off("create-message");
+      wsClient.off("delete-message");
     };
   }, [id]);
 
-  if (isLoading || !room) {
+  if (!session || isLoading || !room) {
     return <LoadingScreen />;
   }
 
@@ -85,7 +114,7 @@ function RoomPage({
           {isMobile ? (
             <>
               <div className="flex flex-1 flex-col gap-8 py-6">
-                <MessageList roomId={room.id} />
+                <MessageList roomId={room.id} session={session} />
                 <MessageController roomId={room.id} />
               </div>
               <Sheet>
@@ -105,7 +134,7 @@ function RoomPage({
           ) : (
             <>
               <div className="flex flex-1 flex-col gap-8 py-6">
-                <MessageList roomId={room.id} />
+                <MessageList roomId={room.id} session={session} />
                 <div className="pr-6">
                   <MessageController roomId={room.id} />
                 </div>
