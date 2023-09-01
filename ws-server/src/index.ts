@@ -3,7 +3,7 @@ import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { env } from "./env";
+import { env } from "./env.js";
 
 const app = express();
 app.use(json()); // for parsing application/json

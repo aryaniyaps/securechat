@@ -62,10 +62,6 @@ services:
       MINIO_USE_SSL: ${MINIO_USE_SSL}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
 
-      # Centrifugo Configuration
-      CENTRIFUGO_URL: ${CENTRIFUGO_URL}
-      CENTRIFUGO_API_KEY: ${CENTRIFUGO_API_KEY}
-
     depends_on:
       - mongodb
       - minio

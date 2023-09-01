@@ -2,10 +2,11 @@
   "name": "ws-server",
   "version": "1.0.0",
   "description": "",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc",
-    "start": "npm run build && node dist/index.js"
+    "build": "rimraf ./build && tsc",
+    "start": "node ./build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,8 @@
     "@types/express": "^4.17.17",
     "@types/node": "^20.5.6",
     "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.7.0",
     "typescript": "^5.2.2"
   }
 }
