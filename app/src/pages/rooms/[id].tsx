@@ -2,7 +2,6 @@ import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
 } from "next";
-import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -26,8 +25,6 @@ function RoomPage({
   id,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const utils = api.useContext();
-
-  const { data: session } = useSession();
 
   const isMobile = useMediaQuery({ query: "(max-width: 672px)" });
 
@@ -71,7 +68,7 @@ function RoomPage({
     };
   }, [id]);
 
-  if (!session || isLoading || !room) {
+  if (isLoading || !room) {
     return <LoadingScreen />;
   }
 
@@ -107,9 +104,11 @@ function RoomPage({
             </>
           ) : (
             <>
-              <div className="flex flex-1 flex-col gap-8 py-6 pr-6">
+              <div className="flex flex-1 flex-col gap-8 py-6">
                 <MessageList roomId={room.id} />
-                <MessageController roomId={room.id} />
+                <div className="pr-6">
+                  <MessageController roomId={room.id} />
+                </div>
               </div>
               <Separator orientation="vertical" />
               <div className="w-64">

@@ -133,7 +133,7 @@ export default function MessageList({ roomId }: { roomId: string }) {
     >
       <div
         ref={scrollContainerRef}
-        className="flex w-full flex-col-reverse gap-10 overflow-y-auto"
+        className="flex w-full flex-col-reverse overflow-y-auto"
         onScroll={handleScroll}
       >
         {/* Add this Button component right below the main div */}
@@ -151,7 +151,10 @@ export default function MessageList({ roomId }: { roomId: string }) {
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
             page.items.map((message) => (
-              <div key={message.id} className="flex w-full gap-4">
+              <div
+                key={message.id}
+                className="flex w-full gap-4 px-2 py-4 hover:bg-primary-foreground"
+              >
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <Avatar className="h-8 w-8">
