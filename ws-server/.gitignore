@@ -11,6 +11,9 @@
 # production
 /build
 
+# tsc output
+/dist
+
 # misc
 .DS_Store
 *.pem
