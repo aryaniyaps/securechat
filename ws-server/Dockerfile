@@ -59,6 +59,8 @@ RUN adduser --system --uid 1001 socketio
 
 COPY --from=builder /ws-server/package.json ./package.json
 
+COPY --from=builder --chown=nextjs:nodejs /ws-server/build ./build
+
 USER socketio
 EXPOSE 5000
 ENV PORT 5000
