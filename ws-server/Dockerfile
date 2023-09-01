@@ -51,7 +51,7 @@ COPY --from=builder /ws-server/package.json ./package.json
 
 RUN npm ci --production
 
-COPY --from=builder --chown=nextjs:nodejs /ws-server/build ./build
+COPY --from=builder --chown=socketio:nodejs /ws-server/build ./build
 
 USER socketio
 EXPOSE 5000
