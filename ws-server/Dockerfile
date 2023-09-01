@@ -6,7 +6,7 @@ WORKDIR /ws-server
 
 # Install dependencies based on the preferred package manager
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml\* ./
+COPY package.json package-lock.json* ./
 
 RUN npm ci
 
@@ -47,9 +47,12 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 socketio
 
-COPY --from=builder /ws-server/package.json ./package.json
+# COPY --from=builder /ws-server/package.json ./package.json
 
-RUN npm ci --production
+COPY --from=builder /ws-server/package.json /ws-server/package-lock.json* ./
+
+# Install production dependencies (as NODE_ENV is set to production)
+RUN npm ci
 
 COPY --from=builder --chown=socketio:nodejs /ws-server/build ./build
 
