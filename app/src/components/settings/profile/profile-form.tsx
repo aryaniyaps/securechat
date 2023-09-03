@@ -55,6 +55,9 @@ export default function ProfileForm({ session }: { session: Session }) {
 
   const uploadAvatar = api.user.uploadAvatar.useMutation();
 
+  const createAvatarPresignedUrl =
+    api.user.createAvatarPresignedUrl.useMutation();
+
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -66,25 +69,32 @@ export default function ProfileForm({ session }: { session: Session }) {
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     try {
       if (values.avatar) {
+        const { presignedUrl, fileName } =
+          await createAvatarPresignedUrl.mutateAsync({
+            fileName: values.avatar.name,
+          });
+
+        await fetch(presignedUrl, { method: "PUT", body: values.avatar });
         // convert file to base64 or another format that can be sent via JSON
-        const fileType = values.avatar.type;
-        const reader = new FileReader();
-        reader.readAsDataURL(values.avatar);
-        reader.onloadend = async function () {
-          const base64data = reader.result as string;
-          // Remove data URL scheme
-          const base64Index = base64data.indexOf("base64,") + "base64,".length;
-          // upload avatar here
-          const image = await uploadAvatar.mutateAsync({
-            avatar: base64data.substring(base64Index),
-            fileType: fileType,
-          });
-          await updateUser.mutateAsync({
-            username: values.username,
-            name: values.name,
-            image: image,
-          });
-        };
+        // const fileType = values.avatar.type;
+        // const reader = new FileReader();
+        // reader.readAsDataURL(values.avatar);
+        // reader.onloadend = async function () {
+        //   const base64data = reader.result as string;
+        //   // Remove data URL scheme
+        //   const base64Index = base64data.indexOf("base64,") + "base64,".length;
+        //   // upload avatar here
+        //   const image = await uploadAvatar.mutateAsync({
+        //     avatar: base64data.substring(base64Index),
+        //     fileType: fileType,
+        //   });
+
+        // };
+        await updateUser.mutateAsync({
+          username: values.username,
+          name: values.name,
+          image: fileName,
+        });
       } else {
         await updateUser.mutateAsync({
           username: values.username,

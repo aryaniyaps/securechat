@@ -30,6 +30,22 @@ export const userRouter = createTRPCRouter({
       });
       return fileName;
     }),
+  createAvatarPresignedUrl: protectedProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+      })
+    )
+    .output(z.object({ presignedUrl: z.string(), fileName: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const fileName = `${ctx.session.user.id}/${input.fileName}`;
+      const presignedUrl = await minioClient.presignedPutObject(
+        env.MINIO_BUCKET_NAME,
+        fileName
+      );
+
+      return { presignedUrl, fileName };
+    }),
   update: protectedProcedure
     .input(
       z.object({
