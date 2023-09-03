@@ -23,7 +23,8 @@ io.use(async (socket, next) => {
       });
 
       if (response.data.valid) {
-        // store user info with the socket ID
+        // store user info within the socket
+        socket.data.userInfo = response.data.result
         return next();
       }
     } catch (error) {
@@ -37,12 +38,10 @@ io.use(async (socket, next) => {
 io.on("connection", (socket) => {
   console.log(`New connection: ${socket.id}`);
   socket.on("rooms:join", (roomId) => {
-    console.log(`Socket ${socket.id} joining room ${roomId}`);
     socket.join(`rooms:${roomId}`);
   });
 
   socket.on("rooms:leave", (roomId) => {
-    console.log(`Socket ${socket.id} leaving room ${roomId}`);
     socket.leave(`rooms:${roomId}`);
   });
 });

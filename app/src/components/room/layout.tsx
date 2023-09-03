@@ -21,6 +21,7 @@ export default function RoomLayout({
             <p className="font-semibold">{title}</p>
             <Button
               variant="ghost"
+              size="icon"
               aria-label="Copy Room URL"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.toString());

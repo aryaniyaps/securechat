@@ -31,6 +31,7 @@ import { useSearchQuery } from "~/hooks/use-search-query";
 import { type Room } from "~/schemas/room";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
+import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Skeleton } from "../ui/skeleton";
 
 function getColumns(session: Session | null): ColumnDef<Room>[] {
@@ -122,21 +123,24 @@ function RoomActions({
     onSuccess: async (_) => {
       await utils.room.getAll.cancel();
 
-      utils.room.getAll.setInfiniteData({ limit: 10 }, (oldData) => {
-        if (oldData == null) return;
+      utils.room.getAll.setInfiniteData(
+        { limit: DEFAULT_PAGINATION_LIMIT },
+        (oldData) => {
+          if (oldData == null) return;
 
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page) => {
-            return {
-              ...page,
-              items: page.items.filter(
-                (existingRoom) => existingRoom.id !== room.id
-              ),
-            };
-          }),
-        };
-      });
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => {
+              return {
+                ...page,
+                items: page.items.filter(
+                  (existingRoom) => existingRoom.id !== room.id
+                ),
+              };
+            }),
+          };
+        }
+      );
     },
   });
 

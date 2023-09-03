@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
+import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -36,19 +37,6 @@ function MessageTile({
       onMouseEnter={() => setShowDeleteButton(true)}
       onMouseLeave={() => setShowDeleteButton(false)}
     >
-      {/* Delete Button */}
-      {canShowDeleteButton && (
-        <Button
-          variant="secondary"
-          disabled={deleteMessage.isLoading}
-          className="absolute -top-3 right-0 mr-6 text-destructive"
-          onClick={async () => {
-            await deleteMessage.mutateAsync({ id: message.id });
-          }}
-        >
-          <Icons.trash2 size={5} className="h-4 w-4" />
-        </Button>
-      )}
       <HoverCard>
         <HoverCardTrigger asChild>
           <Avatar className="h-8 w-8">
@@ -131,11 +119,44 @@ function MessageTile({
                 hour12: true,
               })}
             </p>
+            {canShowDeleteButton && (
+              <Button variant="ghost" size="icon">
+                <Icons.trash2
+                  size={5}
+                  className="h-3 w-3"
+                  onClick={async () => {
+                    await deleteMessage.mutateAsync({ id: message.id });
+                  }}
+                />
+              </Button>
+            )}
           </div>
           <p className="whitespace-normal break-all">{message.content}</p>
         </div>
       </HoverCard>
     </div>
+  );
+}
+
+function MessageListSkeleton() {
+  return (
+    <>
+      {Array.from({ length: 12 }).map((_, index) => (
+        <div key={index} className="flex w-[350px] space-x-4">
+          <Avatar className="h-8 w-8">
+            <Skeleton className="h-full w-full" />
+          </Avatar>
+          <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full gap-2">
+              <Skeleton className="h-3 w-1/2" />
+              <Skeleton className="h-2 w-1/6" />
+            </div>
+            {/* message content */}
+            <Skeleton className="h-8 w-full" />
+          </div>
+        </div>
+      ))}
+    </>
   );
 }
 
@@ -153,7 +174,7 @@ export default function MessageList({
     fetchNextPage,
   } = api.message.getAll.useInfiniteQuery(
     {
-      limit: 10,
+      limit: DEFAULT_PAGINATION_LIMIT,
       roomId: roomId,
     },
     {
@@ -216,48 +237,6 @@ export default function MessageList({
     }
   };
 
-  if (isLoading)
-    return (
-      <div
-        className="relative flex flex-1 overflow-hidden"
-        data-testid="message-list"
-      >
-        <div
-          ref={scrollContainerRef}
-          className="flex w-full flex-col-reverse gap-10 overflow-y-auto"
-          onScroll={handleScroll}
-        >
-          {/* Add this Button component right below the main div */}
-          {showScrollButton && (
-            <Button
-              variant="secondary"
-              className="absolute bottom-10 right-10"
-              onClick={scrollBottom}
-            >
-              <Icons.arrowDown size={20} className="h-5 w-5" />
-            </Button>
-          )}
-
-          <div ref={bottomChatRef} />
-          {Array.from({ length: 12 }).map((_, index) => (
-            <div key={index} className="flex w-[350px] space-x-4">
-              <Avatar className="h-8 w-8">
-                <Skeleton className="h-full w-full" />
-              </Avatar>
-              <div className="flex w-full flex-col gap-2">
-                <div className="flex w-full gap-2">
-                  <Skeleton className="h-3 w-1/2" />
-                  <Skeleton className="h-2 w-1/6" />
-                </div>
-                {/* message content */}
-                <Skeleton className="h-8 w-full" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-
   return (
     <div
       className="relative flex flex-1 overflow-hidden"
@@ -272,7 +251,7 @@ export default function MessageList({
         {showScrollButton && (
           <Button
             variant="secondary"
-            className="absolute bottom-10 right-10"
+            className="absolute bottom-10 right-10 z-50"
             onClick={scrollBottom}
           >
             <Icons.arrowDown size={20} className="h-5 w-5" />
@@ -290,6 +269,7 @@ export default function MessageList({
               />
             ))
           )}
+        {isLoading && <MessageListSkeleton />}
         {hasNextPage && (
           <Button variant="link" onClick={handleFetchMore}>
             Load More
