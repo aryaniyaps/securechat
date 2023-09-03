@@ -70,9 +70,7 @@ export default function ProfileForm({ session }: { session: Session }) {
     try {
       if (values.avatar) {
         const { presignedUrl, fileName } =
-          await createAvatarPresignedUrl.mutateAsync({
-            fileName: values.avatar.name,
-          });
+          await createAvatarPresignedUrl.mutateAsync({});
 
         await fetch(presignedUrl, { method: "PUT", body: values.avatar });
         // convert file to base64 or another format that can be sent via JSON

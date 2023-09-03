@@ -87,19 +87,19 @@ variable "minio_default_buckets" {
 variable "minio_end_point" {
   description = "MinIO Endpoint"
   type        = string
-  default     = "minio"
+  default     = "minio.vnadi.com"
 }
 
 variable "minio_port" {
   description = "MinIO Port"
   type        = string
-  default     = "9000"
+  default     = "80"
 }
 
 variable "minio_use_ssl" {
   description = "MinIO Use SSL"
   type        = string
-  default     = "false"
+  default     = "true"
 }
 
 variable "minio_bucket_name" {
