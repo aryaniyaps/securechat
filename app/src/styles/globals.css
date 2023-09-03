@@ -22,8 +22,11 @@
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 240 5.9% 92%;
+    --secondary-foreground: 240 0% 45%;
+
+    --tertiary: 240 4.8% 95.9%;
+    --tertiary-foreground: 240 5.9% 10%;
 
     --accent: 240 4.8% 95.9%;
     --accent-foreground: 240 5.9% 10%;
@@ -55,8 +58,11 @@
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
 
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 0 0% 8%;
     --secondary-foreground: 0 0% 98%;
+
+    --tertiary: 240 3.7% 15.9%;
+    --tertiary-foreground: 0 0% 98%;
 
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
@@ -92,13 +98,13 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    @apply bg-secondary;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-primary-foreground;
+    @apply bg-tertiary;
     @apply rounded-xl;
-    @apply border-4 border-solid border-transparent;
+    @apply border-x-4 border-solid border-transparent;
     @apply bg-clip-padding;
   }
 }

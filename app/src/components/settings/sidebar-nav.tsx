@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/utils/style";
 
@@ -20,6 +21,8 @@ export default function SidebarNav({
   ...props
 }: SidebarNavProps) {
   const pathname = usePathname();
+
+  const router = useRouter();
 
   return (
     <nav
@@ -52,6 +55,7 @@ export default function SidebarNav({
         className="font-bold text-destructive"
         onClick={async () => {
           await signOut();
+          router.reload();
         }}
       >
         signout

@@ -3,7 +3,7 @@ import { json } from "body-parser";
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { env } from "./env.js";
+import { env } from "./env";
 
 const app = express();
 app.use(json()); // for parsing application/json
@@ -24,7 +24,7 @@ io.use(async (socket, next) => {
 
       if (response.data.valid) {
         // store user info within the socket
-        socket.data.userInfo = response.data.result
+        socket.data.userInfo = response.data.result;
         return next();
       }
     } catch (error) {

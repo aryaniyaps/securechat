@@ -33,7 +33,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
     <Form {...form} data-testid="message-controller">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex w-full items-center gap-4"
+        className="mb-6 flex w-full items-center gap-4"
       >
         <FormField
           name="content"

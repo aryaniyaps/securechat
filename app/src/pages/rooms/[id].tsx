@@ -20,7 +20,7 @@ import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { Message } from "~/schemas/message";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
-import { APP_NAME } from "~/utils/constants";
+import { APP_NAME, DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { wsClient } from "~/utils/wsClient";
 
 function RoomPage({
@@ -44,11 +44,13 @@ function RoomPage({
   useEffect(() => {
     void setRoom(id);
 
+    console.log("ADDING LISTENERS", id);
+
     wsClient.on("create-message", async (newMessage: Message) => {
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData(
-        { limit: 10, roomId: id },
+        { limit: DEFAULT_PAGINATION_LIMIT, roomId: id },
         (oldData) => {
           if (oldData == null || oldData.pages[0] == null) return;
           return {
@@ -69,7 +71,7 @@ function RoomPage({
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData(
-        { limit: 10, roomId: id },
+        { limit: DEFAULT_PAGINATION_LIMIT, roomId: id },
         (oldData) => {
           if (oldData == null || oldData.pages.length === 0) return oldData;
 
@@ -92,10 +94,13 @@ function RoomPage({
     return () => {
       clearRoom();
       // remove all listeners
+      console.log("REMOVING LISTENERS", id);
       wsClient.off("create-message");
       wsClient.off("delete-message");
     };
   }, [id]);
+
+  console.log("ID: ", id);
 
   if (!session || isLoading || !room) {
     return <LoadingScreen />;
@@ -133,7 +138,7 @@ function RoomPage({
             </>
           ) : (
             <>
-              <div className="flex flex-1 flex-col gap-8 py-6">
+              <div className="flex flex-1 flex-col gap-8">
                 <MessageList roomId={room.id} session={session} />
                 <div className="pr-6">
                   <MessageController roomId={room.id} />

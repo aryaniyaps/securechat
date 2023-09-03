@@ -120,10 +120,14 @@ function MessageTile({
               })}
             </p>
             {canShowDeleteButton && (
-              <Button variant="ghost" size="icon">
-                <Icons.trash2
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={deleteMessage.isLoading}
+              >
+                <Icons.trash
                   size={5}
-                  className="h-3 w-3"
+                  className="h-3 w-3 text-destructive"
                   onClick={async () => {
                     await deleteMessage.mutateAsync({ id: message.id });
                   }}
