@@ -2,6 +2,7 @@ import Link from "next/link";
 import { APP_NAME } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export default function RoomLayout({
   children,
@@ -19,16 +20,21 @@ export default function RoomLayout({
           </Link>
           <div className="flex items-center gap-4">
             <p className="font-semibold">{title}</p>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Copy Room URL"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.toString());
-              }}
-            >
-              <Icons.copy size={20} className="h-5 w-5" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Copy Room URL"
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.toString());
+                  }}
+                >
+                  <Icons.copy size={20} className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Copy Room URL</TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>

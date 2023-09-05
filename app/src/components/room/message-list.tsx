@@ -7,12 +7,8 @@ import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
 import { Skeleton } from "../ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const SCROLL_THRESHOLD = 250;
 
@@ -37,8 +33,8 @@ function MessageTile({
       onMouseEnter={() => setShowDeleteButton(true)}
       onMouseLeave={() => setShowDeleteButton(false)}
     >
-      <HoverCard>
-        <HoverCardTrigger asChild>
+      <Tooltip>
+        <TooltipTrigger asChild>
           <Avatar className="h-8 w-8">
             <AvatarImage
               src={getAvatarUrl(message.owner.image, message.owner.username)}
@@ -49,15 +45,15 @@ function MessageTile({
               {(message.owner.name || message.owner.username).slice(0, 2)}
             </AvatarFallback>
           </Avatar>
-        </HoverCardTrigger>
+        </TooltipTrigger>
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
-            <HoverCardTrigger asChild>
+            <TooltipTrigger asChild>
               <h3 className="text-xs font-semibold text-primary hover:cursor-default">
                 {message.owner.username}
               </h3>
-            </HoverCardTrigger>
-            <HoverCardContent side="right">
+            </TooltipTrigger>
+            <TooltipContent side="right">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage
@@ -109,7 +105,7 @@ function MessageTile({
                   </div>
                 )}
               </div>
-            </HoverCardContent>
+            </TooltipContent>
             <p className="text-xs font-thin">
               {new Date(message.createdAt).toLocaleString(undefined, {
                 month: "2-digit",
@@ -120,25 +116,30 @@ function MessageTile({
               })}
             </p>
             {canShowDeleteButton && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="ml-2"
-                disabled={deleteMessage.isLoading}
-              >
-                <Icons.trash
-                  size={5}
-                  className="h-3 w-3 text-destructive"
-                  onClick={async () => {
-                    await deleteMessage.mutateAsync({ id: message.id });
-                  }}
-                />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-2"
+                    disabled={deleteMessage.isLoading}
+                  >
+                    <Icons.trash
+                      size={5}
+                      className="h-3 w-3 text-destructive"
+                      onClick={async () => {
+                        await deleteMessage.mutateAsync({ id: message.id });
+                      }}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete message</TooltipContent>
+              </Tooltip>
             )}
           </div>
           <p className="whitespace-normal break-all">{message.content}</p>
         </div>
-      </HoverCard>
+      </Tooltip>
     </div>
   );
 }

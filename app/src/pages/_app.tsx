@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import { type AppType } from "next/app";
 import { Inter as FontSans } from "next/font/google";
 import { Toaster } from "~/components/ui/toaster";
+import { TooltipProvider } from "~/components/ui/tooltip";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
 
@@ -26,7 +27,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
 			}`}</style>
       <SessionProvider session={session}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Component {...pageProps} />
+          <TooltipProvider>
+            <Component {...pageProps} />
+          </TooltipProvider>
         </ThemeProvider>
       </SessionProvider>
       <Toaster />
