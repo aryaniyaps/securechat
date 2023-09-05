@@ -109,10 +109,22 @@ services:
     ports:
       - "5000:5000"
 
+  seaweed:
+    image: chrislusf/seaweedfs:3.55
+    command: server -dir="/data" -publicIp=
+    ports:
+      - "9333:9333"
+      - "8080:8080"
+      - "18080:8080"
+    volumes:
+      - seaweed_data:/data
+
 volumes:
   minio_data:
     driver: local
   caddy_data:
     driver: local
   mongodb_data:
+    driver: local
+  seaweed_data:
     driver: local

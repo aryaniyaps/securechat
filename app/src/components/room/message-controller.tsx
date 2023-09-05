@@ -65,7 +65,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
     if (typingCount === 1 && typing[0]) {
       return `${typing[0].username} is typing`;
     } else if (typingCount === 2 && typing[0] && typing[1]) {
-      return `${typing[0].username} and ${typing[0].username} are typing`;
+      return `${typing[0].username} and ${typing[1].username} are typing`;
     } else if (typingCount > 2) {
       return `${typingCount} users are typing`;
     }
