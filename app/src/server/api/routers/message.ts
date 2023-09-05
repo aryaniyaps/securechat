@@ -102,6 +102,16 @@ export const messageRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+              createdAt: true,
+            },
+          },
+        },
       });
 
       if (!message) {
