@@ -122,7 +122,7 @@ function MessageTile({
               <Button
                 variant="ghost"
                 size="icon"
-                className="ml-4"
+                className="ml-2"
                 disabled={deleteMessage.isLoading}
               >
                 <Icons.trash
