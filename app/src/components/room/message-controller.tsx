@@ -125,7 +125,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
         </form>
       </Form>
       <p
-        className="h-2 animate-pulse text-xs font-semibold"
+        className="h-2 animate-pulse text-xs font-semibold transition-opacity"
         style={{
           visibility: typing.length > 0 ? "visible" : "hidden",
         }}

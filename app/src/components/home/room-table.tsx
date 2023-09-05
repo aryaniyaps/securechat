@@ -32,6 +32,7 @@ import { type Room } from "~/schemas/room";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
+import { ScrollArea } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
 
 function getColumns(session: Session | null): ColumnDef<Room>[] {
@@ -191,7 +192,7 @@ export default function RoomTable({ session }: { session: Session }) {
     refetch,
   } = api.room.getAll.useInfiniteQuery(
     {
-      limit: 10,
+      limit: DEFAULT_PAGINATION_LIMIT,
       ...(debouncedSearchQuery && {
         search: String(debouncedSearchQuery),
       }),
@@ -239,7 +240,7 @@ export default function RoomTable({ session }: { session: Session }) {
   if (isLoading) return;
 
   return table.getRowModel().rows?.length ? (
-    <>
+    <ScrollArea>
       <Table className="flex-grow" data-testid="room-table">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -282,7 +283,7 @@ export default function RoomTable({ session }: { session: Session }) {
           </TableCaption>
         )}
       </Table>
-    </>
+    </ScrollArea>
   ) : (
     <div className="w-full text-center" data-testid="room-table">
       No rooms found.
