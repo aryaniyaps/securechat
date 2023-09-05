@@ -57,6 +57,12 @@ app.post("/broadcast-event", (req: Request, res: Response) => {
     case "DELETE_MESSAGE":
       io.to(`rooms:${roomId}`).emit("delete-message", payload);
       break;
+    case "ADD_TYPING_USER":
+      io.to(`rooms:${roomId}`).emit("add-typing-user", payload);
+      break;
+    case "REMOVE_TYPING_USER":
+      io.to(`rooms:${roomId}`).emit("remove-typing-user", payload);
+      break;
     default:
       break;
   }

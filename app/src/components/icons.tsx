@@ -22,15 +22,14 @@ import {
   Plus,
   SendIcon,
   Settings,
-  SunMedium,
-  Trash,
+  SunMedium, TextCursor, Trash,
   Trash2,
   Twitter,
   User,
   Users,
   X,
   type Icon as LucideIcon,
-  type LucideProps,
+  type LucideProps
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -50,6 +49,7 @@ export const Icons = {
     </svg>
   ),
   users: Users,
+  textCursor: TextCursor,
   close: X,
   spinner: Loader2,
   chevronLeft: ChevronLeft,

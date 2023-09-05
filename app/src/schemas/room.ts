@@ -5,7 +5,7 @@ export const roomSchema = z.object({
   name: z.string(),
   ownerId: z.string(),
   createdAt: z.date(),
-  updatedAt: z.date(),
+  updatedAt: z.date().nullable(),
   owner: z.object({
     name: z.string().nullish(),
     username: z.string(),

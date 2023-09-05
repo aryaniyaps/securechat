@@ -6,6 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 
 export const roomRouter = createTRPCRouter({
   getById: publicProcedure
@@ -31,7 +32,7 @@ export const roomRouter = createTRPCRouter({
       z.object({
         search: z.optional(z.string()),
         cursor: z.string().nullish(),
-        limit: z.number().min(1).max(100),
+        limit: z.number().min(1).max(100).default(DEFAULT_PAGINATION_LIMIT),
       })
     )
     .output(

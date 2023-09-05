@@ -18,9 +18,10 @@ import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { Message } from "~/schemas/message";
+import { TypingUser } from "~/schemas/typing";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
-import { APP_NAME, DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
+import { APP_NAME } from "~/utils/constants";
 import { wsClient } from "~/utils/wsClient";
 
 function RoomPage({
@@ -39,7 +40,8 @@ function RoomPage({
     { refetchOnMount: false }
   );
 
-  const { setRoom, clearRoom } = useCurrentRoomStore();
+  const { setRoom, clearRoom, addTypingUser, removeTypingUser } =
+    useCurrentRoomStore();
 
   useEffect(() => {
     void setRoom(id);
@@ -49,45 +51,47 @@ function RoomPage({
     wsClient.on("create-message", async (newMessage: Message) => {
       await utils.message.getAll.cancel();
 
-      utils.message.getAll.setInfiniteData(
-        { limit: DEFAULT_PAGINATION_LIMIT, roomId: id },
-        (oldData) => {
-          if (oldData == null || oldData.pages[0] == null) return;
-          return {
-            ...oldData,
-            pages: [
-              {
-                ...oldData.pages[0],
-                items: [newMessage, ...oldData.pages[0].items],
-              },
-              ...oldData.pages.slice(1),
-            ],
-          };
-        }
-      );
+      utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
+        if (oldData == null || oldData.pages[0] == null) return;
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              items: [newMessage, ...oldData.pages[0].items],
+            },
+            ...oldData.pages.slice(1),
+          ],
+        };
+      });
     });
 
     wsClient.on("delete-message", async (deletedMessage: Message) => {
       await utils.message.getAll.cancel();
 
-      utils.message.getAll.setInfiniteData(
-        { limit: DEFAULT_PAGINATION_LIMIT, roomId: id },
-        (oldData) => {
-          if (oldData == null || oldData.pages.length === 0) return oldData;
+      utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
+        if (oldData == null || oldData.pages.length === 0) return oldData;
 
-          const newData = {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              items: page.items.filter(
-                (message: Message) => message.id !== deletedMessage.id
-              ),
-            })),
-          };
+        const newData = {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            items: page.items.filter(
+              (message: Message) => message.id !== deletedMessage.id
+            ),
+          })),
+        };
 
-          return newData;
-        }
-      );
+        return newData;
+      });
+    });
+
+    wsClient.on("add-typing-user", (user: TypingUser) => {
+      addTypingUser(user);
+    });
+
+    wsClient.on("remove-typing-user", (user: TypingUser) => {
+      removeTypingUser(user);
     });
 
     // cleanup when the component unmounts
@@ -97,6 +101,8 @@ function RoomPage({
       console.log("REMOVING LISTENERS", id);
       wsClient.off("create-message");
       wsClient.off("delete-message");
+      wsClient.off("add-typing-user");
+      wsClient.off("remove-typing-user");
     };
   }, [id]);
 

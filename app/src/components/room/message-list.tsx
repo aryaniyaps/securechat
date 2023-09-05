@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
-import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -54,7 +53,7 @@ function MessageTile({
           <div className="flex gap-2">
             <HoverCardTrigger asChild>
               <h3 className="text-xs font-semibold text-primary hover:cursor-default">
-                {message.owner.name || message.owner.username}
+                {message.owner.username}
               </h3>
             </HoverCardTrigger>
             <HoverCardContent side="right">
@@ -123,6 +122,7 @@ function MessageTile({
               <Button
                 variant="ghost"
                 size="icon"
+                className="ml-4"
                 disabled={deleteMessage.isLoading}
               >
                 <Icons.trash
@@ -146,14 +146,14 @@ function MessageListSkeleton() {
   return (
     <>
       {Array.from({ length: 12 }).map((_, index) => (
-        <div key={index} className="flex w-[350px] space-x-4">
+        <div key={index} className="relative flex w-[350px] gap-4 px-2 py-4">
           <Avatar className="h-8 w-8">
             <Skeleton className="h-full w-full" />
           </Avatar>
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col justify-start gap-2">
             <div className="flex w-full gap-2">
               <Skeleton className="h-3 w-1/2" />
-              <Skeleton className="h-2 w-1/6" />
+              <Skeleton className="h-3 w-1/6" />
             </div>
             {/* message content */}
             <Skeleton className="h-8 w-full" />
@@ -178,7 +178,6 @@ export default function MessageList({
     fetchNextPage,
   } = api.message.getAll.useInfiniteQuery(
     {
-      limit: DEFAULT_PAGINATION_LIMIT,
       roomId: roomId,
     },
     {

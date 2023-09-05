@@ -1,6 +1,7 @@
 import { PresenceResult, PresenceStatsResult } from "centrifuge";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
+import { TypingUser } from "~/schemas/typing";
 import { wsClient } from "~/utils/wsClient";
 
 export const useCurrentRoomStore = create(
@@ -9,6 +10,7 @@ export const useCurrentRoomStore = create(
       roomId: null as string | null,
       presence: null as PresenceResult | null,
       presenceStats: null as PresenceStatsResult | null,
+      typing: [] as TypingUser[],
     },
     (set, get) => ({
       setRoom: async (roomId: string) => {
@@ -28,6 +30,28 @@ export const useCurrentRoomStore = create(
             roomId: null,
             presence: null,
             presenceStats: null,
+          }));
+        }
+      },
+      addTypingUser: (user: TypingUser) => {
+        const { typing } = get();
+        const userExists = typing.some(
+          (existingUser) => existingUser.id === user.id
+        );
+        if (!userExists) {
+          set((state) => ({ typing: [user, ...state.typing] }));
+        }
+      },
+      removeTypingUser: (user: TypingUser) => {
+        const { typing } = get();
+        const userExists = typing.some(
+          (existingUser) => existingUser.id === user.id
+        );
+        if (userExists) {
+          set((state) => ({
+            typing: state.typing.filter(
+              (existingUser) => existingUser.id !== user.id
+            ),
           }));
         }
       },

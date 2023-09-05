@@ -3,6 +3,7 @@ import { z } from "zod";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { wsServerApi } from "~/server/config/wsServer";
+import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 
 export const messageRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -10,7 +11,7 @@ export const messageRouter = createTRPCRouter({
       z.object({
         roomId: z.string(),
         cursor: z.string().nullish(),
-        limit: z.number().min(1).max(100),
+        limit: z.number().min(1).max(100).default(DEFAULT_PAGINATION_LIMIT),
       })
     )
     .output(
@@ -80,10 +81,10 @@ export const messageRouter = createTRPCRouter({
           },
         },
       });
-      // broadcast message here
+
       await wsServerApi.post("/broadcast-event", {
         type: "CREATE_MESSAGE",
-        payload: message,
+        payload: messageSchema.parse(message),
         roomId: input.roomId,
       });
 
@@ -125,7 +126,7 @@ export const messageRouter = createTRPCRouter({
       // broadcast message here
       await wsServerApi.post("/broadcast-event", {
         type: "DELETE_MESSAGE",
-        payload: message,
+        payload: messageSchema.parse(message),
         roomId: message.roomId,
       });
     }),
