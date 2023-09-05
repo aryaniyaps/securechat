@@ -31,6 +31,7 @@ import { useSearchQuery } from "~/hooks/use-search-query";
 import { type Room } from "~/schemas/room";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
+import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Skeleton } from "../ui/skeleton";
 
 function getColumns(session: Session | null): ColumnDef<Room>[] {
@@ -217,7 +218,7 @@ export default function RoomTable({ session }: { session: Session }) {
 
   const data = useMemo(() => {
     return isLoading
-      ? Array(16)
+      ? Array(DEFAULT_PAGINATION_LIMIT)
       : roomsPages
       ? roomsPages.pages.flatMap((page) => page.items)
       : [];

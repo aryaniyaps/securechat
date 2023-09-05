@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
+import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -145,7 +146,7 @@ function MessageTile({
 function MessageListSkeleton() {
   return (
     <>
-      {Array.from({ length: 12 }).map((_, index) => (
+      {Array.from({ length: DEFAULT_PAGINATION_LIMIT }).map((_, index) => (
         <div key={index} className="relative flex w-[350px] gap-4 px-2 py-4">
           <Avatar className="h-8 w-8">
             <Skeleton className="h-full w-full" />
