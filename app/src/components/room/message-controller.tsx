@@ -101,6 +101,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
               <FormItem className="w-full flex-grow">
                 <FormControl>
                   <Input
+                    type="text"
                     placeholder="send a message..."
                     className="px-4 py-6"
                     onChange={(e) => {
