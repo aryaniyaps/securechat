@@ -248,7 +248,7 @@ export default function MessageList({
     >
       <div
         ref={scrollContainerRef}
-        className="flex w-full flex-col-reverse overflow-y-auto"
+        className="flex w-full flex-col-reverse overflow-y-auto scroll-smooth"
         onScroll={handleScroll}
       >
         {/* Add this Button component right below the main div */}
