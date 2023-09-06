@@ -87,7 +87,7 @@ variable "s3_region" {
 variable "s3_end_point" {
   description = "S3 Endpoint"
   type        = string
-  default     = "s3.vnadi.com"
+  default     = "https://s3.vnadi.com"
 }
 
 variable "s3_bucket_name" {

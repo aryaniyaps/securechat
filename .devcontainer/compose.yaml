@@ -97,7 +97,7 @@ services:
     image: chrislusf/seaweedfs:3.55
     ports:
       - "9333:9333"
-    command: "master -mdir=/data/master -volumeSizeLimitMB=1000 -ip=seaweedfs-master"
+    command: "master -mdir=/data/master -volumePreallocate=false -ip=seaweedfs-master"
     volumes:
       - seaweedfs_data:/data/master
 

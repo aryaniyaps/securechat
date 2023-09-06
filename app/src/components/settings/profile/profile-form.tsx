@@ -64,7 +64,7 @@ export default function ProfileForm({ session }: { session: Session }) {
     },
   });
 
-  async function uploadAvatar(avatar: any, presignedUrl: string) {
+  async function uploadAvatar(avatar: Blob, presignedUrl: string) {
     const response = await fetch(presignedUrl, {
       method: "PUT",
       body: avatar,
@@ -75,7 +75,10 @@ export default function ProfileForm({ session }: { session: Session }) {
     return response.ok;
   }
 
-  async function updateProfile(values: any, fileName: string | null) {
+  async function updateProfile(
+    values: z.infer<typeof profileSchema>,
+    fileName: string | null
+  ) {
     const payload: any = {
       username: values.username,
       name: values.name,
@@ -114,7 +117,6 @@ export default function ProfileForm({ session }: { session: Session }) {
 
       await updateProfile(values, fileName);
       form.reset({ username: values.username, name: values.name });
-      toast({ description: "Your user profile is updated!" });
     } catch (err) {
       if (err instanceof TRPCClientError) {
         if (err.message.includes("Username")) {
