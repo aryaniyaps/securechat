@@ -15,7 +15,7 @@ vnadi.com {
 	}
 }
 
-http://s3.vnadi.com {
+s3.vnadi.com {
 	tls {$ACME_EMAIL} {
 		dns digitalocean {$DIGITALOCEAN_API_TOKEN}
 	}
