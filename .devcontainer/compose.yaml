@@ -16,23 +16,8 @@ services:
         hard: 65535
     depends_on:
       - app
-      - minio
+      - seaweedfs-s3
       - ws-server
-
-  minio:
-    image: bitnami/minio:2023
-    restart: unless-stopped
-    volumes:
-      - minio_data:/data
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
-      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
-      MINIO_SERVER_URL: ${MINIO_SERVER_URL}
-      MINIO_BROWSER_REDIRECT_URL: ${MINIO_BROWSER_REDIRECT_URL}
-    ports:
-      - "9000:9000"
-      - "9001:9001"
 
   mongodb:
     image: bitnami/mongodb:6.0
@@ -55,9 +40,9 @@ services:
       target: dev-container
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
-        # MINIO Public Information
-        NEXT_PUBLIC_MINIO_ENDPOINT: ${NEXT_PUBLIC_MINIO_ENDPOINT}
-        NEXT_PUBLIC_MINIO_BUCKET: ${NEXT_PUBLIC_MINIO_BUCKET}
+        # S3 Public Information
+        NEXT_PUBLIC_S3_ENDPOINT: ${NEXT_PUBLIC_S3_ENDPOINT}
+        NEXT_PUBLIC_S3_BUCKET: ${NEXT_PUBLIC_S3_BUCKET}
     working_dir: /workspace/app
     volumes:
       - ../:/workspace:cached
@@ -65,7 +50,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - mongodb
-      - minio
+      - seaweedfs-s3
       - ws-server
     environment:
       # Prisma
@@ -80,13 +65,14 @@ services:
       # Next Auth Email Provider
       EMAIL_SERVER: ${EMAIL_SERVER}
       EMAIL_FROM: ${EMAIL_FROM}
-      # MinIO Configuration
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
-      MINIO_END_POINT: ${MINIO_END_POINT}
-      MINIO_PORT: ${MINIO_PORT}
-      MINIO_USE_SSL: ${MINIO_USE_SSL}
-      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
+      # S3 Configuration
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_END_POINT: ${S3_END_POINT}
+      S3_PORT: ${S3_PORT}
+      S3_USE_SSL: ${S3_USE_SSL}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      S3_REGION: ${S3_REGION}
 
       # WS Server Configuration
       WS_SERVER_URL: ${WS_SERVER_URL}
@@ -109,22 +95,46 @@ services:
     ports:
       - "5000:5000"
 
-  seaweed:
+  seaweedfs-master:
     image: chrislusf/seaweedfs:3.55
-    command: server -dir="/data" -publicIp=
     ports:
       - "9333:9333"
-      - "8080:8080"
-      - "18080:8080"
+    command: "master -mdir /data -ip=seaweedfs-master"
     volumes:
-      - seaweed_data:/data
+      - seaweedfs_master_data:/data
+
+  seaweedfs-volume:
+    image: chrislusf/seaweedfs:3.55
+    ports:
+      - "8080:8080"
+    depends_on:
+      - seaweedfs-master
+    command: "volume -max=5 -mserver=seaweedfs-master:9333 -port=8080 ip=seaweedfs-volume"
+
+  seaweedfs-filer:
+    image: chrislusf/seaweedfs:3.55
+    ports:
+      - "8888:8888"
+    depends_on:
+      - seaweedfs-master
+    command: "filer -master=seaweedfs-master:9333 -ip.bind=0.0.0.0"
+
+  seaweedfs-s3:
+    build:
+      context: ../weed-s3
+      dockerfile: Dockerfile
+      target: dev-container
+    ports:
+      - "8333:8333"
+    depends_on:
+      - seaweedfs-master
+      - seaweedfs-filer
+    command: "s3 -filer=seaweedfs-filer:8888 -port=8333 -ip.bind=0.0.0.0 -config=/config.json"
 
 volumes:
-  minio_data:
-    driver: local
   caddy_data:
     driver: local
   mongodb_data:
     driver: local
-  seaweed_data:
+  seaweedfs_master_data:
     driver: local

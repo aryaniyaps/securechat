@@ -11,6 +11,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.405.0",
+    "@aws-sdk/s3-request-presigner": "^3.405.0",
     "@babel/runtime": "^7.22.6",
     "@hookform/resolvers": "^3.1.1",
     "@next-auth/prisma-adapter": "^1.0.5",
@@ -40,7 +42,6 @@
     "clsx": "^1.2.1",
     "email-templates": "^11.1.1",
     "lucide-react": "^0.252.0",
-    "minio": "^7.1.1",
     "nanoid": "^4.0.2",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",

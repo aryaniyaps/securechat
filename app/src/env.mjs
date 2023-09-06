@@ -26,22 +26,23 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     EMAIL_SERVER: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
-    MINIO_END_POINT: z.string().min(1),
-    MINIO_PORT: z
+    S3_END_POINT: z.string().min(1),
+    S3_PORT: z
       .string()
       // transform to number
       .transform((s) => parseInt(s, 10))
       // make sure transform worked
       .pipe(z.number()),
-    MINIO_USE_SSL: z
+    S3_USE_SSL: z
       .string()
       // only allow "true" or "false"
       .refine((s) => s === "true" || s === "false")
       // transform to boolean
       .transform((s) => s === "true"),
-    MINIO_ACCESS_KEY: z.string().min(1),
-    MINIO_SECRET_KEY: z.string().min(1),
-    MINIO_BUCKET_NAME: z.string().min(1),
+    S3_ACCESS_KEY: z.string().min(1),
+    S3_SECRET_KEY: z.string().min(1),
+    S3_REGION: z.string().min(1),
+    S3_BUCKET_NAME: z.string().min(1),
     WS_SERVER_URL: z.string().min(1),
   },
 
@@ -52,8 +53,8 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-    NEXT_PUBLIC_MINIO_ENDPOINT: z.string().min(1),
-    NEXT_PUBLIC_MINIO_BUCKET: z.string().min(1),
+    NEXT_PUBLIC_S3_ENDPOINT: z.string().min(1),
+    NEXT_PUBLIC_S3_BUCKET: z.string().min(1),
   },
 
   /**
@@ -70,15 +71,16 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     EMAIL_SERVER: process.env.EMAIL_SERVER,
     EMAIL_FROM: process.env.EMAIL_FROM,
-    MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY,
-    MINIO_END_POINT: process.env.MINIO_END_POINT,
-    MINIO_PORT: process.env.MINIO_PORT,
-    MINIO_SECRET_KEY: process.env.MINIO_SECRET_KEY,
-    MINIO_USE_SSL: process.env.MINIO_USE_SSL,
-    MINIO_BUCKET_NAME: process.env.MINIO_BUCKET_NAME,
+    S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
+    S3_END_POINT: process.env.S3_END_POINT,
+    S3_PORT: process.env.S3_PORT,
+    S3_SECRET_KEY: process.env.S3_SECRET_KEY,
+    S3_USE_SSL: process.env.S3_USE_SSL,
+    S3_REGION: process.env.S3_REGION,
+    S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     WS_SERVER_URL: process.env.WS_SERVER_URL,
-    NEXT_PUBLIC_MINIO_ENDPOINT: process.env.NEXT_PUBLIC_MINIO_ENDPOINT,
-    NEXT_PUBLIC_MINIO_BUCKET: process.env.NEXT_PUBLIC_MINIO_BUCKET,
+    NEXT_PUBLIC_S3_ENDPOINT: process.env.NEXT_PUBLIC_S3_ENDPOINT,
+    NEXT_PUBLIC_S3_BUCKET: process.env.NEXT_PUBLIC_S3_BUCKET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

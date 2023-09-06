@@ -9,5 +9,5 @@ export function getAvatarUrl(image: string | null, username: string): string {
     // we have an avatar URL from an Oauth2 provider already
     return image;
   }
-  return `${env.NEXT_PUBLIC_MINIO_ENDPOINT}/${env.NEXT_PUBLIC_MINIO_BUCKET}/${image}`;
+  return `${env.NEXT_PUBLIC_S3_ENDPOINT}/${env.NEXT_PUBLIC_S3_BUCKET}/${image}`;
 }

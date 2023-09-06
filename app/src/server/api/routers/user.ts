@@ -1,44 +1,27 @@
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { email } from "~/server/config/email";
-import { minioClient } from "~/server/config/minio";
+import { s3Client } from "~/server/config/s3";
 
 export const userRouter = createTRPCRouter({
-  uploadAvatar: protectedProcedure
-    .input(
-      z.object({
-        avatar: z.string(), // Base64 encoded image
-        fileType: z.string(), // File type
-      })
-    )
-    .output(z.string())
-    .mutation(async ({ ctx, input }) => {
-      // Convert base64 string to buffer
-      const file = Buffer.from(input.avatar, "base64");
-
-      // Determine file extension
-      const extension = input.fileType.split("/")[1] || "jpg"; // defaults to jpg;
-
-      const fileName = `${ctx.session.user.id}/${nanoid(6)}.${extension}`;
-
-      // Upload file
-      await minioClient.putObject(env.MINIO_BUCKET_NAME, fileName, file, {
-        "Content-Type": input.fileType,
-      });
-      return fileName;
-    }),
   createAvatarPresignedUrl: protectedProcedure
-    .input(z.object({}))
+    .input(z.object({ contentType: z.string() }))
     .output(z.object({ presignedUrl: z.string(), fileName: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const fileName = `${ctx.session.user.id}/${nanoid(6)}`;
-      const presignedUrl = await minioClient.presignedPutObject(
-        env.MINIO_BUCKET_NAME,
-        fileName
-      );
+      const command = new PutObjectCommand({
+        Bucket: env.S3_BUCKET_NAME,
+        Key: fileName,
+        ContentType: input.contentType,
+      });
+      const presignedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600, // 1 hr
+      });
 
       return { presignedUrl, fileName };
     }),

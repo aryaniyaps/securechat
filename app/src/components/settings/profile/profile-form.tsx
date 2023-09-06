@@ -53,8 +53,6 @@ export default function ProfileForm({ session }: { session: Session }) {
     },
   });
 
-  const uploadAvatar = api.user.uploadAvatar.useMutation();
-
   const createAvatarPresignedUrl =
     api.user.createAvatarPresignedUrl.useMutation();
 
@@ -66,57 +64,63 @@ export default function ProfileForm({ session }: { session: Session }) {
     },
   });
 
+  async function uploadAvatar(avatar: any, presignedUrl: string) {
+    const response = await fetch(presignedUrl, {
+      method: "PUT",
+      body: avatar,
+      headers: {
+        "Content-Type": avatar.type,
+      },
+    });
+    return response.ok;
+  }
+
+  async function updateProfile(values: any, fileName: string | null) {
+    const payload: any = {
+      username: values.username,
+      name: values.name,
+    };
+
+    if (fileName) {
+      payload.image = fileName;
+    }
+
+    await updateUser.mutateAsync(payload);
+  }
+
   async function onSubmit(values: z.infer<typeof profileSchema>) {
     try {
+      let fileName = null;
+
       if (values.avatar) {
-        const { presignedUrl, fileName } =
-          await createAvatarPresignedUrl.mutateAsync({});
+        const { presignedUrl, fileName: generatedFileName } =
+          await createAvatarPresignedUrl.mutateAsync({
+            contentType: values.avatar.type,
+          });
+        const isUploadSuccessful = await uploadAvatar(
+          values.avatar,
+          presignedUrl
+        );
 
-        await fetch(presignedUrl, { method: "PUT", body: values.avatar });
-        // convert file to base64 or another format that can be sent via JSON
-        // const fileType = values.avatar.type;
-        // const reader = new FileReader();
-        // reader.readAsDataURL(values.avatar);
-        // reader.onloadend = async function () {
-        //   const base64data = reader.result as string;
-        //   // Remove data URL scheme
-        //   const base64Index = base64data.indexOf("base64,") + "base64,".length;
-        //   // upload avatar here
-        //   const image = await uploadAvatar.mutateAsync({
-        //     avatar: base64data.substring(base64Index),
-        //     fileType: fileType,
-        //   });
-
-        // };
-        await updateUser.mutateAsync({
-          username: values.username,
-          name: values.name,
-          image: fileName,
-        });
-      } else {
-        await updateUser.mutateAsync({
-          username: values.username,
-          name: values.name,
-        });
+        if (!isUploadSuccessful) {
+          toast({
+            description: "Couldn't upload avatar!",
+            variant: "destructive",
+          });
+        } else {
+          fileName = generatedFileName;
+        }
       }
 
+      await updateProfile(values, fileName);
       form.reset({ username: values.username, name: values.name });
-
-      toast({
-        description: "Your user profile is updated!",
-      });
+      toast({ description: "Your user profile is updated!" });
     } catch (err) {
       if (err instanceof TRPCClientError) {
         if (err.message.includes("Username")) {
-          form.setError("username", {
-            type: "manual",
-            message: err.message,
-          });
+          form.setError("username", { type: "manual", message: err.message });
         } else {
-          toast({
-            description: err.message,
-            variant: "destructive",
-          });
+          toast({ description: err.message, variant: "destructive" });
         }
       }
     }
