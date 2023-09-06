@@ -69,7 +69,9 @@ services:
       - "9333:9333"
       - "19333:19333"
       - "9324:9324"
-    command: "master -ip=seaweedfs-master -ip.bind=0.0.0.0 -metricsPort=9324"
+    command: "master -mdir=/data/master -volumeSizeLimitMB=1000 -ip=seaweedfs-master -ip.bind=0.0.0.0 -metricsPort=9324"
+    volumes:
+      - seaweedfs_data:/data/master
 
   seaweedfs-volume:
     image: chrislusf/seaweedfs:3.55
@@ -79,7 +81,9 @@ services:
       - "9325:9325"
     depends_on:
       - seaweedfs-master
-    command: "volume -max=2 -mserver=seaweedfs-master:9333 -ip.bind=0.0.0.0 -port=8080  -metricsPort=9325"
+    command: "volume -max=2 -mserver=seaweedfs-master:9333 -ip.bind=0.0.0.0 -port=8080 -dir=/data/volume -metricsPort=9325"
+    volumes:
+      - seaweedfs_data:/data/volume
 
   seaweedfs-filer:
     image: chrislusf/seaweedfs:3.55
@@ -109,6 +113,8 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
 
 volumes:
+  seaweedfs_data:
+    driver: local
   caddy_data:
     driver: local
   mongodb_data:
