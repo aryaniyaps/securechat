@@ -8,6 +8,8 @@ ARG S3_SECRET_KEY
 # Install gettext for envsubst
 RUN apk add --no-cache gettext
 
+COPY ./config.json /tmp/config.json.template
+
 COPY ./entrypoint.sh /new-entrypoint.sh
 
 RUN chmod +x /new-entrypoint.sh
