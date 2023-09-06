@@ -1,73 +1,70 @@
 {
-    "name": "SecureChat",
-    "dockerComposeFile": "compose.yaml",
-    "service": "app",
-    "workspaceFolder": "/workspace",
-    "forwardPorts": [
-        80,
-        3000,
-        27017,
-        9000,
-        9001,
-        5000,
-        1025,
-        8025
-    ],
-    "portsAttributes": {
-        "80": {
-            "label": "Caddy Server"
-        },
-        "3000": {
-            "label": "Next.js Application"
-        },
-        "27017": {
-            "label": "MongoDB Database"
-        },
-        "9000": {
-            "label": "MinIO Server"
-        },
-        "9001": {
-            "label": "MinIO Console"
-        },
-        "5000": {
-            "label": "WS Server"
-        },
-        "1025": {
-            "label": "MailHog SMTP Port"
-        },
-        "8025": {
-            "label": "MailHog Web Interface"
-        }
+  "name": "SecureChat",
+  "dockerComposeFile": "compose.yaml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [80, 3000, 27017, 9333, 8080, 8888, 8333, 5000, 1025, 8025],
+  "portsAttributes": {
+    "80": {
+      "label": "Caddy Server"
     },
-    "customizations": {
-        "vscode": {
-            "settings": {
-                "terminal.integrated.shell.linux": "/bin/bash",
-                "editor.codeActionsOnSave": {
-                    "source.organizeImports": true
-                },
-                "editor.formatOnSave": true
-            },
-            "extensions": [
-                "donjayamanne.git-extension-pack",
-                "github.vscode-github-actions",
-                "mikestead.dotenv",
-                "mutantdino.resourcemonitor",
-                "ms-azuretools.vscode-docker",
-                "zamerick.vscode-caddyfile-syntax",
-                "hashicorp.hcl",
-                "ms-playwright.playwright",
-                "github.vscode-github-actions",
-                "hashicorp.terraform",
-                "ZainChen.json",
-                "esbenp.prettier-vscode",
-                "Prisma.prisma",
-                "christian-kohler.path-intellisense",
-                "bradlc.vscode-tailwindcss",
-                "pmneo.tsimporter",
-                "redhat.vscode-yaml",
-                "alexbabichev.formatter-pug"
-            ]
-        }
+    "3000": {
+      "label": "Next.js Application"
+    },
+    "27017": {
+      "label": "MongoDB Database"
+    },
+    "9333": {
+      "label": "SeaweedFS Master"
+    },
+    "8080": {
+      "label": "SeaweedFS Volume"
+    },
+    "8888": {
+      "label": "SeaweedFS Filer"
+    },
+    "8333": {
+      "label": "SeaweedFS S3 Gateway"
+    },
+    "5000": {
+      "label": "WS Server"
+    },
+    "1025": {
+      "label": "MailHog SMTP Port"
+    },
+    "8025": {
+      "label": "MailHog Web Interface"
     }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true
+        },
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "donjayamanne.git-extension-pack",
+        "github.vscode-github-actions",
+        "mikestead.dotenv",
+        "mutantdino.resourcemonitor",
+        "ms-azuretools.vscode-docker",
+        "zamerick.vscode-caddyfile-syntax",
+        "hashicorp.hcl",
+        "ms-playwright.playwright",
+        "github.vscode-github-actions",
+        "hashicorp.terraform",
+        "ZainChen.json",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma",
+        "christian-kohler.path-intellisense",
+        "bradlc.vscode-tailwindcss",
+        "pmneo.tsimporter",
+        "redhat.vscode-yaml",
+        "alexbabichev.formatter-pug"
+      ]
+    }
+  }
 }

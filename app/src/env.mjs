@@ -27,18 +27,6 @@ export const env = createEnv({
     EMAIL_SERVER: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
     S3_END_POINT: z.string().min(1),
-    S3_PORT: z
-      .string()
-      // transform to number
-      .transform((s) => parseInt(s, 10))
-      // make sure transform worked
-      .pipe(z.number()),
-    S3_USE_SSL: z
-      .string()
-      // only allow "true" or "false"
-      .refine((s) => s === "true" || s === "false")
-      // transform to boolean
-      .transform((s) => s === "true"),
     S3_ACCESS_KEY: z.string().min(1),
     S3_SECRET_KEY: z.string().min(1),
     S3_REGION: z.string().min(1),
@@ -73,9 +61,7 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
     S3_END_POINT: process.env.S3_END_POINT,
-    S3_PORT: process.env.S3_PORT,
     S3_SECRET_KEY: process.env.S3_SECRET_KEY,
-    S3_USE_SSL: process.env.S3_USE_SSL,
     S3_REGION: process.env.S3_REGION,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     WS_SERVER_URL: process.env.WS_SERVER_URL,

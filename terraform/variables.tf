@@ -67,43 +67,31 @@ variable "email_from" {
   default     = "noreply@vnadi.com"
 }
 
-variable "minio_access_key" {
-  description = "MinIO Access Key"
+variable "s3_access_key" {
+  description = "S3 Access Key"
   type        = string
 }
 
-variable "minio_secret_key" {
-  description = "MinIO Secret Key"
+variable "s3_secret_key" {
+  description = "S3 Secret Key"
   type        = string
   sensitive   = true
 }
 
-variable "minio_default_buckets" {
-  description = "MinIO Default Buckets"
+variable "s3_region" {
+  description = "S3 Region"
   type        = string
-  default     = "avatars:public"
+  default     = "us-east-1"
 }
 
-variable "minio_end_point" {
-  description = "MinIO Endpoint"
+variable "s3_end_point" {
+  description = "S3 Endpoint"
   type        = string
   default     = "minio.vnadi.com"
 }
 
-variable "minio_port" {
-  description = "MinIO Port"
-  type        = string
-  default     = "80"
-}
-
-variable "minio_use_ssl" {
-  description = "MinIO Use SSL"
-  type        = string
-  default     = "true"
-}
-
-variable "minio_bucket_name" {
-  description = "MinIO Bucket Name"
+variable "s3_bucket_name" {
+  description = "S3 Bucket Name"
   type        = string
   default     = "avatars"
 }
@@ -129,12 +117,6 @@ variable "mongo_replica_set_key" {
   description = "MongoDB Replica Set Key"
   type        = string
   sensitive   = true
-}
-
-variable "minio_server_url" {
-  description = "MinIO Server URL"
-  type        = string
-  default     = "https://minio.vnadi.com"
 }
 
 variable "connect_proxy_url" {

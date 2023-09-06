@@ -29,8 +29,8 @@ jobs:
         uses: docker/build-push-action@v2
         env:
           NEXT_PUBLIC_SITE_URL: https://vnadi.com
-          NEXT_PUBLIC_MINIO_ENDPOINT: https://minio.vnadi.com
-          NEXT_PUBLIC_MINIO_BUCKET: avatars
+          NEXT_PUBLIC_S3_ENDPOINT: https://minio.vnadi.com
+          NEXT_PUBLIC_S3_BUCKET: avatars
         with:
           context: ./app
           push: true
@@ -39,5 +39,5 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SITE_URL=${{ env.NEXT_PUBLIC_SITE_URL }}
 
-            NEXT_PUBLIC_MINIO_ENDPOINT=${{ env.NEXT_PUBLIC_MINIO_ENDPOINT }}
-            NEXT_PUBLIC_MINIO_BUCKET=${{ env.NEXT_PUBLIC_MINIO_BUCKET }}
+            NEXT_PUBLIC_S3_ENDPOINT=${{ env.NEXT_PUBLIC_S3_ENDPOINT }}
+            NEXT_PUBLIC_S3_BUCKET=${{ env.NEXT_PUBLIC_S3_BUCKET }}
