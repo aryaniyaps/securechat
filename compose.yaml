@@ -69,9 +69,7 @@ services:
       - "9333:9333"
       - "19333:19333"
       - "9324:9324"
-    command: "master -mdir /data -ip=seaweedfs-master -ip.bind=0.0.0.0 -metricsPort=9324"
-    volumes:
-      - seaweedfs_master_data:/data
+    command: "master -ip=seaweedfs-master -ip.bind=0.0.0.0 -metricsPort=9324"
 
   seaweedfs-volume:
     image: chrislusf/seaweedfs:3.55
@@ -96,10 +94,7 @@ services:
     stdin_open: true
 
   seaweedfs-s3:
-    build:
-      context: ../weed-s3
-      dockerfile: Dockerfile
-      target: dev-container
+    image: aryaniyaps/securechat-weed-s3:latest
     ports:
       - "8333:8333"
       - "9327:9327"
@@ -107,10 +102,11 @@ services:
       - seaweedfs-master
       - seaweedfs-filer
     command: "s3 -filer=seaweedfs-filer:8888 -ip.bind=0.0.0.0 -metricsPort=9327 -config=/config.json"
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
 
 volumes:
-  seaweedfs_master_data:
-    driver: local
   caddy_data:
     driver: local
   mongodb_data:
