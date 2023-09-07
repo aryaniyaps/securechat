@@ -96,7 +96,6 @@ function RoomPage({
     return () => {
       clearRoom();
       // remove all listeners
-      console.log("REMOVING LISTENERS", id);
       wsClient.off("create-message");
       wsClient.off("delete-message");
       wsClient.off("add-typing-user");
