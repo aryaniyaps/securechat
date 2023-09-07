@@ -46,8 +46,6 @@ function RoomPage({
   useEffect(() => {
     void setRoom(id);
 
-    console.log("ADDING LISTENERS", id);
-
     wsClient.on("create-message", async (newMessage: Message) => {
       await utils.message.getAll.cancel();
 
@@ -105,8 +103,6 @@ function RoomPage({
       wsClient.off("remove-typing-user");
     };
   }, [id]);
-
-  console.log("ID: ", id);
 
   if (!session || isLoading || !room) {
     return <LoadingScreen />;

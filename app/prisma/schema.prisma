@@ -31,6 +31,8 @@ model Message {
     content   String
     ownerId   String   @db.ObjectId
     roomId    String   @db.ObjectId
+    media     String?  @db.String
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

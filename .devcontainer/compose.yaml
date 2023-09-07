@@ -42,7 +42,8 @@ services:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
         # S3 Public Information
         NEXT_PUBLIC_S3_ENDPOINT: ${NEXT_PUBLIC_S3_ENDPOINT}
-        NEXT_PUBLIC_S3_BUCKET: ${NEXT_PUBLIC_S3_BUCKET}
+        NEXT_PUBLIC_S3_AVATAR_BUCKET: ${NEXT_PUBLIC_S3_AVATAR_BUCKET}
+        NEXT_PUBLIC_S3_MEDIA_BUCKET: ${NEXT_PUBLIC_S3_MEDIA_BUCKET}
     working_dir: /workspace/app
     volumes:
       - ../:/workspace:cached
@@ -69,7 +70,8 @@ services:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_END_POINT: ${S3_END_POINT}
-      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      S3_AVATAR_BUCKET_NAME: ${S3_AVATAR_BUCKET_NAME}
+      S3_MEDIA_BUCKET_NAME: ${S3_MEDIA_BUCKET_NAME}
       S3_REGION: ${S3_REGION}
 
       # WS Server Configuration
@@ -107,7 +109,7 @@ services:
       - "8080:8080"
     depends_on:
       - seaweedfs-master
-    command: "volume -max=5 -mserver=seaweedfs-master:9333 -port=8080 -ip=seaweedfs-volume -dir=/data/volume"
+    command: "volume -max=50 -mserver=seaweedfs-master:9333 -port=8080 -ip=seaweedfs-volume -dir=/data/volume"
     volumes:
       - seaweedfs_data:/data/volume
 

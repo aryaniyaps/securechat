@@ -4,6 +4,7 @@ import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
+import { getMediaUrl } from "~/utils/media";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -138,6 +139,7 @@ function MessageTile({
             )}
           </div>
           <p className="whitespace-normal break-all">{message.content}</p>
+          {message.media && <a>{getMediaUrl(message.media)}</a>}
         </div>
       </Tooltip>
     </div>

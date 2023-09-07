@@ -5,6 +5,7 @@ export const messageSchema = z.object({
   content: z.string(),
   roomId: z.string(),
   ownerId: z.string(),
+  media: z.string().nullable(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
   owner: z.object({

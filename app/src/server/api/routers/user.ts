@@ -15,7 +15,7 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const fileName = `${ctx.session.user.id}/${nanoid(6)}`;
       const command = new PutObjectCommand({
-        Bucket: env.S3_BUCKET_NAME,
+        Bucket: env.S3_AVATAR_BUCKET_NAME,
         Key: fileName,
         ContentType: input.contentType,
       });

@@ -1,7 +1,12 @@
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TRPCError } from "@trpc/server";
+import { nanoid } from "nanoid";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { s3Client } from "~/server/config/s3";
 import { wsServerApi } from "~/server/config/wsServer";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 
@@ -53,10 +58,27 @@ export const messageRouter = createTRPCRouter({
         nextCursor,
       };
     }),
+  createMediaPresignedUrl: protectedProcedure
+    .input(z.object({ contentType: z.string(), roomId: z.string() }))
+    .output(z.object({ presignedUrl: z.string(), fileName: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const fileName = `${input.roomId}/${ctx.session.user.id}/${nanoid(6)}`;
+      const command = new PutObjectCommand({
+        Bucket: env.S3_MEDIA_BUCKET_NAME,
+        Key: fileName,
+        ContentType: input.contentType,
+      });
+      const presignedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600, // 1 hr
+      });
+
+      return { presignedUrl, fileName };
+    }),
   create: protectedProcedure
     .input(
       z.object({
         content: z.string(),
+        media: z.string().nullable(),
         roomId: z.string(),
       })
     )
@@ -67,6 +89,7 @@ export const messageRouter = createTRPCRouter({
       const message = await ctx.prisma.message.create({
         data: {
           content: input.content,
+          media: input.media,
           roomId: input.roomId,
           ownerId: ctx.session.user.id,
         },

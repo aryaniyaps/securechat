@@ -48,7 +48,8 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_END_POINT: ${S3_END_POINT}
       S3_REGION: ${S3_REGION}
-      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      S3_AVATAR_BUCKET_NAME: ${S3_AVATAR_BUCKET_NAME}
+      S3_MEDIA_BUCKET_NAME: ${S3_MEDIA_BUCKET_NAME}
 
       # WS Server Configuration
       WS_SERVER_URL: ${WS_SERVER_URL}
@@ -81,7 +82,7 @@ services:
       - "9325:9325"
     depends_on:
       - seaweedfs-master
-    command: "volume -max=2 -mserver=seaweedfs-master:9333 -ip.bind=0.0.0.0 -port=8080 -dir=/data/volume -metricsPort=9325"
+    command: "volume -max=50 -mserver=seaweedfs-master:9333 -ip.bind=0.0.0.0 -port=8080 -dir=/data/volume -metricsPort=9325"
     volumes:
       - seaweedfs_data:/data/volume
 

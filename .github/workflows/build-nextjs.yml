@@ -30,7 +30,8 @@ jobs:
         env:
           NEXT_PUBLIC_SITE_URL: https://vnadi.com
           NEXT_PUBLIC_S3_ENDPOINT: https://s3.vnadi.com
-          NEXT_PUBLIC_S3_BUCKET: avatars
+          NEXT_PUBLIC_S3_AVATAR_BUCKET: avatars
+          NEXT_PUBLIC_S3_MEDIA_BUCKET: media
         with:
           context: ./app
           push: true
@@ -40,4 +41,5 @@ jobs:
             NEXT_PUBLIC_SITE_URL=${{ env.NEXT_PUBLIC_SITE_URL }}
 
             NEXT_PUBLIC_S3_ENDPOINT=${{ env.NEXT_PUBLIC_S3_ENDPOINT }}
-            NEXT_PUBLIC_S3_BUCKET=${{ env.NEXT_PUBLIC_S3_BUCKET }}
+            NEXT_PUBLIC_S3_AVATAR_BUCKET=${{ env.NEXT_PUBLIC_S3_AVATAR_BUCKET }}
+            NEXT_PUBLIC_S3_MEDIA_BUCKET=${{ env.NEXT_PUBLIC_S3_MEDIA_BUCKET }}

@@ -90,10 +90,16 @@ variable "s3_end_point" {
   default     = "https://s3.vnadi.com"
 }
 
-variable "s3_bucket_name" {
-  description = "S3 Bucket Name"
+variable "s3_avatar_bucket_name" {
+  description = "S3 Avatar Bucket Name"
   type        = string
   default     = "avatars"
+}
+
+variable "s3_media_bucket_name" {
+  description = "S3 Media Bucket Name"
+  type        = string
+  default     = "media"
 }
 
 variable "ws_server_url" {
