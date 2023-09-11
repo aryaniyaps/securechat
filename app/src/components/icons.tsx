@@ -17,8 +17,7 @@ import {
   Loader2,
   Moon,
   MoreHorizontal,
-  MoreVertical,
-  Pizza,
+  MoreVertical, Paperclip, Pizza,
   Plus,
   SendIcon,
   Settings,
@@ -49,6 +48,7 @@ export const Icons = {
     </svg>
   ),
   users: Users,
+  paperclip: Paperclip,
   textCursor: TextCursor,
   close: X,
   spinner: Loader2,
