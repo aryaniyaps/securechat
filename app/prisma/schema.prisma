@@ -26,12 +26,19 @@ model Room {
     messages Message[]
 }
 
+type AttachmentFile {
+    name        String
+    contentType String
+    uri         String
+}
+
 model Message {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    content   String
-    ownerId   String   @db.ObjectId
-    roomId    String   @db.ObjectId
-    media     String?  @db.String
+    id      String @id @default(auto()) @map("_id") @db.ObjectId
+    content String
+    ownerId String @db.ObjectId
+    roomId  String @db.ObjectId
+
+    attachments AttachmentFile[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -58,7 +65,7 @@ model Account {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    user              User    @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id])
 
     @@unique([provider, providerAccountId])
 }

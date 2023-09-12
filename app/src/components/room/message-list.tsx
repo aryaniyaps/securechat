@@ -1,10 +1,12 @@
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import { AttachmentFile } from "@prisma/client";
 import { Session } from "next-auth";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
+import { getMediaUrl } from "~/utils/media";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -12,6 +14,17 @@ import { Skeleton } from "../ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const SCROLL_THRESHOLD = 250;
+
+function MessageAttachmentsViewer({ attachments }: { attachments: AttachmentFile[] }) {
+  const documents = attachments.map(attachment => {
+    return { uri: getMediaUrl(attachment.uri), fileType: attachment.contentType, fileName: attachment.name }
+  })
+  return (<DocViewer
+    documents={documents}
+    initialActiveDocument={documents[0]}
+    pluginRenderers={DocViewerRenderers}
+  />)
+}
 
 function MessageTile({
   message,
@@ -138,29 +151,8 @@ function MessageTile({
               </Tooltip>
             )}
           </div>
-          {message.media && (
-            // TODO: need more attributes to be stored
-            // we can also have multiple media uploads per message
-            // example of stream chat attachments:
-            /* 
-            [
-              {
-                file: {
-                  name: 'test.pdf';
-                  size: 2000;
-                  type: 'application/pdf';
-                  uri: 'file-uri';
-                };
-                id: 'asdas232bk3jb42k3';
-                state: 'uploaded'; // or 'finished'
-                url: 'https://cdn.getstream.io/kajsnkj2n3j4';
-              }
-            ]
-            */
-            <DocViewer
-              documents={[{ uri: message.media }]}
-              pluginRenderers={DocViewerRenderers}
-            />
+          {message.attachments.length > 0 && (
+            <MessageAttachmentsViewer attachments={message.attachments} />
           )}
           <p className="whitespace-normal break-all">{message.content}</p>
         </div>

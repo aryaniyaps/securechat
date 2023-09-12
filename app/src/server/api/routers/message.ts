@@ -43,7 +43,7 @@ export const messageRouter = createTRPCRouter({
               image: true,
               createdAt: true,
             },
-          },
+          },          
         },
       });
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -60,25 +60,29 @@ export const messageRouter = createTRPCRouter({
     }),
   createMediaPresignedUrl: protectedProcedure
     .input(z.object({ contentType: z.string(), roomId: z.string() }))
-    .output(z.object({ presignedUrl: z.string(), fileName: z.string() }))
+    .output(z.object({ presignedUrl: z.string(), uri: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const fileName = `${input.roomId}/${ctx.session.user.id}/${nanoid(6)}`;
+      const uri = `${input.roomId}/${ctx.session.user.id}/${nanoid(6)}`;
       const command = new PutObjectCommand({
         Bucket: env.S3_MEDIA_BUCKET_NAME,
-        Key: fileName,
+        Key: uri,
         ContentType: input.contentType,
       });
       const presignedUrl = await getSignedUrl(s3Client, command, {
         expiresIn: 3600, // 1 hr
       });
 
-      return { presignedUrl, fileName };
+      return { presignedUrl, uri };
     }),
   create: protectedProcedure
     .input(
       z.object({
         content: z.string(),
-        media: z.string().nullable(),
+        attachments: z.array(z.object({
+          name: z.string(),
+          contentType: z.string(),
+          uri: z.string(),
+        })),
         roomId: z.string(),
       })
     )
@@ -89,8 +93,8 @@ export const messageRouter = createTRPCRouter({
       const message = await ctx.prisma.message.create({
         data: {
           content: input.content,
-          media: input.media,
           roomId: input.roomId,
+          attachments: input.attachments,
           ownerId: ctx.session.user.id,
         },
         include: {

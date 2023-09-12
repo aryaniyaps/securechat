@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HTMLProps, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { useToast } from "~/hooks/use-toast";
+import { AttachmentFile } from "~/schemas/attachment";
 import { TypingUser } from "~/schemas/typing";
 import { api } from "~/utils/api";
 import { TYPING_INDICATOR_DELAY } from "~/utils/constants";
@@ -14,59 +15,55 @@ import { Input } from "../ui/input";
 
 const createMessageSchema = z
   .object({
-    content: z
-      .string()
-      .min(1, { message: "Message must be at least 1 character." })
-      .max(250, { message: "Message cannot exceed 250 characters." })
-      .optional(),
-    media: z.instanceof(Blob).optional(),
+    content: z.optional(
+      z.string()
+        .min(1, { message: "Message must be at least 1 character." })
+        .max(250, { message: "Message cannot exceed 250 characters." })
+    ),
+    attachments: z.nullable(z.array(z.instanceof(Blob))),
   })
   .refine(
-    (data) => !!data.content || !!data.media,
+    (data) => !!data.content || !!data.attachments,
     {
-      message: "Either content or media must be provided.",
+      message: "Either content or attachments must be provided.",
       path: [], // specify the root object as the point of failure
     }
   );
 
 
-interface MediaControllerProps extends Omit<HTMLProps<HTMLInputElement>, 'onChange'> {
-  onChange: (selectedFile: Blob | null) => void;
+interface MediaControllerProps {
+  selectedFiles: File[];
+  onChange: (selectedFiles: File[] | null) => void;
 }
 
 function MediaController(props: MediaControllerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isFileSelected, setIsFileSelected] = useState(false);
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.item(0);
-    if (selectedFile) {
-      setIsFileSelected(true);
-      props.onChange(selectedFile);
-    } else {
-      setIsFileSelected(false);
-      props.onChange(null);
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+      props.onChange([...(props.selectedFiles || []), ...newFiles]);
     }
   };
 
   return (
-    <>
+    <Button
+      type="button"
+      variant="secondary"
+      onClick={() => {
+        fileInputRef.current?.click();
+      }}
+    >
+      <Icons.add size={20} className="h-4 w-4" />
       <input
-        name="media"
+        name="attachments"
         type="file"
+        multiple
         ref={fileInputRef}
         className="hidden"
         onChange={onSelectFile}
       />
-      <Button
-        variant={isFileSelected ? "destructive" : "secondary"}
-        onClick={() => {
-          fileInputRef.current?.click();
-        }}
-      >
-        {isFileSelected ? (<Icons.paperclip size={20} className="h-4 w-4" />) : (<Icons.add size={20} className="h-4 w-4" />)}
-      </Button>
-    </>
+    </Button>
   );
 }
 
@@ -74,12 +71,15 @@ function MediaController(props: MediaControllerProps) {
 export default function MessageController({ roomId }: { roomId: string }) {
   const { typing } = useCurrentRoomStore();
 
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
   const [isTyping, setIsTyping] = useState(false);
 
   const form = useForm<z.infer<typeof createMessageSchema>>({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {
       content: "",
+      attachments: []
     },
   });
 
@@ -96,6 +96,13 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
   const createMediaPresignedUrl =
     api.message.createMediaPresignedUrl.useMutation({});
+
+
+  const onFileChange = (newFiles: File[] | null) => {
+    if (newFiles) {
+      setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
+    }
+  };
 
   async function uploadMedia(media: Blob, presignedUrl: string) {
     const response = await fetch(presignedUrl, {
@@ -146,26 +153,32 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
   async function onSubmit(values: z.infer<typeof createMessageSchema>) {
     try {
-      let fileName = null;
 
-      if (values.media) {
-        const { presignedUrl, fileName: generatedFileName } =
-          await createMediaPresignedUrl.mutateAsync({
-            contentType: values.media.type,
-            roomId: roomId
-          });
-        const isUploadSuccessful = await uploadMedia(
-          values.media,
-          presignedUrl
-        );
+      let attachments: AttachmentFile[] = [];
 
-        if (!isUploadSuccessful) {
-          toast({
-            description: "Couldn't upload media!",
-            variant: "destructive",
-          });
-        } else {
-          fileName = generatedFileName;
+      if (values.attachments) {
+        for (const attachment of values.attachments) {
+          let uri = null;
+          const { presignedUrl, uri: generatedFileUri } =
+            await createMediaPresignedUrl.mutateAsync({
+              contentType: attachment.type,
+              roomId: roomId
+            });
+          const isUploadSuccessful = await uploadMedia(
+            attachment,
+            presignedUrl
+          );
+
+          if (!isUploadSuccessful) {
+            toast({
+              description: "Couldn't upload media!",
+              variant: "destructive",
+            });
+          } else {
+            uri = generatedFileUri;
+            attachments.push({ contentType: attachment.type, uri: uri, name: attachment.name });
+          }
+
         }
       }
 
@@ -174,12 +187,12 @@ export default function MessageController({ roomId }: { roomId: string }) {
         roomId: roomId
       };
 
-      if (fileName) {
-        payload.media = fileName;
+      if (attachments) {
+        payload.attachments = attachments;
       }
 
       await createMessage.mutateAsync(payload);
-      form.reset({ content: "", media: undefined });
+      form.reset({ content: "", attachments: null });
     } catch (err) {
       toast({ description: "Couldn't send message!", variant: "destructive" });
     }
@@ -196,6 +209,12 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
   return (
     <div className="mb-4 flex flex-col gap-4">
+      {selectedFiles.length > 0 && (<div className="w-full flex gap-4 p-4 bg-secondary rounded-md" >{selectedFiles.map((file, index) => {
+        return (
+          <div key={`${file.name}-${index}`} className="px-6 py-4 bg-tertiary rounded-md">{file.name}</div>
+        )
+      })}</div>)}
+
       <Form {...form} data-testid="message-controller">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -203,13 +222,13 @@ export default function MessageController({ roomId }: { roomId: string }) {
         >
           <FormField
             control={form.control}
-            name="media"
+            name="attachments"
             render={({ field: { ref, ...field } }) => (
               <FormItem>
                 <FormControl>
                   <MediaController
-                    {...field}
-                    disabled={form.formState.isSubmitting}
+                    selectedFiles={selectedFiles}
+                    onChange={onFileChange}
                   />
                 </FormControl>
                 <FormMessage />
