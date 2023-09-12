@@ -8,6 +8,7 @@ import { AttachmentFile } from "~/schemas/attachment";
 import { TypingUser } from "~/schemas/typing";
 import { api } from "~/utils/api";
 import { TYPING_INDICATOR_DELAY } from "~/utils/constants";
+import { bytesToSize } from "~/utils/file";
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
@@ -202,6 +203,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
     // Clean up the timeout when the component is unmounted
     return () => {
       if (typingTimeout) {
+
         clearTimeout(typingTimeout);
       }
     };
@@ -211,7 +213,10 @@ export default function MessageController({ roomId }: { roomId: string }) {
     <div className="mb-4 flex flex-col gap-4">
       {selectedFiles.length > 0 && (<div className="w-full flex gap-4 p-4 bg-secondary rounded-md" >{selectedFiles.map((file, index) => {
         return (
-          <div key={`${file.name}-${index}`} className="px-6 py-4 bg-tertiary rounded-md">{file.name}</div>
+          <div key={`${file.name}-${index}`} className="px-6 py-4 flex flex-col gap-1 bg-tertiary rounded-md max-w-[200px] overflow-ellipsis">
+            <p className="font-mono text-sm truncate">{file.name}</p>
+            <p className="text-xs font-light">{bytesToSize(file.size)}</p>
+          </div>
         )
       })}</div>)}
 
