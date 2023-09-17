@@ -65,7 +65,7 @@ services:
       CONNECT_PROXY_URL: ${CONNECT_PROXY_URL}
 
   seaweedfs-master:
-    image: chrislusf/seaweedfs:3.55
+    image: chrislusf/seaweedfs:3.56
     ports:
       - "9333:9333"
       - "19333:19333"
@@ -75,7 +75,7 @@ services:
       - seaweedfs_data:/data/master
 
   seaweedfs-volume:
-    image: chrislusf/seaweedfs:3.55
+    image: chrislusf/seaweedfs:3.56
     ports:
       - "8080:8080"
       - "18080:18080"
