@@ -21,7 +21,6 @@ services:
 
   mongodb:
     image: bitnami/mongodb:6.0
-    restart: unless-stopped
     environment:
       MONGODB_REPLICA_SET_MODE: primary
       MONGODB_ADVERTISED_HOSTNAME: mongodb
