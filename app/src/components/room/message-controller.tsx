@@ -103,9 +103,9 @@ function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) =
 }
 
 function MediaPreviewer({ selectedFiles, onDeleteFile }: { selectedFiles: File[]; onDeleteFile: (file: File) => void }) {
-
+  // todo: add horizontal scrollbar here
   return (
-    <div className="w-full flex gap-4 p-4 bg-secondary rounded-md" >
+    <div className="w-full flex gap-4 p-4 bg-secondary rounded-md">
       {selectedFiles.map((file, index) => <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />)}
     </div>
   )
