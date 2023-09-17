@@ -11,25 +11,20 @@ import { TYPING_INDICATOR_DELAY } from "~/utils/constants";
 import { bytesToSize } from "~/utils/file";
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const createMessageSchema = z
   .object({
-    content: z.optional(
-      z.string()
-        .min(1, { message: "Message must be at least 1 character." })
-        .max(250, { message: "Message cannot exceed 250 characters." })
-    ),
-    attachments: z.nullable(z.array(z.instanceof(Blob))),
+    content: z
+      .union([
+        z.string()
+          .min(1, { message: "Message must be at least 1 character." })
+          .max(250, { message: "Message cannot exceed 250 characters." }),
+        z.literal(null)
+      ])
   })
-  .refine(
-    (data) => !!data.content || !!data.attachments,
-    {
-      message: "Either content or attachments must be provided.",
-      path: [], // specify the root object as the point of failure
-    }
-  );
 
 
 interface MediaControllerProps {
@@ -43,29 +38,77 @@ function MediaController(props: MediaControllerProps) {
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
-      props.onChange([...(props.selectedFiles || []), ...newFiles]);
+      props.onChange(newFiles);
     }
   };
 
   return (
-    <Button
-      type="button"
-      variant="secondary"
-      onClick={() => {
-        fileInputRef.current?.click();
-      }}
-    >
-      <Icons.add size={20} className="h-4 w-4" />
-      <input
-        name="attachments"
-        type="file"
-        multiple
-        ref={fileInputRef}
-        className="hidden"
-        onChange={onSelectFile}
-      />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => {
+            fileInputRef.current?.click();
+          }}
+        >
+          <Icons.add size={20} className="h-4 w-4" />
+          <input
+            type="file"
+            className="hidden"
+            onChange={onSelectFile}
+            multiple
+            ref={fileInputRef}
+          />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Add attachment</TooltipContent>
+    </Tooltip>
   );
+}
+
+function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) => void }) {
+  const [showDeleteButton, setShowDeleteButton] = useState(false)
+  return (
+    <div
+      className="px-6 py-4 flex relative flex-col gap-1 bg-tertiary rounded-md max-w-[200px] overflow-ellipsis"
+      onMouseEnter={() => setShowDeleteButton(true)}
+      onMouseLeave={() => setShowDeleteButton(false)}
+    >
+      {showDeleteButton && (
+        <div className="absolute right-0 top-0 mr-2 z-10">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+              >
+                <Icons.trash2
+                  size={5}
+                  className="h-3 w-3 text-destructive"
+                  onClick={() => {
+                    onDelete(file)
+                  }}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete attachment</TooltipContent>
+          </Tooltip>
+        </div>
+      )}
+      <p className="font-mono text-sm truncate">{file.name}</p>
+      <p className="text-xs font-light">{bytesToSize(file.size)}</p>
+    </div>
+  )
+}
+
+function MediaPreviewer({ selectedFiles, onDeleteFile }: { selectedFiles: File[]; onDeleteFile: (file: File) => void }) {
+
+  return (
+    <div className="w-full flex gap-4 p-4 bg-secondary rounded-md" >
+      {selectedFiles.map((file, index) => <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />)}
+    </div>
+  )
 }
 
 
@@ -79,9 +122,8 @@ export default function MessageController({ roomId }: { roomId: string }) {
   const form = useForm<z.infer<typeof createMessageSchema>>({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {
-      content: "",
-      attachments: []
-    },
+      content: null
+    }
   });
 
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
@@ -150,15 +192,17 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
     return null;
   }
-  // }
+
+  function onDeleteFile(fileToRemove: File) {
+    setSelectedFiles(prevFiles => prevFiles.filter(file => file !== fileToRemove));
+  }
 
   async function onSubmit(values: z.infer<typeof createMessageSchema>) {
     try {
-
       let attachments: AttachmentFile[] = [];
 
-      if (values.attachments) {
-        for (const attachment of values.attachments) {
+      if (selectedFiles) {
+        for (const attachment of selectedFiles) {
           let uri = null;
           const { presignedUrl, uri: generatedFileUri } =
             await createMediaPresignedUrl.mutateAsync({
@@ -193,7 +237,8 @@ export default function MessageController({ roomId }: { roomId: string }) {
       }
 
       await createMessage.mutateAsync(payload);
-      form.reset({ content: "", attachments: null });
+      form.reset({ content: null });
+      setSelectedFiles([])
     } catch (err) {
       toast({ description: "Couldn't send message!", variant: "destructive" });
     }
@@ -203,7 +248,6 @@ export default function MessageController({ roomId }: { roomId: string }) {
     // Clean up the timeout when the component is unmounted
     return () => {
       if (typingTimeout) {
-
         clearTimeout(typingTimeout);
       }
     };
@@ -211,34 +255,17 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
   return (
     <div className="mb-4 flex flex-col gap-4">
-      {selectedFiles.length > 0 && (<div className="w-full flex gap-4 p-4 bg-secondary rounded-md" >{selectedFiles.map((file, index) => {
-        return (
-          <div key={`${file.name}-${index}`} className="px-6 py-4 flex flex-col gap-1 bg-tertiary rounded-md max-w-[200px] overflow-ellipsis">
-            <p className="font-mono text-sm truncate">{file.name}</p>
-            <p className="text-xs font-light">{bytesToSize(file.size)}</p>
-          </div>
-        )
-      })}</div>)}
+      {selectedFiles.length > 0 && (<MediaPreviewer selectedFiles={selectedFiles} onDeleteFile={onDeleteFile} />
+      )}
 
       <Form {...form} data-testid="message-controller">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex w-full items-center gap-4"
         >
-          <FormField
-            control={form.control}
-            name="attachments"
-            render={({ field: { ref, ...field } }) => (
-              <FormItem>
-                <FormControl>
-                  <MediaController
-                    selectedFiles={selectedFiles}
-                    onChange={onFileChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <MediaController
+            selectedFiles={selectedFiles}
+            onChange={onFileChange}
           />
 
           <FormField
@@ -251,24 +278,30 @@ export default function MessageController({ roomId }: { roomId: string }) {
                     type="text"
                     placeholder="send a message..."
                     className="px-4 py-6"
+                    {...field}
+                    value={field.value || ""}
                     onChange={(e) => {
                       handleTyping(e);
                       field.onChange(e);
                     }}
-                    value={field.value}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
-          <Button
-            variant="secondary"
-            type="submit"
-            className="py-6"
-            disabled={!form.formState.isValid}
-          >
-            <Icons.send size={20} className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="secondary"
+                type="submit"
+                className="py-6"
+                disabled={!form.getValues("content") && selectedFiles.length === 0}
+              >
+                <Icons.send size={20} className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Send message</TooltipContent>
+          </Tooltip>
         </form>
       </Form>
       <p

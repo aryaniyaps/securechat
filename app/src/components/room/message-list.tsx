@@ -1,4 +1,3 @@
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { AttachmentFile } from "@prisma/client";
 import { Session } from "next-auth";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -16,14 +15,20 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 const SCROLL_THRESHOLD = 250;
 
 function MessageAttachmentsViewer({ attachments }: { attachments: AttachmentFile[] }) {
-  const documents = attachments.map(attachment => {
-    return { uri: getMediaUrl(attachment.uri), fileType: attachment.contentType, fileName: attachment.name }
-  })
-  return (<DocViewer
-    documents={documents}
-    initialActiveDocument={documents[0]}
-    pluginRenderers={DocViewerRenderers}
-  />)
+
+  return (
+    <div className="flex flex-col gap-4">
+      {attachments.map(attachment => {
+        return (
+          <a key={attachment.uri} href={getMediaUrl(attachment.uri)} target="_blank" rel="noopener noreferrer">
+            <div className="px-6 py-4 bg-tertiary rounded-md max-w-[200px] overflow-ellipsis">
+              <p className="font-mono text-sm truncate">{attachment.name}</p>
+            </div>
+          </a>
+        )
+      })}
+    </div>
+  )
 }
 
 function MessageTile({
@@ -154,7 +159,9 @@ function MessageTile({
           {message.attachments.length > 0 && (
             <MessageAttachmentsViewer attachments={message.attachments} />
           )}
-          <p className="whitespace-normal break-all">{message.content}</p>
+          {message.content && (
+            <p className="whitespace-normal break-all">{message.content}</p>
+          )}
         </div>
       </Tooltip>
     </div>

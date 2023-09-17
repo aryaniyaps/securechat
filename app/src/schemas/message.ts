@@ -3,7 +3,7 @@ import { attachmentFileSchema } from "./attachment";
 
 export const messageSchema = z.object({
   id: z.string(),
-  content: z.string(),
+  content: z.string().nullable(),
   roomId: z.string(),
   ownerId: z.string(),
   attachments: z.array(attachmentFileSchema),

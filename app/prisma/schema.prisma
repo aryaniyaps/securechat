@@ -33,10 +33,10 @@ type AttachmentFile {
 }
 
 model Message {
-    id      String @id @default(auto()) @map("_id") @db.ObjectId
-    content String
-    ownerId String @db.ObjectId
-    roomId  String @db.ObjectId
+    id      String  @id @default(auto()) @map("_id") @db.ObjectId
+    content String? @db.String
+    ownerId String  @db.ObjectId
+    roomId  String  @db.ObjectId
 
     attachments AttachmentFile[]
 

@@ -43,7 +43,7 @@ export const messageRouter = createTRPCRouter({
               image: true,
               createdAt: true,
             },
-          },          
+          },
         },
       });
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -77,18 +77,25 @@ export const messageRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        content: z.string(),
-        attachments: z.array(z.object({
-          name: z.string(),
-          contentType: z.string(),
-          uri: z.string(),
-        })),
+        content: z.string().nullable(),
+        attachments: z.array(
+          z.object({
+            name: z.string(),
+            contentType: z.string(),
+            uri: z.string(),
+          })
+        ),
         roomId: z.string(),
       })
     )
     .output(messageSchema)
     .mutation(async ({ ctx, input }) => {
-      // create message here
+      if (!input.content && input.attachments.length === 0) {
+        throw new TRPCError({
+          message: "Either content or attachments must be provided.",
+          code: "BAD_REQUEST",
+        });
+      }
       // check if room ID is valid here
       const message = await ctx.prisma.message.create({
         data: {
@@ -160,6 +167,8 @@ export const messageRouter = createTRPCRouter({
           id: input.id,
         },
       });
+      // TODO: delete attachments also here
+      
       // broadcast message here
       await wsServerApi.post("/broadcast-event", {
         type: "DELETE_MESSAGE",
