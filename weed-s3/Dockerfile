@@ -1,5 +1,5 @@
 # Use the official centrifugo image as a base
-FROM chrislusf/seaweedfs:3.55 AS production
+FROM chrislusf/seaweedfs:3.56 AS production
 
 ARG S3_ACCESS_KEY
 
