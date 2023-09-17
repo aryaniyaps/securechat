@@ -19,6 +19,14 @@ s3.vnadi.com {
 	tls {$ACME_EMAIL} {
 		dns digitalocean {$DIGITALOCEAN_API_TOKEN}
 	}
+
+	header {
+		# Enable CORS by adding the following headers
+		Access-Control-Allow-Origin https://vnadi.com
+		Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+		Access-Control-Allow-Headers "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range"
+	}
+	
 	reverse_proxy seaweedfs-s3:8333 {
 		header_up Host {host}
 		header_up X-Real-IP {remote}
