@@ -169,7 +169,7 @@ export const messageRouter = createTRPCRouter({
       });
 
       // delete attachments here
-      console.log("BEFORE DELETING ATTACHMENTS");
+      // we have a problem connecting to the s3 gateway in the development environment alone
       try {
         await s3Client.send(
           new DeleteObjectsCommand({
