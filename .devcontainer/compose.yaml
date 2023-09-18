@@ -10,10 +10,6 @@ services:
       - caddy_data:/data/caddy
     ports:
       - "80:80"
-    ulimits:
-      nofile:
-        soft: 65535
-        hard: 65535
     depends_on:
       - app
       - seaweedfs-s3
