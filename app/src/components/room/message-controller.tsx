@@ -203,8 +203,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
       if (selectedFiles) {
         for (const attachment of selectedFiles) {
-          let uri = null;
-          const { presignedUrl, uri: generatedFileUri } =
+          const { presignedUrl, uri } =
             await createMediaPresignedUrl.mutateAsync({
               contentType: attachment.type,
               roomId: roomId
@@ -220,7 +219,6 @@ export default function MessageController({ roomId }: { roomId: string }) {
               variant: "destructive",
             });
           } else {
-            uri = generatedFileUri;
             attachments.push({ contentType: attachment.type, uri: uri, name: attachment.name });
           }
 

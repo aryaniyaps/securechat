@@ -1,4 +1,4 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
@@ -167,8 +167,25 @@ export const messageRouter = createTRPCRouter({
           id: input.id,
         },
       });
-      // TODO: delete attachments also here
-      
+
+      // delete attachments here
+      console.log("BEFORE DELETING ATTACHMENTS");
+      try {
+        await s3Client.send(
+          new DeleteObjectsCommand({
+            Bucket: env.S3_MEDIA_BUCKET_NAME,
+            Delete: {
+              Objects: message.attachments.map((attachment) => {
+                return { Key: attachment.uri };
+              }),
+              Quiet: false,
+            },
+          })
+        );
+      } catch (err) {
+        console.error(err);
+      }
+
       // broadcast message here
       await wsServerApi.post("/broadcast-event", {
         type: "DELETE_MESSAGE",
