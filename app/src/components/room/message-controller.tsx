@@ -105,8 +105,10 @@ function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) =
 function MediaPreviewer({ selectedFiles, onDeleteFile }: { selectedFiles: File[]; onDeleteFile: (file: File) => void }) {
   // todo: add horizontal scrollbar here
   return (
-    <div className="w-full flex gap-4 p-4 bg-secondary rounded-md">
-      {selectedFiles.map((file, index) => <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />)}
+    <div className="w-full min-w-full flex gap-4 p-4 bg-secondary rounded-md overflow-x-auto">
+      {selectedFiles.map((file, index) => (
+        <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />
+      ))}
     </div>
   )
 }
@@ -252,7 +254,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
   }, []);
 
   return (
-    <div className="mb-4 flex flex-col gap-4">
+    <div className="mb-4 flex flex-col gap-4 w-full min-w-full">
       {selectedFiles.length > 0 && (<MediaPreviewer selectedFiles={selectedFiles} onDeleteFile={onDeleteFile} />
       )}
 

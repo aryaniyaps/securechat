@@ -139,7 +139,7 @@ function RoomPage({
             </>
           ) : (
             <>
-              <div className="flex flex-1 flex-col gap-8">
+              <div className="flex flex-1 flex-col gap-8 w-full">
                 <MessageList roomId={room.id} session={session} />
                 <div className="pr-6">
                   <MessageController roomId={room.id} />
