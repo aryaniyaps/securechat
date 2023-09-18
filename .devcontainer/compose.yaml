@@ -94,9 +94,10 @@ services:
     image: chrislusf/seaweedfs:3.56
     ports:
       - "9333:9333"
-    command: "master -mdir=/data/master -volumePreallocate=false -ip=seaweedfs-master"
+    command: "master -ip=seaweedfs-master"
+    # master servers store data by default to /data
     volumes:
-      - seaweedfs_data:/data/master
+      - seaweedfs_master_data:/data
 
   seaweedfs-volume:
     image: chrislusf/seaweedfs:3.56
@@ -104,9 +105,20 @@ services:
       - "8080:8080"
     depends_on:
       - seaweedfs-master
-    command: "volume -max=50 -mserver=seaweedfs-master:9333 -port=8080 -ip=seaweedfs-volume -dir=/data/volume"
+    command: "volume -max=50 -mserver=seaweedfs-master:9333 -port=8080 -ip=seaweedfs-volume"
+    # volume servers store data by default to /data
     volumes:
-      - seaweedfs_data:/data/volume
+      - seaweedfs_volume_data:/data
+
+  seaweedfs-filer:
+    image: chrislusf/seaweedfs:3.56
+    ports:
+      - "8888:8888"
+    command: "filer -master=seaweedfs-master:9333 -ip.bind=0.0.0.0"
+    volumes:
+      - seaweedfs_filer_data:/data
+    depends_on:
+      - seaweedfs-master
 
   seaweedfs-s3:
     build:
@@ -114,7 +126,7 @@ services:
       dockerfile: Dockerfile
     # we are overriding the entrypoint, so we need to prefix our command with `weed`.
     # this won't be necessary if we are using the default entrypoint.
-    command: "weed -v 9 filer -master=seaweedfs-master:9333 -s3 -s3.port=8333 -ip.bind=0.0.0.0 -s3.config=/config.json"
+    command: "weed s3 -filer=seaweedfs-filer:8888 -port=8333 -ip.bind=0.0.0.0 -config=/config.json"
     environment:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
@@ -122,10 +134,14 @@ services:
       - "8333:8333"
     depends_on:
       - seaweedfs-master
-      - seaweedfs-volume
+      - seaweedfs-filer
 
 volumes:
-  seaweedfs_data:
+  seaweedfs_master_data:
+    driver: local
+  seaweedfs_filer_data:
+    driver: local
+  seaweedfs_volume_data:
     driver: local
   caddy_data:
     driver: local

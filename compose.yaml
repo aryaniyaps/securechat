@@ -70,9 +70,10 @@ services:
       - "9333:9333"
       - "19333:19333"
       - "9324:9324"
-    command: "master -mdir=/data/master -volumePreallocate=false -ip=seaweedfs-master -ip.bind=0.0.0.0 -metricsPort=9324"
+    command: "master -volumePreallocate=false -ip=seaweedfs-master -ip.bind=0.0.0.0 -metricsPort=9324"
+    # master servers store data by default to /data
     volumes:
-      - seaweedfs_data:/data/master
+      - seaweedfs_master_data:/data
 
   seaweedfs-volume:
     image: chrislusf/seaweedfs:3.56
@@ -80,11 +81,26 @@ services:
       - "8080:8080"
       - "18080:18080"
       - "9325:9325"
+    command: "volume -max=50 -mserver=seaweedfs-master:9333 -ip.bind=0.0.0.0 -port=8080 -metricsPort=9325"
+    # volume servers store data by default to /data
+    volumes:
+      - seaweedfs_volume_data:/data
     depends_on:
       - seaweedfs-master
-    command: "volume -max=50 -mserver=seaweedfs-master:9333 -ip.bind=0.0.0.0 -port=8080 -dir=/data/volume -metricsPort=9325"
+
+  seaweedfs-filer:
+    image: chrislusf/seaweedfs:3.56
+    ports:
+      - "8888:8888"
+      - "18888:18888"
+      - "9326:9326"
+    command: "filer -master=seaweedfs-master:9333 -ip.bind=0.0.0.0 -metricsPort=9326"
+    tty: true
+    stdin_open: true
     volumes:
-      - seaweedfs_data:/data/volume
+      - seaweedfs_filer_data:/data
+    depends_on:
+      - seaweedfs-master
 
   seaweedfs-s3:
     image: aryaniyaps/securechat-weed-s3:latest
@@ -93,7 +109,7 @@ services:
       - "9327:9327"
     depends_on:
       - seaweedfs-master
-      - seaweedfs-volume
+      - seaweedfs-filer
     # we are overriding the entrypoint, so we need to prefix our command with `weed`.
     # this won't be necessary if we are using the default entrypoint.
     command: "weed -v 9 filer -master=seaweedfs-master:9333 -s3 -metricsPort=9327 -ip.bind=0.0.0.0 -s3.config=/config.json"
@@ -102,7 +118,11 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
 
 volumes:
-  seaweedfs_data:
+  seaweedfs_master_data:
+    driver: local
+  seaweedfs_filer_data:
+    driver: local
+  seaweedfs_volume_data:
     driver: local
   caddy_data:
     driver: local
