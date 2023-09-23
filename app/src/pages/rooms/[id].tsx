@@ -116,10 +116,10 @@ function RoomPage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <RoomLayout title={room.name}>
-        <div className="relative mx-auto flex max-w-7xl flex-1 px-4">
+        <div className="relative mx-auto overflow-hidden flex max-w-7xl flex-1 px-4">
           {isMobile ? (
             <>
-              <div className="flex flex-1 flex-col gap-8 py-6">
+              <div className="flex flex-1 overflow-hidden flex-col gap-8 py-6 w-full">
                 <MessageList roomId={room.id} session={session} />
                 <MessageController roomId={room.id} />
               </div>
@@ -138,18 +138,18 @@ function RoomPage({
               </Sheet>
             </>
           ) : (
-            <>
-              <div className="flex flex-1 flex-col gap-8 w-full">
+            <div className="flex flex-1 w-full">
+              <div className="flex flex-1 overflow-hidden flex-col gap-8">
                 <MessageList roomId={room.id} session={session} />
-                <div className="pr-6">
+                <div className="pr-6 w-full">
                   <MessageController roomId={room.id} />
                 </div>
               </div>
               <Separator orientation="vertical" />
-              <div className="w-64">
+              <div className="w-64 min-w-64 flex-shrink-0 flex-grow-0 flex">
                 <PresenceList />
               </div>
-            </>
+            </div>
           )}
         </div>
       </RoomLayout>

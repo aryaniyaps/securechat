@@ -86,10 +86,9 @@
   html,
   body,
   #__next {
-    @apply min-h-screen;
     @apply h-full w-full;
-    @apply overflow-x-hidden;
     @apply whitespace-normal;
+    @apply box-border;
   }
 
   /* Custom Scrollbar Styles */

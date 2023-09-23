@@ -20,7 +20,7 @@ export default function PresenceList() {
   if (!roomStore.presence || !roomStore.presenceStats) {
     return (
       <div
-        className="flex w-full flex-col gap-6 py-6 pb-6 "
+        className="flex flex-col gap-6 py-6 pb-6"
         data-testid="presence-list"
       >
         <div className="flex items-center gap-2 px-6 text-sm font-medium">
@@ -30,7 +30,7 @@ export default function PresenceList() {
         <Separator />
         <div className="flex flex-1 flex-col gap-6 px-6">
           {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="flex items-center space-x-4">
+            <div key={index} className="flex items-center space-x-4 w-[200px]">
               <Avatar className="h-8 w-8">
                 <Skeleton className="h-full w-full" />
               </Avatar>
@@ -47,7 +47,7 @@ export default function PresenceList() {
 
   return (
     <div
-      className="flex w-full flex-col gap-6 py-6 pb-6"
+      className="flex flex-col gap-6 py-6 pb-6"
       data-testid="presence-list"
     >
       <div className="flex items-center gap-2 px-6 text-sm font-medium">
@@ -63,7 +63,7 @@ export default function PresenceList() {
           ([key, clientInfo]: [string, ClientInfo]) => {
             const user = clientInfo.connInfo as ConnInfo;
             return (
-              <div key={key} className="flex items-center gap-4">
+              <div key={key} className="flex items-center space-x-4 w-[200px]">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
                     src={getAvatarUrl(user.image, user.username)}

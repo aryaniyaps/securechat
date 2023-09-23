@@ -38,7 +38,7 @@ export default function RoomLayout({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 overflow-hidden w-full">{children}</div>
+      <div className="flex flex-1 overflow-hidden">{children}</div>
     </main>
   );
 }

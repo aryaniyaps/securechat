@@ -71,33 +71,35 @@ function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) =
   const [showDeleteButton, setShowDeleteButton] = useState(false)
   return (
     <div
-      className="px-6 py-4 flex relative flex-col gap-1 bg-tertiary rounded-md max-w-[200px] overflow-ellipsis"
+      className="bg-tertiary rounded-md w-36"
       onMouseEnter={() => setShowDeleteButton(true)}
       onMouseLeave={() => setShowDeleteButton(false)}
     >
-      {showDeleteButton && (
-        <div className="absolute right-0 top-0 mr-2 z-10">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-              >
-                <Icons.trash2
-                  size={5}
-                  className="h-3 w-3 text-destructive"
-                  onClick={() => {
-                    onDelete(file)
-                  }}
-                />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Delete attachment</TooltipContent>
-          </Tooltip>
-        </div>
-      )}
-      <p className="font-mono text-sm truncate">{file.name}</p>
-      <p className="text-xs font-light">{bytesToSize(file.size)}</p>
+      <div className="px-6 py-4 flex relative flex-col gap-1">
+        {showDeleteButton && (
+          <div className="absolute right-0 top-0 mr-2 z-10">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                >
+                  <Icons.trash2
+                    size={5}
+                    className="h-3 w-3 text-destructive"
+                    onClick={() => {
+                      onDelete(file)
+                    }}
+                  />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Delete attachment</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+        <p className="font-mono text-sm truncate overflow-ellipsis">{file.name}</p>
+        <p className="text-xs font-light">{bytesToSize(file.size)}</p>
+      </div>
     </div>
   )
 }
@@ -105,10 +107,12 @@ function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) =
 function MediaPreviewer({ selectedFiles, onDeleteFile }: { selectedFiles: File[]; onDeleteFile: (file: File) => void }) {
   // todo: add horizontal scrollbar here
   return (
-    <div className="w-full min-w-full flex gap-4 p-4 bg-secondary rounded-md overflow-x-auto">
-      {selectedFiles.map((file, index) => (
-        <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />
-      ))}
+    <div className="w-full border border-tertiary rounded-md overflow-x-auto">
+      <div className="flex flex-nowrap gap-4 p-4">
+        {selectedFiles.map((file, index) => (
+          <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />
+        ))}
+      </div>
     </div>
   )
 }
@@ -254,9 +258,11 @@ export default function MessageController({ roomId }: { roomId: string }) {
   }, []);
 
   return (
-    <div className="mb-4 flex flex-col gap-4 w-full min-w-full">
-      {selectedFiles.length > 0 && (<MediaPreviewer selectedFiles={selectedFiles} onDeleteFile={onDeleteFile} />
+    <div className="mb-4 flex flex-col gap-4 w-full">
+      {selectedFiles.length > 0 && (
+        <MediaPreviewer selectedFiles={selectedFiles} onDeleteFile={onDeleteFile} />
       )}
+
 
       <Form {...form} data-testid="message-controller">
         <form
