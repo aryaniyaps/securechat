@@ -61,8 +61,6 @@ function MessageTile({
 }) {
   const [showControls, setShowControls] = useState(false);
 
-  console.log("message content ", message.content)
-
   const form = useForm<z.infer<typeof updateMessageSchema>>({
     resolver: zodResolver(updateMessageSchema),
     defaultValues: {
