@@ -262,7 +262,11 @@ function MessageTile({
             ) : (
               <>
                 {message.content && (
-                  <p className="whitespace-normal break-all">{message.content}</p>
+                  <div className="flex items-center">
+                    <p className="whitespace-normal break-all">{message.content}</p>
+                    {message.updatedAt !== message.createdAt && (<p className="text-xs font-thin ml-1">(edited)</p>)}
+                  </div>
+
                 )}
 
               </>)}
