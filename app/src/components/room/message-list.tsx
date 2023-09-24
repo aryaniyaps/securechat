@@ -211,13 +211,13 @@ function MessageTile({
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 pr-4">
             {isEditing ? (
               <>
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col w-full pr-4 items-start gap-4"
+                    className="flex flex-col w-full items-start gap-4"
                   >
 
                     <FormField
@@ -230,7 +230,6 @@ function MessageTile({
                               type="text"
                               className="px-4 py-6"
                               {...field}
-                            // value={field.value || ""}
                             />
                           </FormControl>
                         </FormItem>
@@ -238,7 +237,7 @@ function MessageTile({
                     />
                     <div className="flex gap-4">
                       <Button
-                        variant="outline"
+                        variant="secondary"
                         type="submit"
                         className="py-6"
                         size="xs"
