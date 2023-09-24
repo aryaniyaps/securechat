@@ -7,8 +7,7 @@ import { useToast } from "~/hooks/use-toast";
 import { AttachmentFile } from "~/schemas/attachment";
 import { TypingUser } from "~/schemas/typing";
 import { api } from "~/utils/api";
-import { TYPING_INDICATOR_DELAY } from "~/utils/constants";
-import { bytesToSize } from "~/utils/file";
+import { MAX_MESSAGE_ATTACHMENTS, TYPING_INDICATOR_DELAY } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
@@ -68,37 +67,38 @@ function MediaController(props: MediaControllerProps) {
 }
 
 function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) => void }) {
-  const [showDeleteButton, setShowDeleteButton] = useState(false)
   return (
     <div
       className="bg-tertiary rounded-md w-36"
-      onMouseEnter={() => setShowDeleteButton(true)}
-      onMouseLeave={() => setShowDeleteButton(false)}
     >
-      <div className="px-6 py-4 flex relative flex-col gap-1">
-        {showDeleteButton && (
-          <div className="absolute right-0 top-0 mr-2 z-10">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                >
-                  <Icons.trash2
-                    size={5}
-                    className="h-3 w-3 text-destructive"
-                    onClick={() => {
-                      onDelete(file)
-                    }}
-                  />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Delete attachment</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
-        <p className="font-mono text-sm truncate overflow-ellipsis">{file.name}</p>
-        <p className="text-xs font-light">{bytesToSize(file.size)}</p>
+      <div className="p-2 flex relative flex-col gap-4">
+        <div className="absolute right-0 top-0 z-10">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="tertiary"
+                size="xs"
+              >
+                <Icons.trash2
+                  size={15}
+                  className="h-4 w-4 text-destructive"
+                  onClick={() => {
+                    onDelete(file)
+                  }}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete attachment</TooltipContent>
+          </Tooltip>
+        </div>
+        <embed
+          type={file.type}
+          src={URL.createObjectURL(file)}
+          title={file.name}
+          height={100}
+          className="object-cover rounded-md"
+        />
+        <p className="font-mono text-xs truncate overflow-ellipsis">{file.name}</p>
       </div>
     </div>
   )
@@ -148,8 +148,23 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
 
   const onFileChange = (newFiles: File[] | null) => {
-    if (newFiles) {
-      setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
+    if (!newFiles) return;
+
+    const spaceLeft = MAX_MESSAGE_ATTACHMENTS - selectedFiles.length;
+
+    // Check if we've already reached the max attachments
+    if (spaceLeft <= 0) {
+      toast({ description: "Maximum attachment limit reached!", variant: "destructive" });
+      return;
+    }
+
+    // Determine how many new files can be added without exceeding the limit
+    const filesToAdd = newFiles.slice(0, spaceLeft);
+    setSelectedFiles(prevFiles => [...prevFiles, ...filesToAdd]);
+
+    // If we had to truncate the newFiles array, show a toast
+    if (filesToAdd.length < newFiles.length) {
+      toast({ description: "Some files were not added due to the attachment limit!", variant: "destructive" });
     }
   };
 
@@ -301,7 +316,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
                 variant="secondary"
                 type="submit"
                 className="py-6"
-                disabled={!form.getValues("content") && selectedFiles.length === 0}
+                disabled={form.formState.isSubmitting || (!form.getValues("content") && selectedFiles.length === 0)}
               >
                 <Icons.send size={20} className="h-4 w-4" />
               </Button>

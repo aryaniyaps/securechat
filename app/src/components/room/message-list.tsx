@@ -20,11 +20,13 @@ function MessageAttachmentsViewer({ attachments }: { attachments: AttachmentFile
     <div className="flex flex-col gap-4">
       {attachments.map(attachment => {
         return (
-          <a key={attachment.uri} href={getMediaUrl(attachment.uri)} target="_blank" rel="noopener noreferrer">
-            <div className="px-6 py-4 bg-tertiary rounded-md max-w-[200px] overflow-ellipsis">
-              <p className="font-mono text-sm truncate">{attachment.name}</p>
-            </div>
-          </a>
+          <embed
+            key={attachment.uri}
+            src={getMediaUrl(attachment.uri)}
+            type={attachment.contentType}
+            title={attachment.name}
+            className="max-w-[200px] h-auto object-fill rounded-md"
+          />
         )
       })}
     </div>

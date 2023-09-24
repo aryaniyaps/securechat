@@ -8,7 +8,10 @@ import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { s3Client } from "~/server/config/s3";
 import { wsServerApi } from "~/server/config/wsServer";
-import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
+import {
+  DEFAULT_PAGINATION_LIMIT,
+  MAX_MESSAGE_ATTACHMENTS,
+} from "~/utils/constants";
 
 export const messageRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -78,13 +81,15 @@ export const messageRouter = createTRPCRouter({
     .input(
       z.object({
         content: z.string().nullable(),
-        attachments: z.array(
-          z.object({
-            name: z.string(),
-            contentType: z.string(),
-            uri: z.string(),
-          })
-        ),
+        attachments: z
+          .array(
+            z.object({
+              name: z.string(),
+              contentType: z.string(),
+              uri: z.string(),
+            })
+          )
+          .max(MAX_MESSAGE_ATTACHMENTS),
         roomId: z.string(),
       })
     )
