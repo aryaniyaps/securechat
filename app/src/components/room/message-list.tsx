@@ -1,6 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AttachmentFile } from "@prisma/client";
 import { Session } from "next-auth";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
@@ -9,6 +12,8 @@ import { getMediaUrl } from "~/utils/media";
 import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { Form, FormControl, FormField, FormItem } from "../ui/form";
+import { Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
@@ -33,26 +38,57 @@ function MessageAttachmentsViewer({ attachments }: { attachments: AttachmentFile
   )
 }
 
+const updateMessageSchema = z
+  .object({
+    content: z
+      .optional(
+        z.string()
+          .min(1, { message: "Message must be at least 1 character." })
+          .max(250, { message: "Message cannot exceed 250 characters." })
+      ),
+  })
+
 function MessageTile({
   message,
   session,
+  isEditing,
+  setEditingMessageId,
 }: {
   message: Message;
   session: Session;
+  isEditing: boolean;
+  setEditingMessageId: (id: string | null) => void;
 }) {
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [showControls, setShowControls] = useState(false);
 
-  const canShowDeleteButton = useMemo(() => {
-    return showDeleteButton && message.ownerId === session.user.id;
-  }, [showDeleteButton]);
+  console.log("message content ", message.content)
+
+  const form = useForm<z.infer<typeof updateMessageSchema>>({
+    resolver: zodResolver(updateMessageSchema),
+    defaultValues: {
+      content: message.content || undefined
+    }
+  });
+
+  const canShowControls = useMemo(() => {
+    return !isEditing && showControls && message.ownerId === session.user.id;
+  }, [showControls, isEditing]);
 
   const deleteMessage = api.message.delete.useMutation({});
 
+  const updateMessage = api.message.update.useMutation({})
+
+  async function onSubmit(values: z.infer<typeof updateMessageSchema>) {
+    // update message here
+    await updateMessage.mutateAsync({ id: message.id, content: values.content })
+    setEditingMessageId(null)
+  }
+
   return (
     <div
-      className="relative flex w-full gap-4 px-2 py-4 hover:bg-primary-foreground"
-      onMouseEnter={() => setShowDeleteButton(true)}
-      onMouseLeave={() => setShowDeleteButton(false)}
+      className="relative flex w-full gap-4 px-2 py-4 hover:bg-secondary/60"
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
     >
       <Tooltip>
         <TooltipTrigger asChild>
@@ -67,7 +103,7 @@ function MessageTile({
             </AvatarFallback>
           </Avatar>
         </TooltipTrigger>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 w-full">
           <div className="flex gap-2">
             <TooltipTrigger asChild>
               <h3 className="text-xs font-semibold text-primary hover:cursor-default">
@@ -136,34 +172,107 @@ function MessageTile({
                 hour12: true,
               })}
             </p>
-            {canShowDeleteButton && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="ml-2"
-                    disabled={deleteMessage.isLoading}
-                  >
-                    <Icons.trash
-                      size={5}
-                      className="h-3 w-3 text-destructive"
-                      onClick={async () => {
-                        await deleteMessage.mutateAsync({ id: message.id });
-                      }}
-                    />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete message</TooltipContent>
-              </Tooltip>
+
+            {canShowControls && (
+              <div className="flex ml-2 gap-3">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <Icons.penBox
+                        size={5}
+                        className="h-4 w-4"
+                        onClick={() => {
+                          setEditingMessageId(message.id);
+                        }}
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit message</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={deleteMessage.isLoading}
+                    >
+                      <Icons.trash2
+                        size={5}
+                        className="h-4 w-4 text-destructive"
+                        onClick={async () => {
+                          await deleteMessage.mutateAsync({ id: message.id });
+                        }}
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete message</TooltipContent>
+                </Tooltip>
+              </div>
             )}
           </div>
-          {message.attachments.length > 0 && (
-            <MessageAttachmentsViewer attachments={message.attachments} />
-          )}
-          {message.content && (
-            <p className="whitespace-normal break-all">{message.content}</p>
-          )}
+          <div className="flex flex-col gap-4">
+            {isEditing ? (
+              <>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="flex flex-col w-full pr-4 items-start gap-4"
+                  >
+
+                    <FormField
+                      name="content"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className="w-full flex-grow">
+                          <FormControl>
+                            <Input
+                              type="text"
+                              className="px-4 py-6"
+                              {...field}
+                            // value={field.value || ""}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex gap-4">
+                      <Button
+                        variant="outline"
+                        type="submit"
+                        className="py-6"
+                        size="xs"
+                        disabled={form.formState.isSubmitting}
+                      >
+                        Save changes
+                      </Button>
+                      <Button
+                        variant="link"
+                        type="button"
+                        className="py-6"
+                        size="xs"
+                        onClick={() => { setEditingMessageId(null) }}
+                        disabled={form.formState.isSubmitting}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </>
+            ) : (
+              <>
+                {message.content && (
+                  <p className="whitespace-normal break-all">{message.content}</p>
+                )}
+
+              </>)}
+            {message.attachments.length > 0 && (
+              <MessageAttachmentsViewer attachments={message.attachments} />
+            )}
+          </div>
         </div>
       </Tooltip>
     </div>
@@ -216,7 +325,10 @@ export default function MessageList({
   const bottomChatRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = useRef(true);
+
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+
 
   const scrollBottom = () => {
     if (scrollToBottom.current && bottomChatRef.current) {
@@ -297,6 +409,8 @@ export default function MessageList({
                 key={message.id}
                 message={message}
                 session={session}
+                isEditing={editingMessageId === message.id}
+                setEditingMessageId={setEditingMessageId}
               />
             ))
           )}

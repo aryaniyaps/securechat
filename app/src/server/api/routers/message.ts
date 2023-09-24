@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import { env } from "~/env.mjs";
+import { attachmentFileSchema } from "~/schemas/attachment";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { s3Client } from "~/server/config/s3";
@@ -81,15 +82,7 @@ export const messageRouter = createTRPCRouter({
     .input(
       z.object({
         content: z.string().nullable(),
-        attachments: z
-          .array(
-            z.object({
-              name: z.string(),
-              contentType: z.string(),
-              uri: z.string(),
-            })
-          )
-          .max(MAX_MESSAGE_ATTACHMENTS),
+        attachments: z.array(attachmentFileSchema).max(MAX_MESSAGE_ATTACHMENTS),
         roomId: z.string(),
       })
     )
@@ -125,6 +118,69 @@ export const messageRouter = createTRPCRouter({
         type: "CREATE_MESSAGE",
         payload: messageSchema.parse(message),
         roomId: input.roomId,
+      });
+
+      return message;
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        content: z.optional(z.string()),
+        attachments: z.optional(
+          z.array(attachmentFileSchema).max(MAX_MESSAGE_ATTACHMENTS)
+        ),
+      })
+    )
+    .output(messageSchema)
+    .mutation(async ({ ctx, input }) => {
+      const existingMessage = await ctx.prisma.message.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!existingMessage) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Message with ID ${input.id} not found.`,
+        });
+      }
+
+      if (existingMessage.ownerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: `Cannot update message with ID ${input.id}.`,
+        });
+      }
+
+      const message = await ctx.prisma.message.update({
+        data: {
+          ...(input.content && {
+            content: input.content,
+          }),
+          ...(input.attachments && {
+            attachments: input.attachments,
+          }),
+        },
+        where: { id: existingMessage.id },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+              createdAt: true,
+            },
+          },
+        },
+      });
+
+      // broadcast message here
+      await wsServerApi.post("/broadcast-event", {
+        type: "UPDATE_MESSAGE",
+        payload: messageSchema.parse(message),
+        roomId: message.roomId,
       });
 
       return message;

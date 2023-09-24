@@ -54,6 +54,9 @@ app.post("/broadcast-event", (req: Request, res: Response) => {
     case "CREATE_MESSAGE":
       io.to(`rooms:${roomId}`).emit("create-message", payload);
       break;
+    case "UPDATE_MESSAGE":
+      io.to(`rooms:${roomId}`).emit("update-message", payload);
+      break;
     case "DELETE_MESSAGE":
       io.to(`rooms:${roomId}`).emit("delete-message", payload);
       break;

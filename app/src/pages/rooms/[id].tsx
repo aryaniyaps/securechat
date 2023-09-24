@@ -64,6 +64,40 @@ function RoomPage({
       });
     });
 
+    wsClient.on("update-message", async (updatedMessage: Message) => {
+      await utils.message.getAll.cancel();
+
+      utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
+        if (oldData == null || oldData.pages.length === 0) return oldData;
+
+        const newData = {
+          ...oldData,
+          pages: oldData.pages.map((page) => {
+            // Check if the current page has the message that needs to be updated
+            const messageIndex = page.items.findIndex(
+              (message: Message) => message.id === updatedMessage.id
+            );
+
+            // If the message was not found in this page, return the page as is
+            if (messageIndex === -1) return page;
+
+            // If the message is found, replace it with the updated message
+            return {
+              ...page,
+              items: [
+                ...page.items.slice(0, messageIndex),
+                updatedMessage,
+                ...page.items.slice(messageIndex + 1),
+              ],
+            };
+          }),
+        };
+
+        return newData;
+      });
+    });
+
+
     wsClient.on("delete-message", async (deletedMessage: Message) => {
       await utils.message.getAll.cancel();
 
@@ -97,6 +131,7 @@ function RoomPage({
       clearRoom();
       // remove all listeners
       wsClient.off("create-message");
+      wsClient.off("update-message");
       wsClient.off("delete-message");
       wsClient.off("add-typing-user");
       wsClient.off("remove-typing-user");
