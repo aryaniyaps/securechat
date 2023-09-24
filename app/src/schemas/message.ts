@@ -7,6 +7,7 @@ export const messageSchema = z.object({
   roomId: z.string(),
   ownerId: z.string(),
   attachments: z.array(attachmentFileSchema),
+  isEdited: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
   owner: z.object({

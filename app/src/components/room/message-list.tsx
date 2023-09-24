@@ -241,7 +241,7 @@ function MessageTile({
                         type="submit"
                         className="py-6"
                         size="xs"
-                        disabled={form.formState.isSubmitting}
+                        disabled={form.formState.isSubmitting || !form.formState.isDirty}
                       >
                         Save changes
                       </Button>
@@ -264,7 +264,7 @@ function MessageTile({
                 {message.content && (
                   <div className="flex items-center">
                     <p className="whitespace-normal break-all">{message.content}</p>
-                    {message.updatedAt !== message.createdAt && (<p className="text-xs font-thin ml-1">(edited)</p>)}
+                    {message.isEdited && (<p className="text-xs font-thin ml-1">(edited)</p>)}
                   </div>
 
                 )}

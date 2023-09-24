@@ -162,6 +162,9 @@ export const messageRouter = createTRPCRouter({
           ...(input.attachments && {
             attachments: input.attachments,
           }),
+          ...((input.content || input.attachments) && {
+            isEdited: true,
+          }),
         },
         where: { id: existingMessage.id },
         include: {
