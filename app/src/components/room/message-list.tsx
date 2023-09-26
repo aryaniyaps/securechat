@@ -226,7 +226,7 @@ function MessageTile({
                       render={({ field }) => (
                         <FormItem className="w-full flex-grow">
                           <FormControl>
-                            <Textarea className="p-4" {...field} />
+                            <Textarea className="p-4 max-h-52" {...field} />
                           </FormControl>
                         </FormItem>
                       )}

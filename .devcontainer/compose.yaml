@@ -90,6 +90,14 @@ services:
     ports:
       - "5000:5000"
 
+  ws_server:
+    build:
+      context: ../ws_server
+      dockerfile: Dockerfile
+      target: dev-container
+    ports:
+      - "4000:4000"
+
   seaweedfs-master:
     image: chrislusf/seaweedfs:3.56
     ports:

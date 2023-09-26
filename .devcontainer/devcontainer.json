@@ -28,6 +28,9 @@
     "5000": {
       "label": "WS Server"
     },
+    "4000": {
+      "label": "Phoenix Realtime Server"
+    },
     "1025": {
       "label": "MailHog SMTP Port"
     },
@@ -51,6 +54,7 @@
         "mutantdino.resourcemonitor",
         "ms-azuretools.vscode-docker",
         "zamerick.vscode-caddyfile-syntax",
+        "JakeBecker.elixir-ls",
         "hashicorp.hcl",
         "ms-playwright.playwright",
         "github.vscode-github-actions",
