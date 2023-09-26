@@ -13,8 +13,8 @@ import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
-import { Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
+import { Textarea } from "../ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const SCROLL_THRESHOLD = 250;
@@ -226,11 +226,7 @@ function MessageTile({
                       render={({ field }) => (
                         <FormItem className="w-full flex-grow">
                           <FormControl>
-                            <Input
-                              type="text"
-                              className="px-4 py-6"
-                              {...field}
-                            />
+                            <Textarea className="p-4" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -241,7 +237,7 @@ function MessageTile({
                         type="submit"
                         className="py-6"
                         size="xs"
-                        disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                        disabled={form.formState.isSubmitting || !form.formState.isDirty || !form.formState.isValid}
                       >
                         Save changes
                       </Button>
@@ -327,7 +323,6 @@ export default function MessageList({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = useRef(true);
 
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
 
@@ -336,25 +331,6 @@ export default function MessageList({
       bottomChatRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  const handleScroll = () => {
-    if (scrollContainerRef.current) {
-      // we are getting a negative value here (possibly because we are using flex-col-reverse)
-      const scrollTop = Math.abs(scrollContainerRef.current.scrollTop);
-
-      setShowScrollButton(scrollTop > SCROLL_THRESHOLD);
-    }
-  };
-
-  useEffect(() => {
-    const currentScrollContainer = scrollContainerRef.current;
-
-    if (currentScrollContainer) {
-      currentScrollContainer.addEventListener("scroll", handleScroll);
-      return () =>
-        currentScrollContainer.removeEventListener("scroll", handleScroll);
-    }
-  }, []);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -389,18 +365,7 @@ export default function MessageList({
       <div
         ref={scrollContainerRef}
         className="flex w-full flex-col-reverse overflow-y-auto scroll-smooth"
-        onScroll={handleScroll}
       >
-        {/* Add this Button component right below the main div */}
-        {showScrollButton && (
-          <Button
-            variant="secondary"
-            className="absolute bottom-10 right-10 z-50"
-            onClick={scrollBottom}
-          >
-            <Icons.arrowDown size={20} className="h-5 w-5" />
-          </Button>
-        )}
 
         <div ref={bottomChatRef} />
         {messagesPages &&
