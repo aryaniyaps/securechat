@@ -51,8 +51,9 @@ services:
       S3_AVATAR_BUCKET_NAME: ${S3_AVATAR_BUCKET_NAME}
       S3_MEDIA_BUCKET_NAME: ${S3_MEDIA_BUCKET_NAME}
 
-      # WS Server Configuration
-      WS_SERVER_URL: ${WS_SERVER_URL}
+      # RabbitMQ Configuration
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
 
     depends_on:
       - mongodb
