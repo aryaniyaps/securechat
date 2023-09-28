@@ -62,7 +62,17 @@ services:
   ws-server:
     image: aryaniyaps/securechat-ws-server:latest
     environment:
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
       CONNECT_PROXY_URL: ${CONNECT_PROXY_URL}
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: bitnami/rabbitmq:3.12
+    environment:
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
 
   seaweedfs-master:
     image: chrislusf/seaweedfs:3.56

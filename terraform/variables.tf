@@ -102,12 +102,6 @@ variable "s3_media_bucket_name" {
   default     = "media"
 }
 
-variable "ws_server_url" {
-  description = "WS Server URL"
-  type        = string
-  default     = "http://ws-server:5000"
-}
-
 variable "mongo_password" {
   description = "MongoDB Password"
   type        = string
@@ -121,6 +115,30 @@ variable "mongo_user" {
 
 variable "mongo_replica_set_key" {
   description = "MongoDB Replica Set Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_url" {
+  description = "RabbitMQ URL"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_queue_name" {
+  description = "RabbitMQ Queue Name"
+  type        = string
+  default     = "events"
+}
+
+variable "rabbitmq_username" {
+  description = "RabbitMQ Username"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_password" {
+  description = "RabbitMQ Password"
   type        = string
   sensitive   = true
 }
