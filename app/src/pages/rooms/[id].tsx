@@ -12,6 +12,7 @@ import RoomLayout from "~/components/room/layout";
 import MessageController from "~/components/room/message-controller";
 import MessageList from "~/components/room/message-list";
 import PresenceList from "~/components/room/presence-list";
+import { useSocket } from "~/components/socket-provider";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
@@ -22,7 +23,6 @@ import { TypingUser } from "~/schemas/typing";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
-import { wsClient } from "~/utils/wsClient";
 
 function RoomPage({
   id,
@@ -40,103 +40,103 @@ function RoomPage({
     { refetchOnMount: false }
   );
 
-  const { setRoom, clearRoom, addTypingUser, removeTypingUser } =
+  const socket = useSocket();
+
+  const { channel, setRoom, clearRoom, addTypingUser, removeTypingUser } =
     useCurrentRoomStore();
 
   useEffect(() => {
-    void setRoom(id);
-
-    wsClient.on("create-message", async (newMessage: Message) => {
-      await utils.message.getAll.cancel();
-
-      utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
-        if (oldData == null || oldData.pages[0] == null) return;
-        return {
-          ...oldData,
-          pages: [
-            {
-              ...oldData.pages[0],
-              items: [newMessage, ...oldData.pages[0].items],
-            },
-            ...oldData.pages.slice(1),
-          ],
-        };
-      });
-    });
-
-    wsClient.on("update-message", async (updatedMessage: Message) => {
-      await utils.message.getAll.cancel();
-
-      utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
-        if (oldData == null || oldData.pages.length === 0) return oldData;
-
-        const newData = {
-          ...oldData,
-          pages: oldData.pages.map((page) => {
-            // Check if the current page has the message that needs to be updated
-            const messageIndex = page.items.findIndex(
-              (message: Message) => message.id === updatedMessage.id
-            );
-
-            // If the message was not found in this page, return the page as is
-            if (messageIndex === -1) return page;
-
-            // If the message is found, replace it with the updated message
-            return {
-              ...page,
-              items: [
-                ...page.items.slice(0, messageIndex),
-                updatedMessage,
-                ...page.items.slice(messageIndex + 1),
-              ],
-            };
-          }),
-        };
-
-        return newData;
-      });
-    });
-
-
-    wsClient.on("delete-message", async (deletedMessage: Message) => {
-      await utils.message.getAll.cancel();
-
-      utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
-        if (oldData == null || oldData.pages.length === 0) return oldData;
-
-        const newData = {
-          ...oldData,
-          pages: oldData.pages.map((page) => ({
-            ...page,
-            items: page.items.filter(
-              (message: Message) => message.id !== deletedMessage.id
-            ),
-          })),
-        };
-
-        return newData;
-      });
-    });
-
-    wsClient.on("add-typing-user", (user: TypingUser) => {
-      addTypingUser(user);
-    });
-
-    wsClient.on("remove-typing-user", (user: TypingUser) => {
-      removeTypingUser(user);
-    });
-
+    if (socket) {
+      void setRoom(socket, id);
+    }
     // cleanup when the component unmounts
     return () => {
       clearRoom();
-      // remove all listeners
-      wsClient.off("create-message");
-      wsClient.off("update-message");
-      wsClient.off("delete-message");
-      wsClient.off("add-typing-user");
-      wsClient.off("remove-typing-user");
     };
-  }, [id]);
+  }, [id, socket]);
+
+  useEffect(() => {
+    if (channel) {
+      channel.on("CREATE_MESSAGE", async (newMessage: Message) => {
+        await utils.message.getAll.cancel();
+
+        utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
+          if (oldData == null || oldData.pages[0] == null) return;
+          return {
+            ...oldData,
+            pages: [
+              {
+                ...oldData.pages[0],
+                items: [newMessage, ...oldData.pages[0].items],
+              },
+              ...oldData.pages.slice(1),
+            ],
+          };
+        });
+      });
+
+      channel.on("UPDATE_MESSAGE", async (updatedMessage: Message) => {
+        await utils.message.getAll.cancel();
+
+        utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
+          if (oldData == null || oldData.pages.length === 0) return oldData;
+
+          const newData = {
+            ...oldData,
+            pages: oldData.pages.map((page) => {
+              // Check if the current page has the message that needs to be updated
+              const messageIndex = page.items.findIndex(
+                (message: Message) => message.id === updatedMessage.id
+              );
+
+              // If the message was not found in this page, return the page as is
+              if (messageIndex === -1) return page;
+
+              // If the message is found, replace it with the updated message
+              return {
+                ...page,
+                items: [
+                  ...page.items.slice(0, messageIndex),
+                  updatedMessage,
+                  ...page.items.slice(messageIndex + 1),
+                ],
+              };
+            }),
+          };
+
+          return newData;
+        });
+      });
+
+      channel.on("DELETE_MESSAGE", async (deletedMessage: Message) => {
+        await utils.message.getAll.cancel();
+
+        utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
+          if (oldData == null || oldData.pages.length === 0) return oldData;
+
+          const newData = {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              items: page.items.filter(
+                (message: Message) => message.id !== deletedMessage.id
+              ),
+            })),
+          };
+
+          return newData;
+        });
+      });
+
+      channel.on("ADD_TYPING_USER", (user: TypingUser) => {
+        addTypingUser(user);
+      });
+
+      channel.on("REMOVE_TYPING_USER", (user: TypingUser) => {
+        removeTypingUser(user);
+      });
+    }
+  }, [channel]);
 
   if (!session || isLoading || !room) {
     return <LoadingScreen />;
@@ -151,10 +151,10 @@ function RoomPage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <RoomLayout title={room.name}>
-        <div className="relative mx-auto overflow-hidden flex max-w-7xl flex-1 px-4">
+        <div className="relative mx-auto flex max-w-7xl flex-1 overflow-hidden px-4">
           {isMobile ? (
             <>
-              <div className="flex flex-1 overflow-hidden flex-col gap-8 py-6 w-full">
+              <div className="flex w-full flex-1 flex-col gap-8 overflow-hidden py-6">
                 <MessageList roomId={room.id} session={session} />
                 <MessageController roomId={room.id} />
               </div>
@@ -173,15 +173,15 @@ function RoomPage({
               </Sheet>
             </>
           ) : (
-            <div className="flex flex-1 w-full">
-              <div className="flex flex-1 overflow-hidden flex-col gap-8">
+            <div className="flex w-full flex-1">
+              <div className="flex flex-1 flex-col gap-8 overflow-hidden">
                 <MessageList roomId={room.id} session={session} />
-                <div className="pr-6 w-full">
+                <div className="w-full pr-6">
                   <MessageController roomId={room.id} />
                 </div>
               </div>
               <Separator orientation="vertical" />
-              <div className="w-64 min-w-64 flex-shrink-0 flex-grow-0 flex">
+              <div className="min-w-64 flex w-64 flex-shrink-0 flex-grow-0">
                 <PresenceList />
               </div>
             </div>

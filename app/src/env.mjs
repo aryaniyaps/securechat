@@ -32,7 +32,8 @@ export const env = createEnv({
     S3_REGION: z.string().min(1),
     S3_AVATAR_BUCKET_NAME: z.string().min(1),
     S3_MEDIA_BUCKET_NAME: z.string().min(1),
-    WS_SERVER_URL: z.string().min(1),
+    RABBITMQ_URL: z.string().min(1),
+    RABBITMQ_QUEUE_NAME: z.string().min(1),
   },
 
   /**
@@ -43,6 +44,7 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
     NEXT_PUBLIC_S3_ENDPOINT: z.string().min(1),
+    NEXT_PUBLIC_WS_URL: z.string().min(1),
     NEXT_PUBLIC_S3_AVATAR_BUCKET: z.string().min(1),
     NEXT_PUBLIC_S3_MEDIA_BUCKET: z.string().min(1),
   },
@@ -67,10 +69,12 @@ export const env = createEnv({
     S3_REGION: process.env.S3_REGION,
     S3_AVATAR_BUCKET_NAME: process.env.S3_AVATAR_BUCKET_NAME,
     S3_MEDIA_BUCKET_NAME: process.env.S3_MEDIA_BUCKET_NAME,
-    WS_SERVER_URL: process.env.WS_SERVER_URL,
+    RABBITMQ_URL: process.env.RABBITMQ_URL,
+    RABBITMQ_QUEUE_NAME: process.env.RABBITMQ_QUEUE_NAME,
     NEXT_PUBLIC_S3_ENDPOINT: process.env.NEXT_PUBLIC_S3_ENDPOINT,
     NEXT_PUBLIC_S3_AVATAR_BUCKET: process.env.NEXT_PUBLIC_S3_AVATAR_BUCKET,
     NEXT_PUBLIC_S3_MEDIA_BUCKET: process.env.NEXT_PUBLIC_S3_MEDIA_BUCKET,
+    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

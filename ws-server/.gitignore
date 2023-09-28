@@ -1,33 +1,27 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# The directory Mix will write compiled artifacts to.
+/_build/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# If you run "mix test --cover", coverage assets end up here.
+/cover/
 
-# testing
-/coverage
+# The directory Mix downloads your dependencies sources to.
+/deps/
 
-# production
-/build
+# Where 3rd-party dependencies like ExDoc output generated docs.
+/doc/
 
-# misc
-.DS_Store
-*.pem
+# Ignore .fetch files in case you like to edit your project deps locally.
+/.fetch
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+# If the VM crashes, it generates a dump, let's ignore it too.
+erl_crash.dump
 
-# local env files
-# do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
-.env
-.env*.local
+# Also ignore archive artifacts (built via "mix archive.build").
+*.ez
 
-# typescript
-*.tsbuildinfo
+# Temporary files, for example, from tests.
+/tmp/
 
-# Crash log files
-crash.log
+# Ignore package tarball (built via "mix hex.build").
+ws_server-*.tar
+

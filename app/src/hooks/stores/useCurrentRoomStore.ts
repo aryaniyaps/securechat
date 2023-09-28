@@ -1,8 +1,8 @@
 import { PresenceResult, PresenceStatsResult } from "centrifuge";
+import { type Channel, type Socket } from "phoenix";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import { TypingUser } from "~/schemas/typing";
-import { wsClient } from "~/utils/wsClient";
 
 export const useCurrentRoomStore = create(
   combine(
@@ -11,25 +11,29 @@ export const useCurrentRoomStore = create(
       presence: null as PresenceResult | null,
       presenceStats: null as PresenceStatsResult | null,
       typing: [] as TypingUser[],
+      channel: null as Channel | null,
     },
     (set, get) => ({
-      setRoom: async (roomId: string) => {
-        wsClient.emit("rooms:join", roomId);
+      setRoom: async (socket: Socket, roomId: string) => {
+        const channel = socket.channel(`rooms:${roomId}`);
+
+        channel.join();
 
         // Fetch presence and presenceStats here
         const presence = null;
         const presenceStats = null;
 
-        set(() => ({ roomId, presence, presenceStats }));
+        set(() => ({ roomId, presence, presenceStats, channel }));
       },
       clearRoom: () => {
-        const { roomId } = get();
-        if (roomId) {
-          wsClient.emit("rooms:leave", roomId);
+        const { channel } = get();
+        if (channel) {
+          channel.leave();
           set(() => ({
             roomId: null,
             presence: null,
             presenceStats: null,
+            channel: null,
           }));
         }
       },

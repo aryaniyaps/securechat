@@ -3,6 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { type AppType } from "next/app";
 import { Inter as FontSans } from "next/font/google";
+import { SocketProvider } from "~/components/socket-provider";
 import { Toaster } from "~/components/ui/toaster";
 import { TooltipProvider } from "~/components/ui/tooltip";
 import "~/styles/globals.css";
@@ -26,11 +27,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
 				}
 			}`}</style>
       <SessionProvider session={session}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <TooltipProvider>
-            <Component {...pageProps} />
-          </TooltipProvider>
-        </ThemeProvider>
+        <SocketProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <TooltipProvider>
+              <Component {...pageProps} />
+            </TooltipProvider>
+          </ThemeProvider>
+        </SocketProvider>
       </SessionProvider>
       <Toaster />
     </>

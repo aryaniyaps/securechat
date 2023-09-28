@@ -13,9 +13,10 @@ defmodule WsServer.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: WsServer.PubSub},
       # Start the Endpoint (http/https)
-      WsServerWeb.Endpoint
+      WsServerWeb.Endpoint,
       # Start a worker by calling: WsServer.Worker.start_link(arg)
-      # {WsServer.Worker, arg}
+      # {WsServer.Worker, arg},
+      WsServerWeb.RabbitMQConsumer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

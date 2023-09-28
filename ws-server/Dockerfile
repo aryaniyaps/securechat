@@ -1,63 +1,53 @@
-##### DEPENDENCIES
-
-FROM node:18-alpine3.17 AS deps
-RUN apk add --no-cache libc6-compat openssl1.1-compat
-WORKDIR /ws-server
-
-# Install dependencies based on the preferred package manager
-
-COPY package.json package-lock.json* ./
-
-RUN npm ci
-
-##### BUILDER
-
-FROM node:18-alpine3.17 AS builder
-
-ARG CONNECT_PROXY_URL
+# ---- Dependencies Stage ----
+FROM elixir:1.14-alpine AS deps
 
 WORKDIR /ws-server
-COPY --from=deps /ws-server/node_modules ./node_modules
+
+# Install hex, rebar, and build dependencies
+RUN mix local.hex --force && \
+    mix local.rebar --force && \
+    apk add --no-cache build-base
+
+# Copy mix.exs and mix.lock to install dependencies
+COPY mix.exs mix.lock ./
+
+# Install dependencies
+RUN mix deps.get
+
+# ---- Development Stage ----
+FROM deps AS dev-container
+
+# This stage is used for development. 
+# It builds upon the dependencies stage and includes source code.
 COPY . .
 
-RUN SKIP_ENV_VALIDATION=1 npm run build
-    
-##### DEV CONTAINER
+CMD ["mix", "phx.server"]
 
-FROM node:18-alpine3.17 AS dev-container
+# ---- Production Stage ----
+FROM deps AS builder
 
-WORKDIR /workspace/ws-server
+# Set MIX_ENV to prod
+ENV MIX_ENV=prod
 
-# Use the --chown option to set file ownership to socketio for both COPY commands
-COPY --from=deps /ws-server/node_modules ./node_modules
+# Install production dependencies and compile the ws-server
+RUN mix deps.get --only prod && \
+    mix compile
+
+# Create the production release
 COPY . .
+RUN mix release
 
-EXPOSE 5000
-ENV PORT 5000
+# ---- Production Stage ----
+FROM alpine:3.14 AS production
 
-CMD ["npm", "run", "dev"]
-
-##### PRODUCTION
-
-FROM node:18-alpine3.17 AS production
 WORKDIR /ws-server
 
-ENV NODE_ENV production
+# Install runtime dependencies for ERTS
+RUN apk add --no-cache openssl ncurses-libs
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 socketio
+# Copy over the built release from the builder stage
+COPY --from=builder /ws-server/_build/prod/rel/ws_server ./
 
-# COPY --from=builder /ws-server/package.json ./package.json
+ENV HOME=/ws-server
 
-COPY --from=builder /ws-server/package.json /ws-server/package-lock.json* ./
-
-# Install production dependencies (as NODE_ENV is set to production)
-RUN npm ci
-
-COPY --from=builder --chown=socketio:nodejs /ws-server/build ./build
-
-USER socketio
-EXPOSE 5000
-ENV PORT 5000
-
-CMD ["npm", "run", "start"]
+CMD ["bin/ws-server", "start"]

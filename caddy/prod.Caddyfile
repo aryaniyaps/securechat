@@ -3,11 +3,12 @@ vnadi.com {
 		dns digitalocean {$DIGITALOCEAN_API_TOKEN}
 	}
 
-	rewrite /gateway /gateway/
-	handle_path /gateway/* {
-		rewrite * /socket.io{path}
-		reverse_proxy ws-server:5000
-	}
+    reverse_proxy /socket/* ws-server:4000 {
+        header_up Host {host}
+		header_up X-Real-IP {remote}
+		header_up Upgrade WebSocket
+		header_up Connection Upgrade
+    }
 
 	reverse_proxy app:3000 {
 		header_up Host {host}

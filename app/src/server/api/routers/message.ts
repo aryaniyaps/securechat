@@ -7,8 +7,8 @@ import { env } from "~/env.mjs";
 import { attachmentFileSchema } from "~/schemas/attachment";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { broadcastEvent } from "~/server/config/amqp";
 import { s3Client } from "~/server/config/s3";
-import { wsServerApi } from "~/server/config/wsServer";
 import {
   DEFAULT_PAGINATION_LIMIT,
   MAX_MESSAGE_ATTACHMENTS,
@@ -114,8 +114,8 @@ export const messageRouter = createTRPCRouter({
         },
       });
 
-      await wsServerApi.post("/broadcast-event", {
-        type: "CREATE_MESSAGE",
+      broadcastEvent({
+        event: "CREATE_MESSAGE",
         payload: messageSchema.parse(message),
         roomId: input.roomId,
       });
@@ -179,9 +179,8 @@ export const messageRouter = createTRPCRouter({
         },
       });
 
-      // broadcast message here
-      await wsServerApi.post("/broadcast-event", {
-        type: "UPDATE_MESSAGE",
+      broadcastEvent({
+        event: "UPDATE_MESSAGE",
         payload: messageSchema.parse(message),
         roomId: message.roomId,
       });
@@ -250,9 +249,8 @@ export const messageRouter = createTRPCRouter({
         console.error(err);
       }
 
-      // broadcast message here
-      await wsServerApi.post("/broadcast-event", {
-        type: "DELETE_MESSAGE",
+      broadcastEvent({
+        event: "DELETE_MESSAGE",
         payload: messageSchema.parse(message),
         roomId: message.roomId,
       });

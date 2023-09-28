@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { wsServerApi } from "~/server/config/wsServer";
+import { broadcastEvent } from "~/server/config/amqp";
 import { typingUserSchema } from "../../../schemas/typing";
 
 export const typingRouter = createTRPCRouter({
@@ -11,13 +11,11 @@ export const typingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await wsServerApi.post("/broadcast-event", {
-        type: "ADD_TYPING_USER",
+      broadcastEvent({
+        event: "ADD_TYPING_USER",
         payload: typingUserSchema.parse(ctx.session.user),
         roomId: input.roomId,
       });
-
-      return;
     }),
 
   removeUser: protectedProcedure
@@ -27,12 +25,10 @@ export const typingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await wsServerApi.post("/broadcast-event", {
-        type: "REMOVE_TYPING_USER",
+      broadcastEvent({
+        event: "REMOVE_TYPING_USER",
         payload: typingUserSchema.parse(ctx.session.user),
         roomId: input.roomId,
       });
-
-      return;
     }),
 });

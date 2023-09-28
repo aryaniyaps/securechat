@@ -25,11 +25,11 @@
     "8333": {
       "label": "SeaweedFS S3 Gateway"
     },
-    "5000": {
-      "label": "WS Server"
-    },
     "4000": {
       "label": "Phoenix Realtime Server"
+    },
+    "5672": {
+      "label": "RabbitMQ Server"
     },
     "1025": {
       "label": "MailHog SMTP Port"
