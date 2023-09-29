@@ -26,6 +26,8 @@ COPY . .
 
 EXPOSE 4000
 
+ENV PORT 4000
+
 CMD ["mix", "phx.server"]
 
 # ---- Production Build Stage ----
@@ -62,4 +64,6 @@ USER elixir
 
 EXPOSE 4000
 
-CMD ["/ws-server/bin/server"]
+ENV PORT 4000
+
+CMD ["/ws-server/bin/ws_server", "start"]

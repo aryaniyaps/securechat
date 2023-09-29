@@ -9,7 +9,7 @@ import Config
 
 # Configures the endpoint
 config :ws_server, WsServerWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "localhost", port: 4000],
   render_errors: [
     formats: [json: WsServerWeb.ErrorJSON],
     layout: false
