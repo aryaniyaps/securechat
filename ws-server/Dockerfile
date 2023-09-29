@@ -6,7 +6,7 @@ WORKDIR /ws-server
 # Install hex, rebar, and build dependencies
 RUN mix local.hex --force && \
     mix local.rebar --force && \
-    apk add --no-cache build-base
+    apk add --no-cache build-base git
 
 # Copy mix.exs and mix.lock to install dependencies
 COPY mix.exs mix.lock ./
@@ -17,24 +17,30 @@ RUN mix deps.get
 # ---- Development Stage ----
 FROM deps AS dev-container
 
-# This stage is used for development. 
-# It builds upon the dependencies stage and includes source code.
+WORKDIR /workspace/ws-server
+
+# Copy the dependencies fetched in the deps stage
+COPY --from=deps /ws-server/deps deps
+
 COPY . .
+
+EXPOSE 4000
 
 CMD ["mix", "phx.server"]
 
-# ---- Production Stage ----
+# ---- Production Build Stage ----
 FROM deps AS builder
 
 # Set MIX_ENV to prod
 ENV MIX_ENV=prod
 
-# Install production dependencies and compile the ws-server
-RUN mix deps.get --only prod && \
-    mix compile
+WORKDIR /ws-server
+
+# Compile the application
+COPY . .
+RUN mix compile
 
 # Create the production release
-COPY . .
 RUN mix release
 
 # ---- Production Stage ----
@@ -42,12 +48,18 @@ FROM alpine:3.14 AS production
 
 WORKDIR /ws-server
 
-# Install runtime dependencies for ERTS
+# Install runtime dependencies for ERTS and set up locale
 RUN apk add --no-cache openssl ncurses-libs
 
+RUN addgroup -S elixir && adduser -S -G elixir elixir
+
 # Copy over the built release from the builder stage
-COPY --from=builder /ws-server/_build/prod/rel/ws_server ./
+COPY --from=builder --chown=elixir:elixir /ws-server/_build/prod/rel/ws_server ./
 
 ENV HOME=/ws-server
 
-CMD ["bin/ws-server", "start"]
+USER elixir
+
+EXPOSE 4000
+
+CMD ["/ws-server/bin/server"]
