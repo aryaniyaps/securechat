@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { Socket } from "phoenix";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { env } from "~/env.mjs";
@@ -14,27 +15,35 @@ interface SocketProviderProps {
 
 export function SocketProvider({ children }: SocketProviderProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
+  const { status, data } = useSession();
 
   useEffect(() => {
-    const ws = new Socket(env.NEXT_PUBLIC_WS_URL);
+    if (status === "authenticated" && socket === null) {
+      // pass gateway token here
+      const ws = new Socket(env.NEXT_PUBLIC_WS_URL, {
+        params: { token: data.gateway.token },
+      });
 
-    ws.onClose((event) => {
-      console.log(event);
-    });
+      ws.onClose((event) => {
+        console.log(event);
+      });
 
-    ws.onError((error) => {
-      console.log(error);
-    });
+      ws.onError((error) => {
+        console.log(error);
+      });
 
-    ws.connect();
+      ws.connect();
 
-    setSocket(ws);
+      setSocket(ws);
+    }
 
     return () => {
-      ws.disconnect();
-      setSocket(null);
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
     };
-  }, []);
+  }, [status]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

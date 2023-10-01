@@ -58,10 +58,10 @@ defmodule WsServerWeb.RabbitMQConsumer do
 
     IO.puts("received event #{event_type}\n#{Kernel.inspect(data)}")
 
-    Phoenix.PubSub.broadcast(
-      WsServer.PubSub,
+    WsServerWeb.Endpoint.broadcast(
       "rooms:#{room_id}",
-      {event_type, data}
+      event_type,
+      data
     )
   end
 end

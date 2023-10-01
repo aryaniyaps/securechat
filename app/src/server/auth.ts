@@ -11,6 +11,7 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
+import { generateGatewayToken } from "../utils/tokens";
 
 let emailInstance: Email;
 
@@ -39,6 +40,9 @@ declare module "next-auth" {
       username: string;
       createdAt: Date;
     } & DefaultSession["user"];
+    gateway: {
+      token: string;
+    };
   }
 
   interface User extends DefaultUser {
@@ -67,6 +71,9 @@ export const authOptions: NextAuthOptions = {
         emailVerified: user.emailVerified,
         username: user.username,
         createdAt: user.createdAt,
+      },
+      gateway: {
+        token: generateGatewayToken({ userId: user.id }),
       },
     }),
   },

@@ -143,8 +143,8 @@ variable "rabbitmq_password" {
   sensitive   = true
 }
 
-variable "connect_proxy_url" {
-  description = "Connect Proxy URL"
+variable "token_verify_url" {
+  description = "Token Verify URL"
   type        = string
-  default     = "http://app:3000/api/connect"
+  default     = "http://app:3000/api/gateway/verify-token"
 }

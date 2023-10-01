@@ -1,7 +1,7 @@
 defmodule WsServerWeb.UserSocket do
   use Phoenix.Socket
 
-  @connect_proxy_url System.get_env("CONNECT_PROXY_URL")
+  @token_verify_url System.get_env("TOKEN_VERIFY_URL")
 
   # A Socket handler
   #
@@ -10,26 +10,28 @@ defmodule WsServerWeb.UserSocket do
 
   ## Channels
 
-  channel "room:*", WsServerWeb.RoomChannel
+  channel "rooms:*", WsServerWeb.RoomChannel
 
   # This function is invoked when a client tries to connect to a channel.
   @impl true
   def connect(params, socket) do
-    IO.puts("Socket is trying to connect...")
-    cookies = socket.conn.req_headers |> List.keyfind("cookie", 0) |> elem(1)
-
-    case authenticate_with_proxy(cookies, params) do
+    case authenticate_connection(params["token"]) do
       {:ok, user_info} ->
         {:ok, assign(socket, :user_info, user_info)}
 
-      {:error, _reason} ->
-        :error
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
-  defp authenticate_with_proxy(cookies, params) do
-    headers = [{"Cookie", cookies}]
-    case HTTPoison.post(@connect_proxy_url, "", headers, params: params) do
+  defp authenticate_connection(gateway_token) do
+    # Convert the Elixir map to a JSON string
+    body = Jason.encode!(%{token: gateway_token})
+
+    headers = [{"Content-Type", "application/json"}]
+
+    # Make a HTTP Request to the Proxy URL
+    case HTTPoison.post(@token_verify_url, body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         decoded_body = Jason.decode!(body)
         if decoded_body["valid"] do
@@ -46,6 +48,7 @@ defmodule WsServerWeb.UserSocket do
     end
   end
 
+
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #
   #     def id(socket), do: "user_socket:#{socket.assigns.user_id}"
@@ -57,5 +60,5 @@ defmodule WsServerWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   @impl true
-  def id(_socket), do: nil
+  def id(socket), do: "user_socket:#{socket.assigns.user_info["id"]}"
 end

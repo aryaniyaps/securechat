@@ -9,13 +9,12 @@ import Config
 
 # Configures the endpoint
 config :ws_server, WsServerWeb.Endpoint,
-  url: [host: "localhost", port: 4000],
+  url: [host: "localhost"],
   render_errors: [
     formats: [json: WsServerWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: WsServer.PubSub,
-  live_view: [signing_salt: "7KXZofr9"]
+  pubsub_server: WsServer.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,

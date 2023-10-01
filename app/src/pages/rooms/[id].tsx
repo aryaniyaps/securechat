@@ -57,6 +57,7 @@ function RoomPage({
 
   useEffect(() => {
     if (channel) {
+      console.log("setting event handlers");
       channel.on("CREATE_MESSAGE", async (newMessage: Message) => {
         await utils.message.getAll.cancel();
 
@@ -135,6 +136,8 @@ function RoomPage({
       channel.on("REMOVE_TYPING_USER", (user: TypingUser) => {
         removeTypingUser(user);
       });
+
+      channel.join();
     }
   }, [channel]);
 

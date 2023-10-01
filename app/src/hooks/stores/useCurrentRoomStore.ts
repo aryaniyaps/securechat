@@ -17,8 +17,6 @@ export const useCurrentRoomStore = create(
       setRoom: async (socket: Socket, roomId: string) => {
         const channel = socket.channel(`rooms:${roomId}`);
 
-        channel.join();
-
         // Fetch presence and presenceStats here
         const presence = null;
         const presenceStats = null;

@@ -65,7 +65,7 @@ services:
     environment:
       RABBITMQ_URL: ${RABBITMQ_URL}
       RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
-      CONNECT_PROXY_URL: ${CONNECT_PROXY_URL}
+      TOKEN_VERIFY_URL: ${TOKEN_VERIFY_URL}
     depends_on:
       - rabbitmq
 

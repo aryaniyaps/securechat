@@ -33,6 +33,13 @@ CMD ["mix", "phx.server"]
 # ---- Production Build Stage ----
 FROM deps AS builder
 
+# RabbitMQ Configuration
+ARG RABBITMQ_URL
+ARG RABBITMQ_QUEUE_NAME
+
+# Connect Proxy Configuration
+ARG TOKEN_VERIFY_URL
+
 # Set MIX_ENV to prod
 ENV MIX_ENV=prod
 
@@ -40,13 +47,13 @@ WORKDIR /ws-server
 
 # Compile the application
 COPY . .
-RUN mix compile
+RUN mix deps.get --only $MIX_ENV && mix compile
 
 # Create the production release
 RUN mix release
 
 # ---- Production Stage ----
-FROM alpine:3.14 AS production
+FROM alpine:3.18.2 AS production
 
 WORKDIR /ws-server
 
