@@ -25,3 +25,6 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 ws_server-*.tar
 
+# VSCode extension
+.elixir_ls
+

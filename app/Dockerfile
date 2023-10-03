@@ -82,6 +82,7 @@ CMD ["npm", "run", "dev"]
 ##### PRODUCTION
 
 FROM node:18-alpine3.17 AS production
+
 WORKDIR /app
 
 ENV NODE_ENV production
