@@ -1,6 +1,7 @@
 defmodule WsServerWeb.RabbitMQConsumer do
-  @rabbitmq_url System.get_env("RABBITMQ_URL")
-  @queue_name System.get_env("RABBITMQ_QUEUE_NAME")
+  defp rabbitmq_url, do: System.get_env("RABBITMQ_URL")
+  defp queue_name, do: System.get_env("RABBITMQ_QUEUE_NAME")
+
 
   def child_spec(_opts) do
     %{
@@ -13,7 +14,7 @@ defmodule WsServerWeb.RabbitMQConsumer do
   end
 
   def start_link do
-    case AMQP.Connection.open(@rabbitmq_url) do
+    case AMQP.Connection.open(rabbitmq_url) do
       {:ok, connection} ->
         pid = spawn_link(fn ->
           channel = AMQP.Channel.open(connection)
@@ -29,18 +30,18 @@ defmodule WsServerWeb.RabbitMQConsumer do
 
 
   defp setup_queue({:ok, channel}) do
-    AMQP.Queue.declare(channel, @queue_name, durable: false)
+    AMQP.Queue.declare(channel, queue_name(), durable: false)
     {:ok, channel}
   end
 
   defp setup_consumer({:ok, channel}) do
-    AMQP.Basic.consume(channel, @queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, queue_name(), nil, no_ack: true)
     receive_messages(channel)
   end
 
 
   defp receive_messages(channel) do
-    AMQP.Basic.consume(channel, @queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, queue_name(), nil, no_ack: true)
 
     receive do
       {:basic_deliver, payload, _metadata} ->
@@ -55,8 +56,6 @@ defmodule WsServerWeb.RabbitMQConsumer do
     event_type = decoded_payload["event"]
     room_id = decoded_payload["roomId"]
     data = decoded_payload["payload"]
-
-    IO.puts("received event #{event_type}\n#{Kernel.inspect(data)}")
 
     WsServerWeb.Endpoint.broadcast(
       "rooms:#{room_id}",
