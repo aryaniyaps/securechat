@@ -64,6 +64,7 @@ resource "digitalocean_droplet" "web" {
       "echo 'MONGO_PASSWORD=${var.mongo_password}' >> /root/.env",
       "echo 'MONGO_USER=${var.mongo_user}' >> /root/.env",
       "echo 'TOKEN_VERIFY_URL=${var.token_verify_url}' >> /root/.env",
+      "echo 'PHX_HOST=${var.phx_host}' >> /root/.env"
     ]
   }
 

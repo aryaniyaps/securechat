@@ -148,3 +148,9 @@ variable "token_verify_url" {
   type        = string
   default     = "http://app:3000/api/gateway/verify-token"
 }
+
+variable "phx_host" {
+  description = "Pheonix Server Host"
+  type        = string
+  default     = "vnadi.com"
+}

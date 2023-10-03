@@ -84,5 +84,8 @@ ENV PORT 4000
 
 ENV PHX_SERVER true
 
+# we need to set this variable to configure the endpoint correctly
+ARG PHX_HOST
+
 CMD ["/ws-server/bin/ws_server", "start"]
 

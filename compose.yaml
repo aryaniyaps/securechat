@@ -65,6 +65,8 @@ services:
     image: aryaniyaps/securechat-ws-server:latest
     restart: always
     environment:
+      # only required in production environment
+      PHX_HOST: ${PHX_HOST}
       RABBITMQ_URL: ${RABBITMQ_URL}
       RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
       TOKEN_VERIFY_URL: ${TOKEN_VERIFY_URL}

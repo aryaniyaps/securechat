@@ -13,7 +13,7 @@ config :ws_server, WsServerWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "g1w1m6LMnGzrL4t6Y7Alptm4j8qTdKRA3c8n9B6w4SNPAjGeokZOeNDXQzWLaXEf",
+  # secret_key_base: "g1w1m6LMnGzrL4t6Y7Alptm4j8qTdKRA3c8n9B6w4SNPAjGeokZOeNDXQzWLaXEf",
   watchers: []
 
 # ## SSL Support
