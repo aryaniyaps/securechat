@@ -59,9 +59,11 @@ services:
       - mongodb
       - seaweedfs-s3
       - ws-server
+      - rabbitmq
 
   ws-server:
     image: aryaniyaps/securechat-ws-server:latest
+    restart: always
     environment:
       RABBITMQ_URL: ${RABBITMQ_URL}
       RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}

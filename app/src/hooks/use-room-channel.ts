@@ -42,8 +42,8 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
     const channel = socket.channel(`rooms:${roomId}`);
 
     let presenceState = {};
-    // Get the current state
 
+    // Get the current state
     channel.on("presence_state", (state) => {
       presenceState = Presence.syncState(presenceState, state);
       setCurrentPresences(Presence.list(presenceState));

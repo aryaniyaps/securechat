@@ -91,6 +91,7 @@ services:
       dockerfile: Dockerfile
       target: dev-container
     working_dir: /workspace/ws-server
+    restart: always
     ports:
       - "4000:4000"
     environment:
