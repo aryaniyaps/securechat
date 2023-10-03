@@ -115,7 +115,7 @@ export const messageRouter = createTRPCRouter({
       });
 
       broadcastEvent({
-        event: "CREATE_MESSAGE",
+        event: "create_message",
         payload: messageSchema.parse(message),
         roomId: input.roomId,
       });
@@ -180,7 +180,7 @@ export const messageRouter = createTRPCRouter({
       });
 
       broadcastEvent({
-        event: "UPDATE_MESSAGE",
+        event: "update_message",
         payload: messageSchema.parse(message),
         roomId: message.roomId,
       });
@@ -250,7 +250,7 @@ export const messageRouter = createTRPCRouter({
       }
 
       broadcastEvent({
-        event: "DELETE_MESSAGE",
+        event: "delete_message",
         payload: messageSchema.parse(message),
         roomId: message.roomId,
       });

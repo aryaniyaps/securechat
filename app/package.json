@@ -37,7 +37,6 @@
     "@trpc/react-query": "^10.26.0",
     "@trpc/server": "^10.26.0",
     "amqplib": "^0.10.3",
-    "centrifuge": "^4.0.1",
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
     "email-templates": "^11.1.1",

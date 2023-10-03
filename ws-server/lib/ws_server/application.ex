@@ -12,6 +12,8 @@ defmodule WsServer.Application do
       WsServerWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: WsServer.PubSub},
+      # Start the Presence system
+      WsServerWeb.Presence,
       # Start the Endpoint (http/https)
       WsServerWeb.Endpoint,
       # Start a worker by calling: WsServer.Worker.start_link(arg)

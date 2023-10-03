@@ -1,7 +1,6 @@
 import { type Session } from "next-auth";
 import Link from "next/link";
 import { APP_NAME } from "~/utils/constants";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import UserNav from "./user-nav";
 
 export default function HomeLayout({
@@ -18,12 +17,7 @@ export default function HomeLayout({
           <Link href="/">
             <h1 className="font-semibold">{APP_NAME}</h1>
           </Link>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <UserNav session={session} />
-            </TooltipTrigger>
-            <TooltipContent>User settings</TooltipContent>
-          </Tooltip>
+          <UserNav session={session} />
         </div>
       </div>
       <div className="flex flex-grow overflow-hidden py-6">{children}</div>

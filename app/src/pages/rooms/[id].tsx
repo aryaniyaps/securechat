@@ -18,8 +18,7 @@ import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
-import { Message } from "~/schemas/message";
-import { TypingUser } from "~/schemas/typing";
+import { useChannel } from "~/hooks/use-channel";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
@@ -27,11 +26,11 @@ import { APP_NAME } from "~/utils/constants";
 function RoomPage({
   id,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const utils = api.useContext();
-
   const { data: session } = useSession();
 
   const isMobile = useMediaQuery({ query: "(max-width: 672px)" });
+
+  const { currentPresences, typingUsersRef } = useChannel({ roomId: id });
 
   const { data: room, isLoading } = api.room.getById.useQuery(
     {
@@ -42,104 +41,17 @@ function RoomPage({
 
   const socket = useSocket();
 
-  const { channel, setRoom, clearRoom, addTypingUser, removeTypingUser } =
-    useCurrentRoomStore();
+  const { setRoom, clearRoom } = useCurrentRoomStore();
 
   useEffect(() => {
     if (socket) {
-      void setRoom(socket, id);
+      void setRoom(id);
     }
     // cleanup when the component unmounts
     return () => {
       clearRoom();
     };
   }, [id, socket]);
-
-  useEffect(() => {
-    if (channel) {
-      console.log("setting event handlers");
-      channel.on("CREATE_MESSAGE", async (newMessage: Message) => {
-        await utils.message.getAll.cancel();
-
-        utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
-          if (oldData == null || oldData.pages[0] == null) return;
-          return {
-            ...oldData,
-            pages: [
-              {
-                ...oldData.pages[0],
-                items: [newMessage, ...oldData.pages[0].items],
-              },
-              ...oldData.pages.slice(1),
-            ],
-          };
-        });
-      });
-
-      channel.on("UPDATE_MESSAGE", async (updatedMessage: Message) => {
-        await utils.message.getAll.cancel();
-
-        utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
-          if (oldData == null || oldData.pages.length === 0) return oldData;
-
-          const newData = {
-            ...oldData,
-            pages: oldData.pages.map((page) => {
-              // Check if the current page has the message that needs to be updated
-              const messageIndex = page.items.findIndex(
-                (message: Message) => message.id === updatedMessage.id
-              );
-
-              // If the message was not found in this page, return the page as is
-              if (messageIndex === -1) return page;
-
-              // If the message is found, replace it with the updated message
-              return {
-                ...page,
-                items: [
-                  ...page.items.slice(0, messageIndex),
-                  updatedMessage,
-                  ...page.items.slice(messageIndex + 1),
-                ],
-              };
-            }),
-          };
-
-          return newData;
-        });
-      });
-
-      channel.on("DELETE_MESSAGE", async (deletedMessage: Message) => {
-        await utils.message.getAll.cancel();
-
-        utils.message.getAll.setInfiniteData({ roomId: id }, (oldData) => {
-          if (oldData == null || oldData.pages.length === 0) return oldData;
-
-          const newData = {
-            ...oldData,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              items: page.items.filter(
-                (message: Message) => message.id !== deletedMessage.id
-              ),
-            })),
-          };
-
-          return newData;
-        });
-      });
-
-      channel.on("ADD_TYPING_USER", (user: TypingUser) => {
-        addTypingUser(user);
-      });
-
-      channel.on("REMOVE_TYPING_USER", (user: TypingUser) => {
-        removeTypingUser(user);
-      });
-
-      channel.join();
-    }
-  }, [channel]);
 
   if (!session || isLoading || !room) {
     return <LoadingScreen />;
@@ -159,7 +71,10 @@ function RoomPage({
             <>
               <div className="flex w-full flex-1 flex-col gap-8 overflow-hidden py-6">
                 <MessageList roomId={room.id} session={session} />
-                <MessageController roomId={room.id} />
+                <MessageController
+                  typingUsers={typingUsersRef.current}
+                  roomId={room.id}
+                />
               </div>
               <Sheet>
                 <SheetTrigger asChild>
@@ -171,7 +86,7 @@ function RoomPage({
                   </Button>
                 </SheetTrigger>
                 <SheetContent className="w-2/3">
-                  <PresenceList />
+                  <PresenceList currentPresences={currentPresences} />
                 </SheetContent>
               </Sheet>
             </>
@@ -180,12 +95,15 @@ function RoomPage({
               <div className="flex flex-1 flex-col gap-8 overflow-hidden">
                 <MessageList roomId={room.id} session={session} />
                 <div className="w-full pr-6">
-                  <MessageController roomId={room.id} />
+                  <MessageController
+                    typingUsers={typingUsersRef.current}
+                    roomId={room.id}
+                  />
                 </div>
               </div>
               <Separator orientation="vertical" />
               <div className="min-w-64 flex w-64 flex-shrink-0 flex-grow-0">
-                <PresenceList />
+                <PresenceList currentPresences={currentPresences} />
               </div>
             </div>
           )}

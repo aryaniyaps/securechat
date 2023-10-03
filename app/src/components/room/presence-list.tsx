@@ -1,92 +1,74 @@
-import { ClientInfo } from "centrifuge";
-import pluralize from "pluralize";
-import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
+import { PresenceEntry } from "~/pages/rooms/[id]";
 import { getAvatarUrl } from "~/utils/avatar";
-import { Icons } from "../icons";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 
-interface ConnInfo {
-  name: string | null;
-  username: string;
-  image: string | null;
-  createdAt: Date;
-}
-
-export default function PresenceList() {
-  const roomStore = useCurrentRoomStore();
-
-  if (!roomStore.presence || !roomStore.presenceStats) {
+export default function PresenceList({
+  currentPresences,
+}: {
+  currentPresences: PresenceEntry[] | null;
+}) {
+  if (!currentPresences) {
     return (
       <div
-        className="flex flex-col gap-6 py-6 pb-6"
+        className="flex flex-col gap-6 px-6 py-6 pb-6"
         data-testid="presence-list"
       >
-        <div className="flex items-center gap-2 px-6 text-sm font-medium">
-          <Icons.users size={20} className="h-5 w-5" />
-          <Skeleton className="h-3 w-3/4" />
-        </div>
-        <Separator />
-        <div className="flex flex-1 flex-col gap-6 px-6">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="flex items-center space-x-4 w-[200px]">
-              <Avatar className="h-8 w-8">
-                <Skeleton className="h-full w-full" />
-              </Avatar>
-              <div className="flex w-full flex-col space-y-2">
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-3/4" />
-              </div>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div key={index} className="flex w-[200px] items-center space-x-4">
+            <Avatar className="h-8 w-8">
+              <Skeleton className="h-full w-full" />
+            </Avatar>
+            <div className="flex w-full flex-col space-y-2">
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-3/4" />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     );
   }
 
   return (
     <div
-      className="flex flex-col gap-6 py-6 pb-6"
+      className="flex flex-col gap-6 px-6 py-6 pb-6"
       data-testid="presence-list"
     >
-      <div className="flex items-center gap-2 px-6 text-sm font-medium">
-        <Icons.users size={20} className="h-5 w-5" />
-        <p>
-          {roomStore.presenceStats.numUsers}{" "}
-          {pluralize("user", roomStore.presenceStats.numUsers)} connected
-        </p>
-      </div>
-      <Separator />
-      <div className="flex flex-1 flex-col gap-6 px-6">
-        {Object.entries(roomStore.presence.clients).map(
-          ([key, clientInfo]: [string, ClientInfo]) => {
-            const user = clientInfo.connInfo as ConnInfo;
-            return (
-              <div key={key} className="flex items-center space-x-4 w-[200px]">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={getAvatarUrl(user.image, user.username)}
-                    loading="eager"
-                    alt={user.name || user.username}
-                  />
-                  <AvatarFallback>
-                    {(user.name || user.username).slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                {user.name ? (
-                  <div className="flex flex-col">
-                    <p className="font-semibold">{user.name}</p>
-                    <p className="text-xs">@{user.username}</p>
-                  </div>
-                ) : (
-                  <p className="font-semibold">{user.name || user.username}</p>
+      {Object.entries(currentPresences).map(([userId, userPresence]) => {
+        const metadata = userPresence.metas[0]; // Assuming each user only has one metadata entry
+        if (!metadata) return;
+
+        return (
+          <div key={userId} className="flex w-[200px] items-center space-x-4">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={getAvatarUrl(
+                  metadata.user_info.image,
+                  metadata.user_info.username
                 )}
+                loading="eager"
+                alt={metadata.user_info.name || metadata.user_info.username}
+              />
+              <AvatarFallback>
+                {(metadata.user_info.name || metadata.user_info.username).slice(
+                  0,
+                  2
+                )}
+              </AvatarFallback>
+            </Avatar>
+            {metadata.user_info.name ? (
+              <div className="flex flex-col">
+                <p className="font-semibold">{metadata.user_info.name}</p>
+                <p className="text-xs">@{metadata.user_info.username}</p>
               </div>
-            );
-          }
-        )}
-      </div>
+            ) : (
+              <p className="font-semibold">
+                {metadata.user_info.name || metadata.user_info.username}
+              </p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

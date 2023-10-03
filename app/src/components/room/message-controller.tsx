@@ -2,29 +2,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { useToast } from "~/hooks/use-toast";
 import { AttachmentFile } from "~/schemas/attachment";
 import { TypingUser } from "~/schemas/typing";
 import { api } from "~/utils/api";
-import { MAX_MESSAGE_ATTACHMENTS, TYPING_INDICATOR_DELAY } from "~/utils/constants";
+import {
+  MAX_MESSAGE_ATTACHMENTS,
+  TYPING_INDICATOR_DELAY,
+} from "~/utils/constants";
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Input } from "../ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-const createMessageSchema = z
-  .object({
-    content: z
-      .union([
-        z.string()
-          .min(1, { message: "Message must be at least 1 character." })
-          .max(250, { message: "Message cannot exceed 250 characters." }),
-        z.literal(null)
-      ])
-  })
-
+const createMessageSchema = z.object({
+  content: z.union([
+    z
+      .string()
+      .min(1, { message: "Message must be at least 1 character." })
+      .max(250, { message: "Message cannot exceed 250 characters." }),
+    z.literal(null),
+  ]),
+});
 
 interface MediaControllerProps {
   selectedFiles: File[];
@@ -66,24 +66,25 @@ function MediaController(props: MediaControllerProps) {
   );
 }
 
-function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) => void }) {
+function MediaPreview({
+  file,
+  onDelete,
+}: {
+  file: File;
+  onDelete: (file: File) => void;
+}) {
   return (
-    <div
-      className="bg-tertiary rounded-md w-36"
-    >
-      <div className="p-2 flex relative flex-col gap-4">
+    <div className="w-36 rounded-md bg-tertiary">
+      <div className="relative flex flex-col gap-4 p-2">
         <div className="absolute right-0 top-0 z-10">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="tertiary"
-                size="xs"
-              >
+              <Button variant="tertiary" size="xs">
                 <Icons.trash2
                   size={15}
                   className="h-4 w-4 text-destructive"
                   onClick={() => {
-                    onDelete(file)
+                    onDelete(file);
                   }}
                 />
               </Button>
@@ -96,31 +97,46 @@ function MediaPreview({ file, onDelete }: { file: File; onDelete: (file: File) =
           src={URL.createObjectURL(file)}
           title={file.name}
           height={100}
-          className="object-cover rounded-md"
+          className="rounded-md object-cover"
         />
-        <p className="font-mono text-xs truncate overflow-ellipsis">{file.name}</p>
+        <p className="truncate overflow-ellipsis font-mono text-xs">
+          {file.name}
+        </p>
       </div>
     </div>
-  )
+  );
 }
 
-function MediaPreviewer({ selectedFiles, onDeleteFile }: { selectedFiles: File[]; onDeleteFile: (file: File) => void }) {
+function MediaPreviewer({
+  selectedFiles,
+  onDeleteFile,
+}: {
+  selectedFiles: File[];
+  onDeleteFile: (file: File) => void;
+}) {
   // todo: add horizontal scrollbar here
   return (
-    <div className="w-full border border-tertiary rounded-md overflow-x-auto">
+    <div className="w-full overflow-x-auto rounded-md border border-tertiary">
       <div className="flex flex-nowrap gap-4 p-4">
         {selectedFiles.map((file, index) => (
-          <MediaPreview key={`${file.name}-${index}`} file={file} onDelete={onDeleteFile} />
+          <MediaPreview
+            key={`${file.name}-${index}`}
+            file={file}
+            onDelete={onDeleteFile}
+          />
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-
-export default function MessageController({ roomId }: { roomId: string }) {
-  const { typing } = useCurrentRoomStore();
-
+export default function MessageController({
+  roomId,
+  typingUsers,
+}: {
+  roomId: string;
+  typingUsers: TypingUser[];
+}) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const [isTyping, setIsTyping] = useState(false);
@@ -128,14 +144,14 @@ export default function MessageController({ roomId }: { roomId: string }) {
   const form = useForm<z.infer<typeof createMessageSchema>>({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {
-      content: null
-    }
+      content: null,
+    },
   });
 
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const createMessage = api.message.create.useMutation({});
 
@@ -146,7 +162,6 @@ export default function MessageController({ roomId }: { roomId: string }) {
   const createMediaPresignedUrl =
     api.message.createMediaPresignedUrl.useMutation({});
 
-
   const onFileChange = (newFiles: File[] | null) => {
     if (!newFiles) return;
 
@@ -154,17 +169,23 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
     // Check if we've already reached the max attachments
     if (spaceLeft <= 0) {
-      toast({ description: "Maximum attachment limit reached!", variant: "destructive" });
+      toast({
+        description: `Maximum attachment limit reached (${MAX_MESSAGE_ATTACHMENTS})!`,
+        variant: "destructive",
+      });
       return;
     }
 
     // Determine how many new files can be added without exceeding the limit
     const filesToAdd = newFiles.slice(0, spaceLeft);
-    setSelectedFiles(prevFiles => [...prevFiles, ...filesToAdd]);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...filesToAdd]);
 
     // If we had to truncate the newFiles array, show a toast
     if (filesToAdd.length < newFiles.length) {
-      toast({ description: "Some files were not added due to the attachment limit!", variant: "destructive" });
+      toast({
+        description: `Some files were not added due to the attachment limit (${MAX_MESSAGE_ATTACHMENTS})!`,
+        variant: "destructive",
+      });
     }
   };
 
@@ -178,7 +199,6 @@ export default function MessageController({ roomId }: { roomId: string }) {
     });
     return response.ok;
   }
-
 
   const handleTyping = async (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only send a request when the user starts typing
@@ -215,7 +235,9 @@ export default function MessageController({ roomId }: { roomId: string }) {
   }
 
   function onDeleteFile(fileToRemove: File) {
-    setSelectedFiles(prevFiles => prevFiles.filter(file => file !== fileToRemove));
+    setSelectedFiles((prevFiles) =>
+      prevFiles.filter((file) => file !== fileToRemove)
+    );
   }
 
   async function onSubmit(values: z.infer<typeof createMessageSchema>) {
@@ -227,7 +249,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
           const { presignedUrl, uri } =
             await createMediaPresignedUrl.mutateAsync({
               contentType: attachment.type,
-              roomId: roomId
+              roomId: roomId,
             });
           const isUploadSuccessful = await uploadMedia(
             attachment,
@@ -240,15 +262,18 @@ export default function MessageController({ roomId }: { roomId: string }) {
               variant: "destructive",
             });
           } else {
-            attachments.push({ contentType: attachment.type, uri: uri, name: attachment.name });
+            attachments.push({
+              contentType: attachment.type,
+              uri: uri,
+              name: attachment.name,
+            });
           }
-
         }
       }
 
       const payload: any = {
         content: values.content,
-        roomId: roomId
+        roomId: roomId,
       };
 
       if (attachments) {
@@ -257,7 +282,7 @@ export default function MessageController({ roomId }: { roomId: string }) {
 
       await createMessage.mutateAsync(payload);
       form.reset({ content: null });
-      setSelectedFiles([])
+      setSelectedFiles([]);
     } catch (err) {
       toast({ description: "Couldn't send message!", variant: "destructive" });
     }
@@ -273,11 +298,13 @@ export default function MessageController({ roomId }: { roomId: string }) {
   }, []);
 
   return (
-    <div className="mb-4 flex flex-col gap-4 w-full">
+    <div className="mb-4 flex w-full flex-col gap-4">
       {selectedFiles.length > 0 && (
-        <MediaPreviewer selectedFiles={selectedFiles} onDeleteFile={onDeleteFile} />
+        <MediaPreviewer
+          selectedFiles={selectedFiles}
+          onDeleteFile={onDeleteFile}
+        />
       )}
-
 
       <Form {...form} data-testid="message-controller">
         <form
@@ -316,7 +343,10 @@ export default function MessageController({ roomId }: { roomId: string }) {
                 variant="secondary"
                 type="submit"
                 className="py-6"
-                disabled={form.formState.isSubmitting || (!form.getValues("content") && selectedFiles.length === 0)}
+                disabled={
+                  form.formState.isSubmitting ||
+                  (!form.getValues("content") && selectedFiles.length === 0)
+                }
               >
                 <Icons.send size={20} className="h-4 w-4" />
               </Button>
@@ -328,10 +358,10 @@ export default function MessageController({ roomId }: { roomId: string }) {
       <p
         className="h-2 animate-pulse text-xs font-semibold transition-opacity"
         style={{
-          visibility: typing.length > 0 ? "visible" : "hidden",
+          visibility: typingUsers.length > 0 ? "visible" : "hidden",
         }}
       >
-        {getTypingMessage(typing)}
+        {getTypingMessage(typingUsers)}
       </p>
     </div>
   );

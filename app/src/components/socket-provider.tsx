@@ -18,7 +18,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
   const { status, data } = useSession();
 
   useEffect(() => {
-    if (status === "authenticated" && socket === null) {
+    if (status === "authenticated" && !socket) {
       // pass gateway token here
       const ws = new Socket(env.NEXT_PUBLIC_WS_URL, {
         params: { token: data.gateway.token },

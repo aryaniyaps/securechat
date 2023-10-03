@@ -12,7 +12,7 @@ export const typingRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       broadcastEvent({
-        event: "ADD_TYPING_USER",
+        event: "add_typing_user",
         payload: typingUserSchema.parse(ctx.session.user),
         roomId: input.roomId,
       });
@@ -26,7 +26,7 @@ export const typingRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       broadcastEvent({
-        event: "REMOVE_TYPING_USER",
+        event: "remove_typing_user",
         payload: typingUserSchema.parse(ctx.session.user),
         roomId: input.roomId,
       });
