@@ -82,5 +82,7 @@ EXPOSE 4000
 
 ENV PORT 4000
 
+ENV PHX_SERVER true
+
 CMD ["/ws-server/bin/ws_server", "start"]
 
