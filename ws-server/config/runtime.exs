@@ -38,6 +38,8 @@ if config_env() == :prod do
   port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :ws_server, WsServerWeb.Endpoint,
+    # This is used for generated URLs within the app only
+    # As Caddy provides TLS, We can set the scheme and port to the following:
     url: [host: host, path: path, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
