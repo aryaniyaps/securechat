@@ -19,7 +19,7 @@ export type PresenceEntry = {
   metas: MetaData[];
 };
 
-export function useChannel({ roomId }: { roomId: string }) {
+export function useRoomChannel({ roomId }: { roomId: string }) {
   const socket = useSocket();
 
   const utils = api.useContext();

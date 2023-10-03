@@ -18,7 +18,7 @@ import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
-import { useChannel } from "~/hooks/use-channel";
+import { useRoomChannel } from "~/hooks/use-room-channel";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
@@ -30,7 +30,7 @@ function RoomPage({
 
   const isMobile = useMediaQuery({ query: "(max-width: 672px)" });
 
-  const { currentPresences, typingUsersRef } = useChannel({ roomId: id });
+  const { currentPresences, typingUsersRef } = useRoomChannel({ roomId: id });
 
   const { data: room, isLoading } = api.room.getById.useQuery(
     {
