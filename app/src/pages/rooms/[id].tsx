@@ -12,7 +12,6 @@ import RoomLayout from "~/components/room/layout";
 import MessageController from "~/components/room/message-controller";
 import MessageList from "~/components/room/message-list";
 import PresenceList from "~/components/room/presence-list";
-import { useSocket } from "~/components/socket-provider";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
@@ -39,19 +38,15 @@ function RoomPage({
     { refetchOnMount: false }
   );
 
-  const socket = useSocket();
-
   const { setRoom, clearRoom } = useCurrentRoomStore();
 
   useEffect(() => {
-    if (socket) {
-      void setRoom(id);
-    }
+    void setRoom(id);
     // cleanup when the component unmounts
     return () => {
       clearRoom();
     };
-  }, [id, socket]);
+  }, [id]);
 
   if (!session || isLoading || !room) {
     return <LoadingScreen />;
