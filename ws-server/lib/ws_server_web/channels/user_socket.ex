@@ -1,7 +1,7 @@
 defmodule WsServerWeb.UserSocket do
   use Phoenix.Socket
 
-  @token_verify_url System.get_env("TOKEN_VERIFY_URL")
+  defp token_verify_url, do: System.get_env("TOKEN_VERIFY_URL")
 
   # A Socket handler
   #
@@ -31,7 +31,7 @@ defmodule WsServerWeb.UserSocket do
     headers = [{"Content-Type", "application/json"}]
 
     # Make a HTTP Request to the Proxy URL
-    case HTTPoison.post(@token_verify_url, body, headers) do
+    case HTTPoison.post(token_verify_url(), body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         decoded_body = Jason.decode!(body)
         if decoded_body["valid"] do
