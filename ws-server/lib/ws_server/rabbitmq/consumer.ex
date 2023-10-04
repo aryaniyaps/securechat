@@ -14,7 +14,7 @@ defmodule WsServerWeb.RabbitMQConsumer do
   end
 
   def start_link do
-    case AMQP.Connection.open(rabbitmq_url) do
+    case AMQP.Connection.open(rabbitmq_url()) do
       {:ok, connection} ->
         pid = spawn_link(fn ->
           channel = AMQP.Channel.open(connection)

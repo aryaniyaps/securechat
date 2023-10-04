@@ -4,11 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 
 export default function PresenceList({
-  currentPresences,
+  presenceInfo,
 }: {
-  currentPresences: PresenceEntry[] | null;
+  presenceInfo: PresenceEntry[] | null;
 }) {
-  if (!currentPresences) {
+  if (!presenceInfo) {
     return (
       <div
         className="flex flex-col gap-6 px-6 py-6 pb-6"
@@ -34,7 +34,7 @@ export default function PresenceList({
       className="flex flex-col gap-6 px-6 py-6 pb-6"
       data-testid="presence-list"
     >
-      {Object.entries(currentPresences).map(([userId, userPresence]) => {
+      {Object.entries(presenceInfo).map(([userId, userPresence]) => {
         const metadata = userPresence.metas[0]; // Assuming each user only has one metadata entry
         if (!metadata) return;
 

@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { Channel } from "phoenix";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { PresenceEntry } from "~/hooks/use-room-channel";
 import { useToast } from "~/hooks/use-toast";
 import { AttachmentFile } from "~/schemas/attachment";
-import { TypingUser } from "~/schemas/typing";
 import { api } from "~/utils/api";
 import {
   MAX_MESSAGE_ATTACHMENTS,
@@ -130,16 +131,64 @@ function MediaPreviewer({
   );
 }
 
+function TypingIndicator({
+  presenceInfo,
+}: {
+  presenceInfo: PresenceEntry[] | null;
+}) {
+  // Filter out users who are typing
+  const typingUsers = useMemo(() => {
+    if (!presenceInfo) return [];
+
+    return Object.entries(presenceInfo)
+      .filter(([_userId, userPresence]) =>
+        userPresence.metas.some((meta) => meta.typing)
+      )
+      .map(([_userId, userPresence]) => userPresence.metas[0]!.user_info);
+  }, [presenceInfo]);
+
+  function getTypingMessage(typing: { name: string; username: string }[]) {
+    const typingCount = typing.length;
+
+    if (typingCount === 1 && typing[0]) {
+      return `${typing[0].username} is typing`;
+    } else if (typingCount === 2 && typing[0] && typing[1]) {
+      return `${typing[0].username} and ${typing[1].username} are typing`;
+    } else if (typingCount > 2) {
+      return `${typingCount} users are typing`;
+    }
+
+    return null;
+  }
+
+  return (
+    <p
+      className="h-2 animate-pulse text-xs font-semibold transition-opacity"
+      style={{
+        visibility: typingUsers.length > 0 ? "visible" : "hidden",
+      }}
+    >
+      {getTypingMessage(typingUsers)}
+    </p>
+  );
+}
+
 export default function MessageController({
   roomId,
-  typingUsers,
+  presenceInfo,
+  channel,
 }: {
   roomId: string;
-  typingUsers: TypingUser[];
+  presenceInfo: PresenceEntry[] | null;
+  channel: Channel;
 }) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const [isTyping, setIsTyping] = useState(false);
+
+  const [typingTimeout, setTypingTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
 
   const form = useForm<z.infer<typeof createMessageSchema>>({
     resolver: zodResolver(createMessageSchema),
@@ -148,16 +197,9 @@ export default function MessageController({
     },
   });
 
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
   const { toast } = useToast();
 
   const createMessage = api.message.create.useMutation({});
-
-  const addTypingUser = api.typing.addUser.useMutation({});
-
-  const removeTypingUser = api.typing.removeUser.useMutation({});
 
   const createAttachmentPresignedUrls =
     api.message.createAttachmentPresignedUrls.useMutation({});
@@ -198,40 +240,6 @@ export default function MessageController({
       },
     });
     return response.ok;
-  }
-
-  const handleTyping = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only send a request when the user starts typing
-    if (!isTyping) {
-      setIsTyping(true);
-      await addTypingUser.mutateAsync({ roomId });
-    }
-
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    const newTimeout = setTimeout(async () => {
-      // Remove user from typing list and reset typing state
-      setIsTyping(false);
-      await removeTypingUser.mutateAsync({ roomId });
-    }, TYPING_INDICATOR_DELAY);
-
-    setTypingTimeout(newTimeout);
-  };
-
-  function getTypingMessage(typing: TypingUser[]) {
-    const typingCount = typing.length;
-
-    if (typingCount === 1 && typing[0]) {
-      return `${typing[0].username} is typing`;
-    } else if (typingCount === 2 && typing[0] && typing[1]) {
-      return `${typing[0].username} and ${typing[1].username} are typing`;
-    } else if (typingCount > 2) {
-      return `${typingCount} users are typing`;
-    }
-
-    return null;
   }
 
   function onDeleteFile(fileToRemove: File) {
@@ -291,8 +299,33 @@ export default function MessageController({
     }
   }
 
+  function handleTyping() {
+    if (!isTyping) {
+      setIsTyping(true);
+      channel.push("typing", { typing: true });
+
+      const timeout = setTimeout(stopTyping, TYPING_INDICATOR_DELAY);
+      setTypingTimeout(timeout);
+    } else {
+      restartTypingTimeout();
+    }
+  }
+
+  function stopTyping() {
+    setIsTyping(false);
+    channel.push("typing", { typing: false });
+  }
+
+  function restartTypingTimeout() {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+    const timeout = setTimeout(stopTyping, TYPING_INDICATOR_DELAY);
+    setTypingTimeout(timeout);
+  }
+
   useEffect(() => {
-    // Clean up the timeout when the component is unmounted
+    // Cleanup: clear the timeout when the component is unmounted
     return () => {
       if (typingTimeout) {
         clearTimeout(typingTimeout);
@@ -332,7 +365,7 @@ export default function MessageController({
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => {
-                      handleTyping(e);
+                      handleTyping();
                       field.onChange(e);
                     }}
                   />
@@ -358,14 +391,7 @@ export default function MessageController({
           </Tooltip>
         </form>
       </Form>
-      <p
-        className="h-2 animate-pulse text-xs font-semibold transition-opacity"
-        style={{
-          visibility: typingUsers.length > 0 ? "visible" : "hidden",
-        }}
-      >
-        {getTypingMessage(typingUsers)}
-      </p>
+      <TypingIndicator presenceInfo={presenceInfo} />
     </div>
   );
 }

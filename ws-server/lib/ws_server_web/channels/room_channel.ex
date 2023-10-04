@@ -13,12 +13,23 @@ defmodule WsServerWeb.RoomChannel do
   def handle_info(:after_join, socket) do
     {:ok, _} =
       Presence.track(socket, socket.assigns.user_info["id"], %{
+        typing: false,
         online_at: inspect(System.system_time(:second)),
         user_info: socket.assigns.user_info
       })
 
     push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_in("typing", %{"typing" => typing}, socket) do
+    {:ok, _} = Presence.update(socket, socket.assigns.user_info["id"], %{
+      typing: typing,
+      online_at: inspect(System.system_time(:second)),
+      user_info: socket.assigns.user_info
+    })
+    {:reply, :ok, socket}
   end
 
 

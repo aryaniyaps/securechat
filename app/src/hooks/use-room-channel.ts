@@ -1,11 +1,11 @@
-import { Presence } from "phoenix";
-import { useEffect, useRef, useState } from "react";
+import { Channel, Presence } from "phoenix";
+import { useEffect, useState } from "react";
 import { useSocket } from "~/components/socket-provider";
 import { Message } from "~/schemas/message";
-import { TypingUser } from "~/schemas/typing";
 import { api } from "~/utils/api";
 
 type MetaData = {
+  typing: boolean;
   online_at: string;
   user_info: {
     name: string;
@@ -24,38 +24,36 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
 
   const utils = api.useContext();
 
-  const [currentPresences, setCurrentPresences] = useState<
-    PresenceEntry[] | null
-  >(null);
+  const [presenceInfo, setPresenceInfo] = useState<PresenceEntry[] | null>(
+    null
+  );
 
-  const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
-
-  const typingUsersRef = useRef<TypingUser[]>([]);
-
-  useEffect(() => {
-    typingUsersRef.current = typingUsers;
-  }, [typingUsers]);
+  // State for the channel
+  const [channel, setChannel] = useState<Channel | null>(null);
 
   useEffect(() => {
     if (!socket) return;
 
-    const channel = socket.channel(`rooms:${roomId}`);
+    const roomChannel = socket.channel(`rooms:${roomId}`);
+
+    // Set the channel to the state
+    setChannel(roomChannel);
 
     let presenceState = {};
 
     // Get the current state
-    channel.on("presence_state", (state) => {
+    roomChannel.on("presence_state", (state) => {
       presenceState = Presence.syncState(presenceState, state);
-      setCurrentPresences(Presence.list(presenceState));
+      setPresenceInfo(Presence.list(presenceState));
     });
 
     // Handle updates
-    channel.on("presence_diff", (diff) => {
+    roomChannel.on("presence_diff", (diff) => {
       presenceState = Presence.syncDiff(presenceState, diff);
-      setCurrentPresences(Presence.list(presenceState));
+      setPresenceInfo(Presence.list(presenceState));
     });
 
-    channel.on("create_message", async (newMessage: Message) => {
+    roomChannel.on("create_message", async (newMessage: Message) => {
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData({ roomId }, (oldData) => {
@@ -73,7 +71,7 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
       });
     });
 
-    channel.on("update_message", async (updatedMessage: Message) => {
+    roomChannel.on("update_message", async (updatedMessage: Message) => {
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData({ roomId }, (oldData) => {
@@ -106,7 +104,7 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
       });
     });
 
-    channel.on("delete_message", async (deletedMessage: Message) => {
+    roomChannel.on("delete_message", async (deletedMessage: Message) => {
       await utils.message.getAll.cancel();
 
       utils.message.getAll.setInfiniteData({ roomId }, (oldData) => {
@@ -126,32 +124,13 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
       });
     });
 
-    channel.on("add_typing_user", (user: TypingUser) => {
-      const userExists = typingUsersRef.current.some(
-        (existingUser) => existingUser.id === user.id
-      );
-      if (!userExists) {
-        setTypingUsers((users) => [user, ...users]);
-      }
-    });
-
-    channel.on("remove_typing_user", (user: TypingUser) => {
-      const userExists = typingUsersRef.current.some(
-        (existingUser) => existingUser.id === user.id
-      );
-      if (userExists) {
-        setTypingUsers((users) =>
-          users.filter((existingUser) => existingUser.id !== user.id)
-        );
-      }
-    });
-
-    channel.join();
+    roomChannel.join();
 
     return () => {
-      channel.leave();
+      roomChannel.leave();
+      setChannel(null); // Reset channel state when leaving
     };
   }, [socket, roomId]);
 
-  return { currentPresences, typingUsersRef };
+  return { presenceInfo, channel };
 }

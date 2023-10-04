@@ -29,7 +29,7 @@ function RoomPage({
 
   const isMobile = useMediaQuery({ query: "(max-width: 672px)" });
 
-  const { currentPresences, typingUsersRef } = useRoomChannel({ roomId: id });
+  const { presenceInfo, channel } = useRoomChannel({ roomId: id });
 
   const { data: room, isLoading } = api.room.getById.useQuery(
     {
@@ -48,7 +48,7 @@ function RoomPage({
     };
   }, [id]);
 
-  if (!session || isLoading || !room) {
+  if (!session || isLoading || !room || !channel) {
     return <LoadingScreen />;
   }
 
@@ -67,7 +67,8 @@ function RoomPage({
               <div className="flex w-full flex-1 flex-col gap-8 overflow-hidden py-6">
                 <MessageList roomId={room.id} session={session} />
                 <MessageController
-                  typingUsers={typingUsersRef.current}
+                  channel={channel}
+                  presenceInfo={presenceInfo}
                   roomId={room.id}
                 />
               </div>
@@ -81,7 +82,7 @@ function RoomPage({
                   </Button>
                 </SheetTrigger>
                 <SheetContent className="w-2/3">
-                  <PresenceList currentPresences={currentPresences} />
+                  <PresenceList presenceInfo={presenceInfo} />
                 </SheetContent>
               </Sheet>
             </>
@@ -91,14 +92,15 @@ function RoomPage({
                 <MessageList roomId={room.id} session={session} />
                 <div className="w-full pr-6">
                   <MessageController
-                    typingUsers={typingUsersRef.current}
+                    channel={channel}
+                    presenceInfo={presenceInfo}
                     roomId={room.id}
                   />
                 </div>
               </div>
               <Separator orientation="vertical" />
               <div className="min-w-64 flex w-64 flex-shrink-0 flex-grow-0">
-                <PresenceList currentPresences={currentPresences} />
+                <PresenceList presenceInfo={presenceInfo} />
               </div>
             </div>
           )}
