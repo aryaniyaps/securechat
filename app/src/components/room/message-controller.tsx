@@ -159,8 +159,8 @@ export default function MessageController({
 
   const removeTypingUser = api.typing.removeUser.useMutation({});
 
-  const createMediaPresignedUrl =
-    api.message.createMediaPresignedUrl.useMutation({});
+  const createAttachmentPresignedUrls =
+    api.message.createAttachmentPresignedUrls.useMutation({});
 
   const onFileChange = (newFiles: File[] | null) => {
     if (!newFiles) return;
@@ -170,7 +170,7 @@ export default function MessageController({
     // Check if we've already reached the max attachments
     if (spaceLeft <= 0) {
       toast({
-        description: `Maximum attachment limit reached (${MAX_MESSAGE_ATTACHMENTS})!`,
+        description: `Cannot add more than ${MAX_MESSAGE_ATTACHMENTS} files!`,
         variant: "destructive",
       });
       return;
@@ -183,13 +183,13 @@ export default function MessageController({
     // If we had to truncate the newFiles array, show a toast
     if (filesToAdd.length < newFiles.length) {
       toast({
-        description: `Some files were not added due to the attachment limit (${MAX_MESSAGE_ATTACHMENTS})!`,
+        description: `Cannot add more than ${MAX_MESSAGE_ATTACHMENTS} files!`,
         variant: "destructive",
       });
     }
   };
 
-  async function uploadMedia(media: Blob, presignedUrl: string) {
+  async function uploadAttachment(media: Blob, presignedUrl: string) {
     const response = await fetch(presignedUrl, {
       method: "PUT",
       body: media,
@@ -245,30 +245,33 @@ export default function MessageController({
       let attachments: AttachmentFile[] = [];
 
       if (selectedFiles) {
-        for (const attachment of selectedFiles) {
-          const { presignedUrl, uri } =
-            await createMediaPresignedUrl.mutateAsync({
-              contentType: attachment.type,
-              roomId: roomId,
-            });
-          const isUploadSuccessful = await uploadMedia(
-            attachment,
-            presignedUrl
-          );
+        const metadata = await createAttachmentPresignedUrls.mutateAsync({
+          roomId: roomId,
+          attachments: selectedFiles.map((attachment, index) => ({
+            name: attachment.name,
+            contentType: attachment.type,
+            id: String(index),
+          })),
+        });
 
-          if (!isUploadSuccessful) {
+        const uploadPromises = metadata.map((item) => {
+          const attachment = selectedFiles[Number(item.id)];
+
+          if (!attachment) {
             toast({
-              description: "Couldn't upload media!",
+              description: "Couldn't find attachment!",
               variant: "destructive",
             });
-          } else {
-            attachments.push({
-              contentType: attachment.type,
-              uri: uri,
-              name: attachment.name,
-            });
+            return;
           }
-        }
+
+          return uploadAttachment(attachment, item.presignedUrl);
+        });
+
+        // Wait for all uploads to complete.
+        await Promise.all(uploadPromises);
+
+        attachments = metadata.map((item) => item.metadata);
       }
 
       const payload: any = {

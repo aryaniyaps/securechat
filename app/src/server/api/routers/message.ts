@@ -62,21 +62,62 @@ export const messageRouter = createTRPCRouter({
         nextCursor,
       };
     }),
-  createMediaPresignedUrl: protectedProcedure
-    .input(z.object({ contentType: z.string(), roomId: z.string() }))
-    .output(z.object({ presignedUrl: z.string(), uri: z.string() }))
+  createAttachmentPresignedUrls: protectedProcedure
+    .input(
+      z.object({
+        roomId: z.string(),
+        attachments: z
+          .array(
+            z.object({
+              id: z.string(),
+              contentType: z.string(),
+              name: z.string(),
+            })
+          )
+          .max(MAX_MESSAGE_ATTACHMENTS),
+      })
+    )
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          presignedUrl: z.string(),
+          metadata: z.object({
+            uri: z.string(),
+            name: z.string(),
+            contentType: z.string(),
+          }),
+        })
+      )
+    )
     .mutation(async ({ ctx, input }) => {
-      const uri = `${input.roomId}/${ctx.session.user.id}/${nanoid(6)}`;
-      const command = new PutObjectCommand({
-        Bucket: env.S3_MEDIA_BUCKET_NAME,
-        Key: uri,
-        ContentType: input.contentType,
-      });
-      const presignedUrl = await getSignedUrl(s3Client, command, {
-        expiresIn: 3600, // 1 hr
+      const metadataPromises = input.attachments.map((attachment) => {
+        const uri = `${input.roomId}/${ctx.session.user.id}/${nanoid(6)}`;
+        const command = new PutObjectCommand({
+          Bucket: env.S3_MEDIA_BUCKET_NAME,
+          Key: uri,
+          ContentType: attachment.contentType,
+          Metadata: {
+            name: attachment.name,
+          },
+        });
+
+        return getSignedUrl(s3Client, command, {
+          expiresIn: 3600, // 1 hr
+        }).then((presignedUrl) => ({
+          presignedUrl,
+          id: attachment.id,
+          metadata: {
+            uri,
+            name: attachment.name,
+            contentType: attachment.contentType,
+          },
+        }));
       });
 
-      return { presignedUrl, uri };
+      const metadata = await Promise.all(metadataPromises);
+
+      return metadata;
     }),
   create: protectedProcedure
     .input(
