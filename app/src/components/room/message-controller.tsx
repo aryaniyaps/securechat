@@ -252,7 +252,7 @@ export default function MessageController({
     try {
       let attachments: AttachmentFile[] = [];
 
-      if (selectedFiles) {
+      if (selectedFiles.length > 0) {
         const metadata = await createAttachmentPresignedUrls.mutateAsync({
           roomId: roomId,
           attachments: selectedFiles.map((attachment, index) => ({
