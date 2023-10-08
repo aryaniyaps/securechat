@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-table";
 import { type Session } from "next-auth";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Icons } from "~/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -21,7 +21,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -188,6 +187,7 @@ export default function RoomTable({ session }: { session: Session }) {
     data: roomsPages,
     isLoading,
     hasNextPage,
+    isFetchingNextPage,
     fetchNextPage,
     refetch,
   } = api.room.getAll.useInfiniteQuery(
@@ -231,13 +231,39 @@ export default function RoomTable({ session }: { session: Session }) {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (debouncedSearchQuery !== searchQuery) {
-      refetch().catch((err) => console.error(err));
+      void refetch();
     }
   }, [debouncedSearchQuery, refetch, searchQuery]);
 
-  if (isLoading) return;
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        const entry = entries[0]!;
+        if (entry.isIntersecting) {
+          await handleFetchMore();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasNextPage, isLoading]);
+
+  async function handleFetchMore() {
+    if (hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
+    }
+  }
 
   return table.getRowModel().rows?.length ? (
     <ScrollArea>
@@ -275,13 +301,7 @@ export default function RoomTable({ session }: { session: Session }) {
           ))}
         </TableBody>
 
-        {hasNextPage && (
-          <TableCaption>
-            <Button variant="link" onClick={() => fetchNextPage()}>
-              Load More
-            </Button>
-          </TableCaption>
-        )}
+        {hasNextPage && <div ref={loadMoreRef} className="my-4" />}
       </Table>
     </ScrollArea>
   ) : (
