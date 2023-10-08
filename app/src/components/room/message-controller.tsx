@@ -144,7 +144,10 @@ function TypingIndicator({
       .filter(([_userId, userPresence]) =>
         userPresence.metas.some((meta) => meta.typing)
       )
-      .map(([_userId, userPresence]) => userPresence.metas[0]!.user_info);
+      .map(([_userId, userPresence]) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return userPresence.metas[0]!.user_info;
+      });
   }, [presenceInfo]);
 
   function getTypingMessage(typing: { name: string; username: string }[]) {
@@ -282,16 +285,11 @@ export default function MessageController({
         attachments = metadata.map((item) => item.metadata);
       }
 
-      const payload: any = {
+      await createMessage.mutateAsync({
         content: values.content,
         roomId: roomId,
-      };
-
-      if (attachments) {
-        payload.attachments = attachments;
-      }
-
-      await createMessage.mutateAsync(payload);
+        ...(attachments && { attachments: attachments }),
+      });
       form.reset({ content: null });
       setSelectedFiles([]);
     } catch (err) {

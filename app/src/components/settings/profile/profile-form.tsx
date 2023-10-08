@@ -79,16 +79,11 @@ export default function ProfileForm({ session }: { session: Session }) {
     values: z.infer<typeof profileSchema>,
     fileName: string | null
   ) {
-    const payload: any = {
+    await updateUser.mutateAsync({
       username: values.username,
       name: values.name,
-    };
-
-    if (fileName) {
-      payload.image = fileName;
-    }
-
-    await updateUser.mutateAsync(payload);
+      ...(fileName && { image: fileName }),
+    });
   }
 
   async function onSubmit(values: z.infer<typeof profileSchema>) {
@@ -119,7 +114,8 @@ export default function ProfileForm({ session }: { session: Session }) {
       form.reset({ username: values.username, name: values.name });
     } catch (err) {
       if (err instanceof TRPCClientError) {
-        if (err.data?.code === "CONFLICT") {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if ("code" in err.data && err.data.code === "CONFLICT") {
           form.setError("username", { type: "manual", message: err.message });
         } else {
           toast({ description: err.message, variant: "destructive" });

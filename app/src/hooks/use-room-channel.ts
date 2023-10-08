@@ -19,16 +19,15 @@ export type PresenceEntry = {
   metas: MetaData[];
 };
 
+type PresenceState = Record<string, PresenceEntry>;
+
 export function useRoomChannel({ roomId }: { roomId: string }) {
   const socket = useSocket();
-
   const utils = api.useContext();
 
   const [presenceInfo, setPresenceInfo] = useState<PresenceEntry[] | null>(
     null
   );
-
-  // State for the channel
   const [channel, setChannel] = useState<Channel | null>(null);
 
   useEffect(() => {
@@ -36,22 +35,22 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
 
     const roomChannel = socket.channel(`rooms:${roomId}`);
 
-    // Set the channel to the state
     setChannel(roomChannel);
 
-    let presenceState = {};
+    let presenceState: PresenceState = {};
 
-    // Get the current state
-    roomChannel.on("presence_state", (state) => {
-      presenceState = Presence.syncState(presenceState, state);
+    roomChannel.on("presence_state", (state: PresenceState) => {
+      presenceState = Presence.syncState(presenceState, state) as PresenceState;
       setPresenceInfo(Presence.list(presenceState));
     });
 
-    // Handle updates
-    roomChannel.on("presence_diff", (diff) => {
-      presenceState = Presence.syncDiff(presenceState, diff);
-      setPresenceInfo(Presence.list(presenceState));
-    });
+    roomChannel.on(
+      "presence_diff",
+      (diff: { joins: PresenceState; leaves: PresenceState }) => {
+        presenceState = Presence.syncDiff(presenceState, diff) as PresenceState;
+        setPresenceInfo(Presence.list(presenceState));
+      }
+    );
 
     roomChannel.on("create_message", async (newMessage: Message) => {
       await utils.message.getAll.cancel();
@@ -130,7 +129,7 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
       roomChannel.leave();
       setChannel(null); // Reset channel state when leaving
     };
-  }, [socket, roomId]);
+  }, [socket, roomId, utils.message.getAll]);
 
   return { presenceInfo, channel };
 }

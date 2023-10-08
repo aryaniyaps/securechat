@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-table";
 import { type Session } from "next-auth";
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Icons } from "~/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -180,6 +180,77 @@ function RoomActions({
   );
 }
 
+function SkeletonTable() {
+  const columns: ColumnDef<null>[] = [
+    {
+      accessorKey: "name",
+      header: "Room Name",
+      enableHiding: false,
+      cell: () => <Skeleton className="h-4 w-4/6" />,
+    },
+    {
+      accessorKey: "owner",
+      header: "Owner",
+      enableHiding: false,
+      cell: () => <Skeleton className="h-4 w-4/6" />,
+    },
+    {
+      accessorKey: "createdAt",
+      enableHiding: false,
+      header: () => <div className="text-right">Created At</div>,
+      cell: () => <Skeleton className="h-4 w-4/6" />,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: () => <Skeleton className="h-4 w-4/6" />,
+    },
+  ];
+
+  const data = Array(DEFAULT_PAGINATION_LIMIT).fill(null);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  return (
+    <Table className="flex-grow" data-testid="room-table">
+      {/* Repeat for table headers */}
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => {
+              return (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
 export default function RoomTable({ session }: { session: Session }) {
   const { searchQuery, debouncedSearchQuery } = useSearchQuery();
 
@@ -202,28 +273,13 @@ export default function RoomTable({ session }: { session: Session }) {
     }
   );
 
-  function skeletonColumn<T>(column: T): T {
-    return {
-      ...column,
-      cell: <Skeleton className="h-4 w-full" />,
-    } as T;
-  }
-
   const columns = useMemo(() => {
-    const columns = getColumns(session);
-    if (isLoading) {
-      return columns.map(skeletonColumn);
-    }
-    return columns;
-  }, [session, isLoading]);
+    return getColumns(session);
+  }, [session]);
 
   const data = useMemo(() => {
-    return isLoading
-      ? Array(DEFAULT_PAGINATION_LIMIT)
-      : roomsPages
-      ? roomsPages.pages.flatMap((page) => page.items)
-      : [];
-  }, [roomsPages, isLoading]);
+    return roomsPages ? roomsPages.pages.flatMap((page) => page.items) : [];
+  }, [roomsPages]);
 
   const table = useReactTable({
     data,
@@ -232,6 +288,12 @@ export default function RoomTable({ session }: { session: Session }) {
   });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const handleFetchMore = useCallback(async () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
     if (debouncedSearchQuery !== searchQuery) {
@@ -242,8 +304,8 @@ export default function RoomTable({ session }: { session: Session }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       async (entries) => {
-        const entry = entries[0]!;
-        if (entry.isIntersecting) {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
           await handleFetchMore();
         }
       },
@@ -257,12 +319,10 @@ export default function RoomTable({ session }: { session: Session }) {
     return () => {
       observer.disconnect();
     };
-  }, [hasNextPage, isLoading]);
+  }, [hasNextPage, isLoading, handleFetchMore]);
 
-  async function handleFetchMore() {
-    if (hasNextPage && !isFetchingNextPage) {
-      await fetchNextPage();
-    }
+  if (isLoading) {
+    return <SkeletonTable />;
   }
 
   return table.getRowModel().rows?.length ? (

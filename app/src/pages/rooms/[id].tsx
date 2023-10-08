@@ -47,7 +47,7 @@ function RoomPage({
     return () => {
       clearRoom();
     };
-  }, [id]);
+  }, [id, setRoom, clearRoom]);
 
   if (!session || isLoading || !room || !channel) {
     return <LoadingScreen />;

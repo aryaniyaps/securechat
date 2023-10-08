@@ -43,7 +43,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
         setSocket(null);
       }
     };
-  }, [status]);
+  }, [status, data?.gateway.token, socket]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

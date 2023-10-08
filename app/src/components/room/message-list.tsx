@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AttachmentFile } from "@prisma/client";
 import { type Session } from "next-auth";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { type Message } from "~/schemas/message";
@@ -16,6 +16,8 @@ import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "../ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+
+// TODO: need a virtual list here
 
 // threshold should be negative because
 // we are using a flex column reverse layout
@@ -341,6 +343,12 @@ export default function MessageList({
 
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
+  const handleFetchMore = useCallback(async () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   useEffect(() => {
     if (scrollToBottom.current && bottomChatRef.current) {
       bottomChatRef.current.scrollIntoView({ behavior: "smooth" });
@@ -350,8 +358,8 @@ export default function MessageList({
   useEffect(() => {
     const observer = new IntersectionObserver(
       async (entries) => {
-        const entry = entries[0]!;
-        if (entry.isIntersecting) {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
           await handleFetchMore();
         }
       },
@@ -365,13 +373,7 @@ export default function MessageList({
     return () => {
       observer.disconnect();
     };
-  }, [hasNextPage, isLoading]);
-
-  async function handleFetchMore() {
-    if (hasNextPage && !isFetchingNextPage) {
-      await fetchNextPage();
-    }
-  }
+  }, [hasNextPage, isLoading, handleFetchMore]);
 
   function handleScroll() {
     if (scrollContainerRef.current) {

@@ -1,18 +1,19 @@
 import jwt from "jsonwebtoken";
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { z } from "zod";
 import { env } from "~/env.mjs";
 import { userSchema } from "~/schemas/user";
 import { prisma } from "~/server/db";
+
+const verifyTokenSchema = z.object({
+  token: z.string(),
+});
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ error: "Token not provided" });
-  }
+  const { token } = verifyTokenSchema.parse(req.body);
 
   try {
     const { sub } = jwt.verify(token, env.NEXTAUTH_SECRET);

@@ -7,5 +7,5 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "elixirLS.projectDir": "ws_server"
+  "elixirLS.projectDir": "ws-server"
 }

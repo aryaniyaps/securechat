@@ -45,7 +45,12 @@
         "editor.codeActionsOnSave": {
           "source.organizeImports": true
         },
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[prisma]": {
+          "editor.defaultFormatter": "Prisma.prisma"
+        },
+        "elixirLS.projectDir": "ws-server"
       },
       "extensions": [
         "donjayamanne.git-extension-pack",
@@ -61,6 +66,7 @@
         "hashicorp.terraform",
         "ZainChen.json",
         "esbenp.prettier-vscode",
+        "rvest.vs-code-prettier-eslint",
         "Prisma.prisma",
         "christian-kohler.path-intellisense",
         "bradlc.vscode-tailwindcss",
