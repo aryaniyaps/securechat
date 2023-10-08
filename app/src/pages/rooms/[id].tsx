@@ -19,7 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { useRoomChannel } from "~/hooks/use-room-channel";
-import { ssgHelper } from "~/server/api/ssgHelper";
+import { ssgHelper } from "~/server/helpers/ssgHelper";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
 
@@ -129,7 +129,6 @@ export const getServerSideProps = async (
   const helper = ssgHelper();
 
   try {
-    // try to fetch the room
     // the room will be stored in the cache and passed
     // to trpcState on dehydration
     await helper.room.getById.fetch({ id });
