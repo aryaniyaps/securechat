@@ -19,14 +19,14 @@ export const messageRouter = createTRPCRouter({
     .input(
       z.object({
         roomId: z.string(),
-        cursor: z.string().nullish(),
+        cursor: z.string().optional(),
         limit: z.number().min(1).max(100).default(DEFAULT_PAGINATION_LIMIT),
       })
     )
     .output(
       z.object({
         items: z.array(messageSchema),
-        nextCursor: z.string().nullish(),
+        nextCursor: z.string().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -57,6 +57,8 @@ export const messageRouter = createTRPCRouter({
           nextCursor = nextItem.id;
         }
       }
+
+      console.log("nextcursor: ", nextCursor);
       return {
         items,
         nextCursor,

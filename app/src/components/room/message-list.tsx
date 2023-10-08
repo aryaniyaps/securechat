@@ -17,36 +17,40 @@ import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "../ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-const SCROLL_THRESHOLD = 250;
+// threshold should be negative because
+// we are using a flex column reverse layout
+const SCROLL_THRESHOLD = -350;
 
-function MessageAttachmentsViewer({ attachments }: { attachments: AttachmentFile[] }) {
-
+function MessageAttachmentsViewer({
+  attachments,
+}: {
+  attachments: AttachmentFile[];
+}) {
   return (
     <div className="flex flex-col gap-4">
-      {attachments.map(attachment => {
+      {attachments.map((attachment) => {
         return (
           <embed
             key={attachment.uri}
             src={getMediaUrl(attachment.uri)}
             type={attachment.contentType}
             title={attachment.name}
-            className="max-w-[200px] h-auto object-fill rounded-md"
+            className="h-auto max-w-[200px] rounded-md object-fill"
           />
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-const updateMessageSchema = z
-  .object({
-    content: z
-      .optional(
-        z.string()
-          .min(1, { message: "Message must be at least 1 character." })
-          .max(250, { message: "Message cannot exceed 250 characters." })
-      ),
-  })
+const updateMessageSchema = z.object({
+  content: z.optional(
+    z
+      .string()
+      .min(1, { message: "Message must be at least 1 character." })
+      .max(250, { message: "Message cannot exceed 250 characters." })
+  ),
+});
 
 function MessageTile({
   message,
@@ -64,8 +68,8 @@ function MessageTile({
   const form = useForm<z.infer<typeof updateMessageSchema>>({
     resolver: zodResolver(updateMessageSchema),
     defaultValues: {
-      content: message.content || undefined
-    }
+      content: message.content || undefined,
+    },
   });
 
   const canShowControls = useMemo(() => {
@@ -74,12 +78,15 @@ function MessageTile({
 
   const deleteMessage = api.message.delete.useMutation({});
 
-  const updateMessage = api.message.update.useMutation({})
+  const updateMessage = api.message.update.useMutation({});
 
   async function onSubmit(values: z.infer<typeof updateMessageSchema>) {
     // update message here
-    await updateMessage.mutateAsync({ id: message.id, content: values.content })
-    setEditingMessageId(null)
+    await updateMessage.mutateAsync({
+      id: message.id,
+      content: values.content,
+    });
+    setEditingMessageId(null);
   }
 
   return (
@@ -101,7 +108,7 @@ function MessageTile({
             </AvatarFallback>
           </Avatar>
         </TooltipTrigger>
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex w-full flex-col gap-2">
           <div className="flex gap-2">
             <TooltipTrigger asChild>
               <h3 className="text-xs font-semibold text-primary hover:cursor-default">
@@ -172,13 +179,10 @@ function MessageTile({
             </p>
 
             {canShowControls && (
-              <div className="flex ml-2 gap-3">
+              <div className="ml-2 flex gap-3">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                    >
+                    <Button variant="ghost" size="icon">
                       <Icons.penBox
                         size={5}
                         className="h-4 w-4"
@@ -217,16 +221,15 @@ function MessageTile({
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col w-full items-start gap-4"
+                    className="flex w-full flex-col items-start gap-4"
                   >
-
                     <FormField
                       name="content"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem className="w-full flex-grow">
                           <FormControl>
-                            <Textarea className="p-4 max-h-52" {...field} />
+                            <Textarea className="max-h-52 p-4" {...field} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -237,7 +240,11 @@ function MessageTile({
                         type="submit"
                         className="py-6"
                         size="xs"
-                        disabled={form.formState.isSubmitting || !form.formState.isDirty || !form.formState.isValid}
+                        disabled={
+                          form.formState.isSubmitting ||
+                          !form.formState.isDirty ||
+                          !form.formState.isValid
+                        }
                       >
                         Save changes
                       </Button>
@@ -246,7 +253,9 @@ function MessageTile({
                         type="button"
                         className="py-6"
                         size="xs"
-                        onClick={() => { setEditingMessageId(null) }}
+                        onClick={() => {
+                          setEditingMessageId(null);
+                        }}
                         disabled={form.formState.isSubmitting}
                       >
                         Cancel
@@ -259,13 +268,16 @@ function MessageTile({
               <>
                 {message.content && (
                   <div className="flex items-center">
-                    <p className="whitespace-normal break-all">{message.content}</p>
-                    {message.isEdited && (<p className="text-xs font-thin ml-1">(edited)</p>)}
+                    <p className="whitespace-normal break-all">
+                      {message.content}
+                    </p>
+                    {message.isEdited && (
+                      <p className="ml-1 text-xs font-thin">(edited)</p>
+                    )}
                   </div>
-
                 )}
-
-              </>)}
+              </>
+            )}
             {message.attachments.length > 0 && (
               <MessageAttachmentsViewer attachments={message.attachments} />
             )}
@@ -308,6 +320,7 @@ export default function MessageList({
   const {
     data: messagesPages,
     isLoading,
+    isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
   } = api.message.getAll.useInfiniteQuery(
@@ -319,43 +332,54 @@ export default function MessageList({
     }
   );
 
-  const bottomChatRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const scrollToBottom = useRef(true);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const bottomChatRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useRef(false);
 
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
-
-  const scrollBottom = () => {
+  useEffect(() => {
     if (scrollToBottom.current && bottomChatRef.current) {
       bottomChatRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  };
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      // we are getting a negative value here (possibly because we are using flex-col-reverse)
-      const scrollTop = Math.abs(scrollContainerRef.current.scrollTop);
-
-      if (scrollTop <= SCROLL_THRESHOLD) {
-        scrollBottom();
-      }
-    }
   }, [messagesPages]);
 
-  const handleFetchMore = async () => {
-    if (scrollContainerRef.current) {
-      const { scrollTop } = scrollContainerRef.current;
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        const entry = entries[0]!;
+        if (entry.isIntersecting) {
+          await handleFetchMore();
+        }
+      },
+      { threshold: 1 }
+    );
 
-      scrollToBottom.current = false;
-      await fetchNextPage();
-      scrollContainerRef.current.scrollTop = scrollTop;
-
-      setTimeout(() => {
-        scrollToBottom.current = true;
-      }, 500);
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
     }
-  };
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasNextPage, isLoading]);
+
+  async function handleFetchMore() {
+    if (hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
+    }
+  }
+
+  function handleScroll() {
+    if (scrollContainerRef.current) {
+      // Auto-scroll only when we're near the "bottom"
+      // (which is actually the top due to col-reverse layout)
+      const { scrollTop } = scrollContainerRef.current;
+      scrollToBottom.current = scrollTop >= SCROLL_THRESHOLD;
+    }
+  }
 
   return (
     <div
@@ -364,9 +388,9 @@ export default function MessageList({
     >
       <div
         ref={scrollContainerRef}
+        onScroll={handleScroll}
         className="flex w-full flex-col-reverse overflow-y-auto scroll-smooth"
       >
-
         <div ref={bottomChatRef} />
         {messagesPages &&
           messagesPages.pages.flatMap((page) =>
@@ -380,12 +404,8 @@ export default function MessageList({
               />
             ))
           )}
-        {isLoading && <MessageListSkeleton />}
-        {hasNextPage && (
-          <Button variant="link" onClick={handleFetchMore}>
-            Load More
-          </Button>
-        )}
+        <div ref={loadMoreRef} className="my-4" />
+        {(isLoading || isFetchingNextPage) && <MessageListSkeleton />}
       </div>
     </div>
   );
