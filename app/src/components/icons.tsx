@@ -17,18 +17,23 @@ import {
   Loader2,
   Moon,
   MoreHorizontal,
-  MoreVertical, Paperclip, PenBox, Pizza,
+  MoreVertical,
+  Paperclip,
+  PenBox,
+  Pizza,
   Plus,
   SendIcon,
   Settings,
-  SunMedium, TextCursor, Trash,
+  SunMedium,
+  TextCursor,
+  Trash,
   Trash2,
   Twitter,
   User,
   Users,
   X,
   type Icon as LucideIcon,
-  type LucideProps
+  type LucideProps,
 } from "lucide-react";
 
 export type Icon = LucideIcon;

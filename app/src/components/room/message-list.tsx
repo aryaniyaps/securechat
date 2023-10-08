@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AttachmentFile } from "@prisma/client";
-import { Session } from "next-auth";
+import { type AttachmentFile } from "@prisma/client";
+import { type Session } from "next-auth";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Message } from "~/schemas/message";
+import { type Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { getAvatarUrl } from "~/utils/avatar";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
@@ -74,7 +74,7 @@ function MessageTile({
 
   const canShowControls = useMemo(() => {
     return !isEditing && showControls && message.ownerId === session.user.id;
-  }, [showControls, isEditing]);
+  }, [showControls, isEditing, message.ownerId, session.user.id]);
 
   const deleteMessage = api.message.delete.useMutation({});
 

@@ -13,9 +13,9 @@ const config = {
   webpack: (config, context) => {
     config.watchOptions = {
       poll: 1000,
-      aggregateTimeout: 300
-    }
-    return config
+      aggregateTimeout: 300,
+    };
+    return config;
   },
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config

@@ -42,7 +42,7 @@ function RoomPage({
   const { setRoom, clearRoom } = useCurrentRoomStore();
 
   useEffect(() => {
-    void setRoom(id);
+    setRoom(id);
     // cleanup when the component unmounts
     return () => {
       clearRoom();

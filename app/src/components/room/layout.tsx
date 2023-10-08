@@ -26,8 +26,10 @@ export default function RoomLayout({
                   variant="ghost"
                   size="icon"
                   aria-label="Copy Room URL"
-                  onClick={() => {
-                    navigator.clipboard.writeText(window.location.toString());
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(
+                      window.location.toString()
+                    );
                   }}
                 >
                   <Icons.copy size={20} className="h-5 w-5" />

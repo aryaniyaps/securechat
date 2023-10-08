@@ -1,4 +1,4 @@
-import { PresenceEntry } from "~/hooks/use-room-channel";
+import { type PresenceEntry } from "~/hooks/use-room-channel";
 import { getAvatarUrl } from "~/utils/avatar";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";

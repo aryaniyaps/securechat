@@ -7,7 +7,7 @@ export const useCurrentRoomStore = create(
       roomId: null as string | null,
     },
     (set) => ({
-      setRoom: async (roomId: string) => {
+      setRoom: (roomId: string) => {
         set(() => ({
           roomId,
         }));

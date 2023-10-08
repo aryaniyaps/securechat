@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import { prisma } from "~/server/db";
 
 export default async function globalConfig() {
-  const storagePath = path.resolve(__dirname, 'storageState.json')
+  const storagePath = path.resolve(__dirname, "storageState.json");
   const date = new Date();
   const sessionToken = v4();
 
@@ -38,7 +38,7 @@ export default async function globalConfig() {
     update: {},
   });
   const browser = await chromium.launch();
-  const context = await browser.newContext({storageState: storagePath});
+  const context = await browser.newContext({ storageState: storagePath });
   await context.addCookies([
     {
       name: "next-auth.session-token",
@@ -50,6 +50,6 @@ export default async function globalConfig() {
       expires: Math.round((Date.now() + 86400000 * 1) / 1000),
     },
   ]);
-  await context.storageState({path: storagePath});
+  await context.storageState({ path: storagePath });
   await browser.close();
 }

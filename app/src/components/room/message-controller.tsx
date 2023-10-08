@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Channel } from "phoenix";
+import { type Channel } from "phoenix";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { PresenceEntry } from "~/hooks/use-room-channel";
+import { type PresenceEntry } from "~/hooks/use-room-channel";
 import { useToast } from "~/hooks/use-toast";
-import { AttachmentFile } from "~/schemas/attachment";
+import { type AttachmentFile } from "~/schemas/attachment";
 import { api } from "~/utils/api";
 import {
   MAX_MESSAGE_ATTACHMENTS,
@@ -331,7 +331,7 @@ export default function MessageController({
         clearTimeout(typingTimeout);
       }
     };
-  }, []);
+  });
 
   return (
     <div className="mb-4 flex w-full flex-col gap-4">
