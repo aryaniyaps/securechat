@@ -207,6 +207,7 @@ function SkeletonTable() {
     },
   ];
 
+  // TODO: add ID here
   const data = Array(DEFAULT_PAGINATION_LIMIT).fill(null);
 
   const table = useReactTable({
