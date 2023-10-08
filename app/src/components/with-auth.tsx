@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import LoadingScreen from "./loading-screen";
 
 export function withAuth<P>(Component: React.ComponentType<P>) {
   return function AuthenticatedComponent(props: React.PropsWithChildren<P>) {
@@ -17,7 +18,7 @@ export function withAuth<P>(Component: React.ComponentType<P>) {
     }, [status, router]);
 
     if (status === "loading") {
-      return null;
+      return <LoadingScreen />;
     }
 
     return <Component {...props} />;
