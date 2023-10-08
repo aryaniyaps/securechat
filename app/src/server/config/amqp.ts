@@ -21,25 +21,5 @@ export function getChannel() {
   return channel;
 }
 
-export function broadcastEvent<Payload>({
-  event,
-  payload,
-  roomId,
-}: {
-  event: string;
-  payload: Payload;
-  roomId: string;
-}) {
-  const message = JSON.stringify({
-    event,
-    payload,
-    roomId,
-  });
-
-  const channel = getChannel();
-
-  channel.sendToQueue(env.RABBITMQ_QUEUE_NAME, Buffer.from(message));
-}
-
 // Call the initialization function during server startup.
 initRabbitMQ();

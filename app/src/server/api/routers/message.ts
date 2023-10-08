@@ -7,7 +7,7 @@ import { env } from "~/env.mjs";
 import { attachmentFileSchema } from "~/schemas/attachment";
 import { messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { broadcastEvent } from "~/server/config/amqp";
+import { broadcastEvent } from "~/server/broadcast";
 import { s3Client } from "~/server/config/s3";
 import {
   DEFAULT_PAGINATION_LIMIT,
