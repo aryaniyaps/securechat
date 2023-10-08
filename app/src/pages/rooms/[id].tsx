@@ -5,7 +5,6 @@ import {
 } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Icons } from "~/components/icons";
 import LoadingScreen from "~/components/loading-screen";
@@ -17,7 +16,6 @@ import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
-import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { useRoomChannel } from "~/hooks/use-room-channel";
 import { ssgHelper } from "~/server/helpers/ssgHelper";
 import { api } from "~/utils/api";
@@ -38,16 +36,6 @@ function RoomPage({
     },
     { refetchOnMount: false }
   );
-
-  const { setRoom, clearRoom } = useCurrentRoomStore();
-
-  useEffect(() => {
-    setRoom(id);
-    // cleanup when the component unmounts
-    return () => {
-      clearRoom();
-    };
-  }, [id, setRoom, clearRoom]);
 
   if (!session || isLoading || !room || !channel) {
     return <LoadingScreen />;

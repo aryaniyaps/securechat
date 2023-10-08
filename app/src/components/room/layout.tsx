@@ -15,8 +15,9 @@ export default function RoomLayout({
     <main className="flex h-full w-full flex-col">
       <div className="border-b py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-          <Link href="/">
-            <h1 className="font-semibold">{APP_NAME}</h1>
+          {/* FIXME: This link changes the browser URL but doesn't re-render to show the home page */}
+          <Link href="/" className="font-semibold">
+            {APP_NAME}
           </Link>
           <div className="flex items-center gap-4">
             <p className="font-semibold">{title}</p>
