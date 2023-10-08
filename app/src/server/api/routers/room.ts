@@ -11,10 +11,20 @@ import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 export const roomRouter = createTRPCRouter({
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
+    .output(roomSchema)
     .query(async ({ ctx, input }) => {
       const room = await ctx.prisma.room.findUnique({
         where: {
           id: input.id,
+        },
+        include: {
+          owner: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+            },
+          },
         },
       });
 

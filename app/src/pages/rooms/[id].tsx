@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import {
   type GetServerSidePropsContext,
   type InferGetServerSidePropsType,
@@ -18,7 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
 import { withAuth } from "~/components/with-auth";
 import { useCurrentRoomStore } from "~/hooks/stores/useCurrentRoomStore";
 import { useRoomChannel } from "~/hooks/use-room-channel";
-import { prisma } from "~/server/db";
+import { ssgHelper } from "~/server/api/ssgHelper";
 import { api } from "~/utils/api";
 import { APP_NAME } from "~/utils/constants";
 
@@ -125,20 +126,25 @@ export const getServerSideProps = async (
     };
   }
 
-  // TODO: return room as a cache here
-  // For now, using SSGHelper requires setting environment variables on server side during build time
-  // whereas we are only going to fetch during runtime
-  const room = await prisma.room.findUnique({ where: { id } });
+  const helper = ssgHelper();
 
-  if (!room) {
-    return {
-      notFound: true,
-    };
+  try {
+    // try to fetch the room
+    // the room will be stored in the cache and passed
+    // to trpcState on dehydration
+    await helper.room.getById.fetch({ id });
+  } catch (err) {
+    if (err instanceof TRPCError && err.code === "NOT_FOUND") {
+      return {
+        notFound: true,
+      };
+    }
   }
 
   return {
     props: {
       id,
+      trpcState: helper.dehydrate(),
     },
   };
 };

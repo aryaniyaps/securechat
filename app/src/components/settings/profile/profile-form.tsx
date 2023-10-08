@@ -119,7 +119,7 @@ export default function ProfileForm({ session }: { session: Session }) {
       form.reset({ username: values.username, name: values.name });
     } catch (err) {
       if (err instanceof TRPCClientError) {
-        if (err.message.includes("Username")) {
+        if (err.data?.code === "CONFLICT") {
           form.setError("username", { type: "manual", message: err.message });
         } else {
           toast({ description: err.message, variant: "destructive" });
