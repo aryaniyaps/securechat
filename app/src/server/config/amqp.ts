@@ -21,5 +21,7 @@ export function getChannel() {
   return channel;
 }
 
-// Call the initialization function during server startup.
-initRabbitMQ();
+if (env.NODE_ENV !== "production") {
+  // Call the initialization function during server startup.
+  initRabbitMQ();
+}
