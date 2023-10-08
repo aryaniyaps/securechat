@@ -329,6 +329,7 @@ export default function MessageList({
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      refetchOnWindowFocus: false,
     }
   );
 
