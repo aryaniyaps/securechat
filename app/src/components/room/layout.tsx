@@ -1,16 +1,15 @@
 import Link from "next/link";
+import type { HTMLProps } from "react";
 import { APP_NAME } from "~/utils/constants";
 import { Icons } from "../icons";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-export default function RoomLayout({
-  children,
-  title,
-}: {
-  children: React.ReactNode;
+interface RoomLayoutProps extends HTMLProps<HTMLDivElement> {
   title: string;
-}) {
+}
+
+export default function RoomLayout({ children, title }: RoomLayoutProps) {
   return (
     <main className="flex h-full w-full flex-col">
       <div className="border-b py-4">

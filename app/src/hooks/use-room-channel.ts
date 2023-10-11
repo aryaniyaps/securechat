@@ -2,17 +2,13 @@ import { Presence, type Channel } from "phoenix";
 import { useEffect, useState } from "react";
 import { useSocket } from "~/components/socket-provider";
 import { type Message } from "~/schemas/message";
+import { User } from "~/schemas/user";
 import { api } from "~/utils/api";
 
 type MetaData = {
   typing: boolean;
   online_at: string;
-  user_info: {
-    name: string;
-    username: string;
-    image: string;
-    createdAt: Date;
-  };
+  user_info: User;
 };
 
 export type PresenceEntry = {
@@ -129,7 +125,8 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
       roomChannel.leave();
       setChannel(null); // Reset channel state when leaving
     };
-  }, [socket, roomId, utils.message.getAll]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, roomId]);
 
   return { presenceInfo, channel };
 }

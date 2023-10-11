@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AttachmentFile } from "@prisma/client";
+import { useVirtual } from "@tanstack/react-virtual";
 import { type Session } from "next-auth";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type HTMLProps } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { type Message } from "~/schemas/message";
@@ -16,12 +17,6 @@ import { Form, FormControl, FormField, FormItem } from "../ui/form";
 import { Skeleton } from "../ui/skeleton";
 import { Textarea } from "../ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-
-// TODO: need a virtual list here
-
-// threshold should be negative because
-// we are using a flex column reverse layout
-const SCROLL_THRESHOLD = -350;
 
 function MessageAttachmentsViewer({
   attachments,
@@ -54,17 +49,20 @@ const updateMessageSchema = z.object({
   ),
 });
 
+interface MessageTileProps extends HTMLProps<HTMLDivElement> {
+  message: Message;
+  session: Session;
+  isEditing: boolean;
+  setEditingMessageId: (id: string | null) => void;
+}
+
 function MessageTile({
   message,
   session,
   isEditing,
   setEditingMessageId,
-}: {
-  message: Message;
-  session: Session;
-  isEditing: boolean;
-  setEditingMessageId: (id: string | null) => void;
-}) {
+  ...props
+}: MessageTileProps) {
   const [showControls, setShowControls] = useState(false);
 
   const form = useForm<z.infer<typeof updateMessageSchema>>({
@@ -93,9 +91,10 @@ function MessageTile({
 
   return (
     <div
-      className="relative flex w-full gap-4 px-2 py-4 hover:bg-secondary/60"
+      className="flex h-full w-full gap-4 px-2 py-4 hover:bg-secondary/60"
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
+      {...props}
     >
       <Tooltip>
         <TooltipTrigger asChild>
@@ -292,7 +291,7 @@ function MessageTile({
 
 function MessageListSkeleton() {
   return (
-    <>
+    <div className="flex flex-col">
       {Array.from({ length: DEFAULT_PAGINATION_LIMIT }).map((_, index) => (
         <div key={index} className="relative flex w-[350px] gap-4 px-2 py-4">
           <Avatar className="h-8 w-8">
@@ -308,7 +307,7 @@ function MessageListSkeleton() {
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }
 
@@ -335,81 +334,92 @@ export default function MessageList({
     }
   );
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const bottomChatRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = useRef(false);
+  const allMessages = messagesPages
+    ? messagesPages.pages.flatMap((data) => data.items)
+    : [];
+
+  const rowVirtualizer = useVirtual({
+    size: hasNextPage ? allMessages.length + 1 : allMessages.length,
+    parentRef,
+    overscan: 15,
+  });
 
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
-  const handleFetchMore = useCallback(async () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      await fetchNextPage();
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
   useEffect(() => {
-    if (scrollToBottom.current && bottomChatRef.current) {
-      bottomChatRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messagesPages]);
+    const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      async (entries) => {
-        const entry = entries[0];
-        if (entry && entry.isIntersecting) {
-          await handleFetchMore();
-        }
-      },
-      { threshold: 1 }
-    );
-
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current);
+    if (!lastItem) {
+      return;
     }
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [hasNextPage, isLoading, handleFetchMore]);
-
-  function handleScroll() {
-    if (scrollContainerRef.current) {
-      // Auto-scroll only when we're near the "bottom"
-      // (which is actually the top due to col-reverse layout)
-      const { scrollTop } = scrollContainerRef.current;
-      scrollToBottom.current = scrollTop >= SCROLL_THRESHOLD;
+    if (
+      lastItem.index >= allMessages.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      void fetchNextPage();
     }
-  }
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    allMessages.length,
+    isFetchingNextPage,
+    rowVirtualizer.virtualItems,
+  ]);
 
   return (
     <div
-      className="relative flex flex-1 overflow-hidden"
-      data-testid="message-list"
+      ref={parentRef}
+      // flex-col-reverse may be causing problems here
+      className="flex w-full max-w-full flex-1 overflow-y-auto"
     >
-      <div
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-        className="flex w-full flex-col-reverse overflow-y-auto scroll-smooth"
-      >
-        <div ref={bottomChatRef} />
-        {messagesPages &&
-          messagesPages.pages.flatMap((page) =>
-            page.items.map((message) => (
-              <MessageTile
-                key={message.id}
-                message={message}
-                session={session}
-                isEditing={editingMessageId === message.id}
-                setEditingMessageId={setEditingMessageId}
-              />
-            ))
-          )}
-        <div ref={loadMoreRef} className="my-4" />
-        {(isLoading || isFetchingNextPage) && <MessageListSkeleton />}
-      </div>
+      {isLoading ? (
+        <MessageListSkeleton />
+      ) : (
+        <div
+          style={{
+            height: `${rowVirtualizer.totalSize}px`,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {rowVirtualizer.virtualItems.map((virtualItem) => {
+            const isLoaderRow = virtualItem.index > allMessages.length - 1;
+
+            const message = allMessages[virtualItem.index];
+
+            if (!message) return null;
+
+            return (
+              <div
+                key={virtualItem.key}
+                ref={virtualItem.measureRef}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                {isLoaderRow && hasNextPage ? (
+                  <MessageListSkeleton />
+                ) : (
+                  <MessageTile
+                    message={message}
+                    session={session}
+                    isEditing={editingMessageId === message.id}
+                    setEditingMessageId={setEditingMessageId}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
