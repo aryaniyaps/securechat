@@ -23,8 +23,8 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
-  TableHeader,
   TableRow,
 } from "~/components/ui/table";
 import { useSearchQuery } from "~/hooks/use-search-query";
@@ -123,21 +123,24 @@ function RoomActions({
     onSuccess: async (_) => {
       await utils.room.getAll.cancel();
 
-      utils.room.getAll.setInfiniteData({}, (oldData) => {
-        if (oldData == null) return;
+      utils.room.getAll.setInfiniteData(
+        { limit: DEFAULT_PAGINATION_LIMIT },
+        (oldData) => {
+          if (oldData == null) return;
 
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page) => {
-            return {
-              ...page,
-              items: page.items.filter(
-                (existingRoom) => existingRoom.id !== room.id
-              ),
-            };
-          }),
-        };
-      });
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => {
+              return {
+                ...page,
+                items: page.items.filter(
+                  (existingRoom) => existingRoom.id !== room.id
+                ),
+              };
+            }),
+          };
+        }
+      );
     },
   });
 
@@ -180,75 +183,25 @@ function RoomActions({
   );
 }
 
-function SkeletonTable() {
-  const columns: ColumnDef<null>[] = [
-    {
-      accessorKey: "name",
-      header: "Room Name",
-      enableHiding: false,
-      cell: () => <Skeleton className="h-4 w-4/6" />,
-    },
-    {
-      accessorKey: "owner",
-      header: "Owner",
-      enableHiding: false,
-      cell: () => <Skeleton className="h-4 w-4/6" />,
-    },
-    {
-      accessorKey: "createdAt",
-      enableHiding: false,
-      header: () => <div className="text-right">Created At</div>,
-      cell: () => <Skeleton className="h-4 w-4/6" />,
-    },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: () => <Skeleton className="h-4 w-4/6" />,
-    },
-  ];
-
-  // TODO: add ID here
-  const data = Array(DEFAULT_PAGINATION_LIMIT).fill(null);
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
+function SkeletonRow() {
   return (
-    <Table className="flex-grow" data-testid="room-table">
-      {/* Repeat for table headers */}
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <TableRow>
+      <TableCell>
+        <Skeleton className="h-4 w-3/4" />
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      </TableCell>
+      <TableCell>
+        <Skeleton className="float-right h-4 w-3/4" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="float-right h-4 w-6" />
+      </TableCell>
+    </TableRow>
   );
 }
 
@@ -296,10 +249,6 @@ export default function RoomTable({ session }: { session: Session }) {
     }
   }, [debouncedSearchQuery, refetch, searchQuery]);
 
-  if (isLoading) {
-    return <SkeletonTable />;
-  }
-
   return (
     <TableVirtuoso
       style={{ height: "100%" }}
@@ -336,12 +285,33 @@ export default function RoomTable({ session }: { session: Session }) {
             </TableRow>
           );
         },
+        TableBody: TableBody,
+        TableFoot: TableFooter,
         EmptyPlaceholder: () => {
+          if (isLoading) {
+            return (
+              <TableBody>
+                {Array(DEFAULT_PAGINATION_LIMIT).map((index) => (
+                  <SkeletonRow key={`row-skeleton-${index}`} />
+                ))}
+              </TableBody>
+            );
+          }
+
           return (
-            <div className="flex h-full w-full items-center justify-center text-sm text-tertiary-foreground">
-              No rooms found!
-            </div>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={4}>
+                  <div className="flex h-full w-full items-center justify-center text-sm">
+                    No rooms found!
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           );
+        },
+        ScrollSeekPlaceholder: () => {
+          return <SkeletonRow />;
         },
       }}
       fixedHeaderContent={() => {
@@ -366,6 +336,14 @@ export default function RoomTable({ session }: { session: Session }) {
         if (hasNextPage && !isFetchingNextPage) {
           await fetchNextPage();
         }
+      }}
+      scrollSeekConfiguration={{
+        enter: (velocity) => {
+          return Math.abs(velocity) > 1000;
+        },
+        exit: (velocity) => {
+          return Math.abs(velocity) < 500;
+        },
       }}
     />
   );

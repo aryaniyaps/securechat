@@ -384,78 +384,73 @@ export default function MessageList({
 
   return (
     <div className="relative flex flex-1 flex-col" data-testid="message-list">
-      {isLoading ? (
-        <MessageListSkeleton />
-      ) : (
-        <>
-          <Virtuoso
-            style={{
-              height: "100%",
-            }}
-            ref={virtuosoRef}
-            followOutput="auto"
-            firstItemIndex={firstItemIndex}
-            initialTopMostItemIndex={allMessages.length - 1}
-            data={allMessages}
-            totalCount={
-              hasNextPage ? allMessages.length + 1 : allMessages.length
+      <Virtuoso
+        style={{
+          height: "100%",
+        }}
+        ref={virtuosoRef}
+        followOutput="auto"
+        firstItemIndex={firstItemIndex}
+        initialTopMostItemIndex={allMessages.length - 1}
+        data={allMessages}
+        totalCount={hasNextPage ? allMessages.length + 1 : allMessages.length}
+        overscan={{ main: 15, reverse: 10 }}
+        atBottomStateChange={(bottom) => {
+          setAtBottom(bottom);
+        }}
+        components={{
+          ScrollSeekPlaceholder: () => <MessageSkeleton />,
+          EmptyPlaceholder: () => {
+            if (isLoading) {
+              return <MessageListSkeleton />;
             }
-            overscan={{ main: 15, reverse: 10 }}
-            atBottomStateChange={(bottom) => {
-              setAtBottom(bottom);
-            }}
-            components={{
-              ScrollSeekPlaceholder: () => <MessageSkeleton />,
-              EmptyPlaceholder: () => {
-                return (
-                  <div className="flex h-full w-full items-end text-sm text-tertiary-foreground">
-                    Be the first to send a message!
-                  </div>
-                );
-              },
-            }}
-            scrollSeekConfiguration={{
-              enter: (velocity) => {
-                return Math.abs(velocity) > 1000;
-              },
-              exit: (velocity) => {
-                return Math.abs(velocity) < 500;
-              },
-            }}
-            startReached={async () => {
-              if (hasNextPage && !isFetchingNextPage) {
-                await fetchNextPage();
-              }
-            }}
-            itemContent={(_index, message) => {
-              return (
-                <MessageTile
-                  message={message}
-                  session={session}
-                  isEditing={editingMessageId === message.id}
-                  setEditingMessageId={setEditingMessageId}
-                />
-              );
-            }}
-          />
-          {showButton && (
-            <Button
-              size="sm"
-              variant="secondary"
-              className="absolute bottom-2 right-8 max-w-min"
-              onClick={() => {
-                if (virtuosoRef.current) {
-                  virtuosoRef.current.scrollToIndex({
-                    index: allMessages.length - 1,
-                    behavior: "smooth",
-                  });
-                }
-              }}
-            >
-              <Icons.arrowDown size={15} className="h-4 w-4" />
-            </Button>
-          )}
-        </>
+            return (
+              <div className="flex h-full w-full items-end text-sm text-tertiary-foreground">
+                Be the first to send a message!
+              </div>
+            );
+          },
+        }}
+        scrollSeekConfiguration={{
+          enter: (velocity) => {
+            return Math.abs(velocity) > 1000;
+          },
+          exit: (velocity) => {
+            return Math.abs(velocity) < 500;
+          },
+        }}
+        startReached={async () => {
+          if (hasNextPage && !isFetchingNextPage) {
+            await fetchNextPage();
+          }
+        }}
+        itemContent={(_index, message) => {
+          return (
+            <MessageTile
+              message={message}
+              session={session}
+              isEditing={editingMessageId === message.id}
+              setEditingMessageId={setEditingMessageId}
+            />
+          );
+        }}
+      />
+      {showButton && (
+        <Button
+          size="sm"
+          variant="secondary"
+          className="absolute bottom-2 right-8 max-w-min"
+          onClick={() => {
+            if (virtuosoRef.current) {
+              virtuosoRef.current.scrollToIndex({
+                index: allMessages.length - 1,
+                behavior: "smooth",
+              });
+            }
+          }}
+        >
+          <Icons.arrowDown size={15} className="h-4 w-4" />
+        </Button>
       )}
     </div>
   );
