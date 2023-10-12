@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type AttachmentFile } from "@prisma/client";
-import { useVirtual } from "@tanstack/react-virtual";
 import { type Session } from "next-auth";
 import { useEffect, useMemo, useRef, useState, type HTMLProps } from "react";
 import { useForm } from "react-hook-form";
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { z } from "zod";
 import { type Message } from "~/schemas/message";
 import { api } from "~/utils/api";
@@ -289,23 +289,29 @@ function MessageTile({
   );
 }
 
+function MessageSkeleton() {
+  return (
+    <div className="relative flex w-[350px] gap-4 px-2 py-4">
+      <Avatar className="h-8 w-8">
+        <Skeleton className="h-full w-full" />
+      </Avatar>
+      <div className="flex w-full flex-col justify-start gap-2">
+        <div className="flex w-full gap-2">
+          <Skeleton className="h-3 w-1/2" />
+          <Skeleton className="h-3 w-1/6" />
+        </div>
+        {/* message content */}
+        <Skeleton className="h-8 w-full" />
+      </div>
+    </div>
+  );
+}
+
 function MessageListSkeleton() {
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full w-full flex-col">
       {Array.from({ length: DEFAULT_PAGINATION_LIMIT }).map((_, index) => (
-        <div key={index} className="relative flex w-[350px] gap-4 px-2 py-4">
-          <Avatar className="h-8 w-8">
-            <Skeleton className="h-full w-full" />
-          </Avatar>
-          <div className="flex w-full flex-col justify-start gap-2">
-            <div className="flex w-full gap-2">
-              <Skeleton className="h-3 w-1/2" />
-              <Skeleton className="h-3 w-1/6" />
-            </div>
-            {/* message content */}
-            <Skeleton className="h-8 w-full" />
-          </div>
-        </div>
+        <MessageSkeleton key={index} />
       ))}
     </div>
   );
@@ -334,91 +340,122 @@ export default function MessageList({
     }
   );
 
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  const allMessages = messagesPages
-    ? messagesPages.pages.flatMap((data) => data.items)
-    : [];
-
-  const rowVirtualizer = useVirtual({
-    size: hasNextPage ? allMessages.length + 1 : allMessages.length,
-    parentRef,
-    overscan: 15,
-  });
-
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
+  const virtuosoRef = useRef<VirtuosoHandle | null>(null);
+  const [atBottom, setAtBottom] = useState(false);
+  const showButtonTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showButton, setShowButton] = useState(false);
+
+  const START_INDEX = 100_000; // Use an appropriate large number based on your expected data size.
+
+  const [firstItemIndex, setFirstItemIndex] = useState(START_INDEX);
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
+
   useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
-
-    if (!lastItem) {
-      return;
+    if (messagesPages) {
+      const newMessages = messagesPages.pages
+        .flatMap((data) => data.items)
+        .reverse();
+      const numberOfNewMessages = newMessages.length - allMessages.length;
+      setFirstItemIndex((prevIndex) => prevIndex - numberOfNewMessages);
+      setAllMessages(newMessages);
     }
+  }, [messagesPages]);
 
-    if (
-      lastItem.index >= allMessages.length - 1 &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      void fetchNextPage();
+  useEffect(() => {
+    return () => {
+      if (showButtonTimeoutRef.current !== null) {
+        clearTimeout(showButtonTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (showButtonTimeoutRef.current !== null) {
+      clearTimeout(showButtonTimeoutRef.current);
     }
-  }, [
-    hasNextPage,
-    fetchNextPage,
-    allMessages.length,
-    isFetchingNextPage,
-    rowVirtualizer.virtualItems,
-  ]);
+    if (!atBottom) {
+      showButtonTimeoutRef.current = setTimeout(() => setShowButton(true), 500);
+    } else {
+      setShowButton(false);
+    }
+  }, [atBottom, setShowButton]);
 
   return (
-    <div
-      ref={parentRef}
-      // flex-col-reverse may be causing problems here
-      className="flex w-full max-w-full flex-1 overflow-y-auto"
-    >
+    <div className="relative flex flex-1 flex-col" data-testid="message-list">
       {isLoading ? (
         <MessageListSkeleton />
       ) : (
-        <div
-          style={{
-            height: `${rowVirtualizer.totalSize}px`,
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          {rowVirtualizer.virtualItems.map((virtualItem) => {
-            const isLoaderRow = virtualItem.index > allMessages.length - 1;
-
-            const message = allMessages[virtualItem.index];
-
-            if (!message) return null;
-
-            return (
-              <div
-                key={virtualItem.key}
-                ref={virtualItem.measureRef}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  transform: `translateY(${virtualItem.start}px)`,
-                }}
-              >
-                {isLoaderRow && hasNextPage ? (
-                  <MessageListSkeleton />
-                ) : (
-                  <MessageTile
-                    message={message}
-                    session={session}
-                    isEditing={editingMessageId === message.id}
-                    setEditingMessageId={setEditingMessageId}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <>
+          <Virtuoso
+            style={{
+              height: "100%",
+            }}
+            ref={virtuosoRef}
+            followOutput="auto"
+            firstItemIndex={firstItemIndex}
+            initialTopMostItemIndex={allMessages.length - 1}
+            data={allMessages}
+            totalCount={
+              hasNextPage ? allMessages.length + 1 : allMessages.length
+            }
+            overscan={{ main: 15, reverse: 10 }}
+            atBottomStateChange={(bottom) => {
+              setAtBottom(bottom);
+            }}
+            components={{
+              ScrollSeekPlaceholder: () => <MessageSkeleton />,
+              EmptyPlaceholder: () => {
+                return (
+                  <div className="flex h-full w-full items-end text-sm text-tertiary-foreground">
+                    Be the first to send a message!
+                  </div>
+                );
+              },
+            }}
+            scrollSeekConfiguration={{
+              enter: (velocity) => {
+                return Math.abs(velocity) > 1000;
+              },
+              exit: (velocity) => {
+                return Math.abs(velocity) < 500;
+              },
+            }}
+            startReached={async () => {
+              if (hasNextPage && !isFetchingNextPage) {
+                await fetchNextPage();
+              }
+            }}
+            itemContent={(_index, message) => {
+              return (
+                <MessageTile
+                  message={message}
+                  session={session}
+                  isEditing={editingMessageId === message.id}
+                  setEditingMessageId={setEditingMessageId}
+                />
+              );
+            }}
+          />
+          {showButton && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="absolute bottom-2 right-8 max-w-min"
+              onClick={() => {
+                if (virtuosoRef.current) {
+                  virtuosoRef.current.scrollToIndex({
+                    index: allMessages.length - 1,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+            >
+              <Icons.arrowDown size={15} className="h-4 w-4" />
+            </Button>
+          )}
+        </>
       )}
     </div>
   );

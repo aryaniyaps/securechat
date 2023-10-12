@@ -58,7 +58,6 @@ export const messageRouter = createTRPCRouter({
         }
       }
 
-      console.log("nextcursor: ", nextCursor);
       return {
         items,
         nextCursor,
