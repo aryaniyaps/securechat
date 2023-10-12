@@ -375,12 +375,15 @@ export default function MessageList({
     if (showButtonTimeoutRef.current !== null) {
       clearTimeout(showButtonTimeoutRef.current);
     }
-    if (!atBottom) {
+
+    // slight hack: if we have no messages and we are already at the bottom of the list,
+    // atBottom is always false initially
+    if (!atBottom && allMessages.length > 0) {
       showButtonTimeoutRef.current = setTimeout(() => setShowButton(true), 500);
     } else {
       setShowButton(false);
     }
-  }, [atBottom, setShowButton]);
+  }, [atBottom, allMessages]);
 
   return (
     <div className="relative flex flex-1 flex-col" data-testid="message-list">
@@ -389,6 +392,8 @@ export default function MessageList({
           height: "100%",
         }}
         ref={virtuosoRef}
+        alignToBottom
+        reversed
         followOutput="auto"
         firstItemIndex={firstItemIndex}
         initialTopMostItemIndex={allMessages.length - 1}
