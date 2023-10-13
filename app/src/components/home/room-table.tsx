@@ -291,9 +291,11 @@ export default function RoomTable({ session }: { session: Session }) {
           if (isLoading) {
             return (
               <TableBody>
-                {Array(DEFAULT_PAGINATION_LIMIT).map((index) => (
-                  <SkeletonRow key={`row-skeleton-${index}`} />
-                ))}
+                {Array.from({ length: DEFAULT_PAGINATION_LIMIT }).map(
+                  (_, index) => (
+                    <SkeletonRow key={`row-skeleton-${index}`} />
+                  )
+                )}
               </TableBody>
             );
           }

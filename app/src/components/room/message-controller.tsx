@@ -6,7 +6,7 @@ import * as z from "zod";
 import { type PresenceEntry } from "~/hooks/use-room-channel";
 import { useToast } from "~/hooks/use-toast";
 import { type AttachmentFile } from "~/schemas/attachment";
-import { User } from "~/schemas/user";
+import { type User } from "~/schemas/user";
 import { api } from "~/utils/api";
 import {
   MAX_MESSAGE_ATTACHMENTS,

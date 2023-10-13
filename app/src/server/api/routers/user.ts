@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { email } from "~/server/config/email";
+import { getEmail } from "~/server/config/email";
 import { s3Client } from "~/server/config/s3";
 
 export const userRouter = createTRPCRouter({
@@ -82,6 +82,8 @@ export const userRouter = createTRPCRouter({
       const changeUrl = new URL("/auth/email/change", env.NEXTAUTH_URL);
       changeUrl.searchParams.append("changeToken", changeToken);
       changeUrl.searchParams.append("newEmail", input.newEmail);
+
+      const email = getEmail();
 
       await email.send({
         template: "email-change",

@@ -2,7 +2,7 @@ import { Presence, type Channel } from "phoenix";
 import { useEffect, useState } from "react";
 import { useSocket } from "~/components/socket-provider";
 import { type Message } from "~/schemas/message";
-import { User } from "~/schemas/user";
+import { type User } from "~/schemas/user";
 import { api } from "~/utils/api";
 
 type MetaData = {

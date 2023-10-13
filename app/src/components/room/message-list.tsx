@@ -3,7 +3,7 @@ import { type AttachmentFile } from "@prisma/client";
 import { type Session } from "next-auth";
 import { useEffect, useMemo, useRef, useState, type HTMLProps } from "react";
 import { useForm } from "react-hook-form";
-import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
+import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { z } from "zod";
 import { type Message } from "~/schemas/message";
 import { api } from "~/utils/api";
@@ -361,6 +361,7 @@ export default function MessageList({
       setFirstItemIndex((prevIndex) => prevIndex - numberOfNewMessages);
       setAllMessages(newMessages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messagesPages]);
 
   useEffect(() => {
