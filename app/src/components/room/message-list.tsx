@@ -326,7 +326,7 @@ export default function MessageList({
 }) {
   const {
     data: messagesPages,
-    isLoading,
+    isInitialLoading,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
@@ -389,32 +389,34 @@ export default function MessageList({
   return (
     <div className="relative flex flex-1 flex-col" data-testid="message-list">
       <Virtuoso
-        style={{
-          height: "100%",
-        }}
+        className="h-full flex-1"
         ref={virtuosoRef}
         alignToBottom
-        reversed
         followOutput="auto"
         firstItemIndex={firstItemIndex}
         initialTopMostItemIndex={allMessages.length - 1}
         data={allMessages}
-        totalCount={hasNextPage ? allMessages.length + 1 : allMessages.length}
-        overscan={{ main: 15, reverse: 10 }}
+        overscan={15}
         atBottomStateChange={(bottom) => {
           setAtBottom(bottom);
         }}
         components={{
           ScrollSeekPlaceholder: () => <MessageSkeleton />,
           EmptyPlaceholder: () => {
-            if (isLoading) {
+            if (isInitialLoading) {
               return <MessageListSkeleton />;
             }
-            return (
-              <div className="flex h-full w-full items-end text-sm text-tertiary-foreground">
-                Be the first to send a message!
-              </div>
-            );
+
+            // Only show the "Be the first to send a message" text when there are no messages.
+            if (allMessages.length === 0) {
+              return (
+                <div className="flex h-full w-full items-end text-sm text-tertiary-foreground">
+                  Be the first to send a message!
+                </div>
+              );
+            }
+            // Return null when there are messages to prevent it from rendering.
+            return null;
           },
         }}
         scrollSeekConfiguration={{

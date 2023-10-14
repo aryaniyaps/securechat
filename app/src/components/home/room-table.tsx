@@ -211,6 +211,7 @@ export default function RoomTable({ session }: { session: Session }) {
   const {
     data: roomsPages,
     isLoading,
+    isInitialLoading,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
@@ -288,7 +289,7 @@ export default function RoomTable({ session }: { session: Session }) {
         TableBody: TableBody,
         TableFoot: TableFooter,
         EmptyPlaceholder: () => {
-          if (isLoading) {
+          if (isInitialLoading) {
             return (
               <TableBody>
                 {Array.from({ length: DEFAULT_PAGINATION_LIMIT }).map(
@@ -300,17 +301,21 @@ export default function RoomTable({ session }: { session: Session }) {
             );
           }
 
-          return (
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={4}>
-                  <div className="flex h-full w-full items-center justify-center text-sm">
-                    No rooms found!
-                  </div>
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          );
+          if (rows.length === 0) {
+            return (
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={4}>
+                    <div className="flex h-full w-full items-center justify-center text-sm">
+                      No rooms found!
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
+            );
+          }
+
+          return null;
         },
         ScrollSeekPlaceholder: () => {
           return <SkeletonRow />;
