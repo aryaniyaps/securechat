@@ -1,6 +1,6 @@
 import { type Session } from "next-auth";
 import { useEffect, useRef, useState } from "react";
-import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
+import { StateSnapshot, Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { type Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
@@ -44,6 +44,8 @@ export default function MessageList({
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
   const virtuosoRef = useRef<VirtuosoHandle | null>(null);
+  const state = useRef<StateSnapshot | undefined>(undefined);
+
   const [atBottom, setAtBottom] = useState(false);
   const showButtonTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showButton, setShowButton] = useState(false);
@@ -90,14 +92,16 @@ export default function MessageList({
   return (
     <div className="relative flex flex-1 flex-col" data-testid="message-list">
       <Virtuoso
-        className="h-full flex-1"
         ref={virtuosoRef}
-        alignToBottom
-        followOutput="auto"
         firstItemIndex={firstItemIndex}
+        followOutput="auto"
+        alignToBottom
+        totalCount={allMessages.length}
         initialTopMostItemIndex={allMessages.length - 1}
         data={allMessages}
         overscan={15}
+        restoreStateFrom={state.current}
+        computeItemKey={(key: number) => `message-${key.toString()}`}
         atBottomStateChange={(bottom) => {
           setAtBottom(bottom);
         }}
@@ -108,14 +112,6 @@ export default function MessageList({
               return <MessageListSkeleton />;
             }
 
-            // Only show the "Be the first to send a message" text when there are no messages.
-            if (allMessages.length === 0) {
-              return (
-                <div className="flex h-full w-full items-end text-sm text-tertiary-foreground">
-                  Be the first to send a message!
-                </div>
-              );
-            }
             // Return null when there are messages to prevent it from rendering.
             return null;
           },

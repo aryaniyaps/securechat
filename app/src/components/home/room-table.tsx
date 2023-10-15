@@ -22,6 +22,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
@@ -303,15 +304,13 @@ export default function RoomTable({ session }: { session: Session }) {
 
           if (rows.length === 0) {
             return (
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={4}>
-                    <div className="flex h-full w-full items-center justify-center text-sm">
-                      No rooms found!
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
+              <TableCaption>
+                <TableCell colSpan={4}>
+                  <div className="flex h-full w-full items-center justify-center text-sm">
+                    No rooms found!
+                  </div>
+                </TableCell>
+              </TableCaption>
             );
           }
 
