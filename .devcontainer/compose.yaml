@@ -8,6 +8,11 @@ services:
       target: dev-container
     volumes:
       - caddy_data:/data/caddy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 5s
+      timeout: 1s
+      retries: 3
     ports:
       - "80:80"
     depends_on:
@@ -27,6 +32,11 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/bitnami/mongodb
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   app:
     build:
@@ -47,6 +57,11 @@ services:
       - ../:/workspace:cached
       - /workspace/app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     environment:
       # Prisma
       DATABASE_URL: ${DATABASE_URL}
@@ -84,6 +99,11 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    healthcheck:
+      test: ["CMD", "echo | telnet localhost 8025"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   ws-server:
     build:
@@ -91,9 +111,13 @@ services:
       dockerfile: Dockerfile
       target: dev-container
     working_dir: /workspace/ws-server
-    restart: always
     ports:
       - "4000:4000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     environment:
       RABBITMQ_URL: ${RABBITMQ_URL}
       RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
@@ -108,6 +132,11 @@ services:
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     ports:
       - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
   seaweedfs-master:
     image: chrislusf/seaweedfs:3.56
@@ -117,6 +146,11 @@ services:
     # master servers store data by default to /data
     volumes:
       - seaweedfs_master_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9333/dir/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   seaweedfs-volume:
     image: chrislusf/seaweedfs:3.56
@@ -128,6 +162,11 @@ services:
     # volume servers store data by default to /data
     volumes:
       - seaweedfs_volume_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   seaweedfs-filer:
     image: chrislusf/seaweedfs:3.56
@@ -138,6 +177,11 @@ services:
       - seaweedfs_filer_data:/data
     depends_on:
       - seaweedfs-master
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   seaweedfs-s3:
     build:
@@ -151,6 +195,11 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
     ports:
       - "8333:8333"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8333/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     depends_on:
       - seaweedfs-master
       - seaweedfs-filer

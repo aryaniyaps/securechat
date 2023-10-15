@@ -1,11 +1,11 @@
 defmodule WsServerWeb.Router do
   use WsServerWeb, :router
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
+  # pipeline :api do
+  #   plug :accepts, ["json"]
+  # end
 
-  scope "/api", WsServerWeb do
-    pipe_through :api
+  scope "/", WsServerWeb do
+    get "/health", HealthController, :index
   end
 end
