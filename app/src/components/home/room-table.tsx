@@ -4,10 +4,10 @@ import {
   useReactTable,
   type ColumnDef,
 } from "@tanstack/react-table";
+import { useVirtual } from "@tanstack/react-virtual";
 import { type Session } from "next-auth";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
-import { TableVirtuoso } from "react-virtuoso";
+import { HTMLProps, forwardRef, useEffect, useMemo, useRef } from "react";
 import { Icons } from "~/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -24,8 +24,8 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
 } from "~/components/ui/table";
 import { useSearchQuery } from "~/hooks/use-search-query";
@@ -124,24 +124,21 @@ function RoomActions({
     onSuccess: async (_) => {
       await utils.room.getAll.cancel();
 
-      utils.room.getAll.setInfiniteData(
-        { limit: DEFAULT_PAGINATION_LIMIT },
-        (oldData) => {
-          if (oldData == null) return;
+      utils.room.getAll.setInfiniteData({}, (oldData) => {
+        if (oldData == null) return;
 
-          return {
-            ...oldData,
-            pages: oldData.pages.map((page) => {
-              return {
-                ...page,
-                items: page.items.filter(
-                  (existingRoom) => existingRoom.id !== room.id
-                ),
-              };
-            }),
-          };
-        }
-      );
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => {
+            return {
+              ...page,
+              items: page.items.filter(
+                (existingRoom) => existingRoom.id !== room.id
+              ),
+            };
+          }),
+        };
+      });
     },
   });
 
@@ -184,9 +181,12 @@ function RoomActions({
   );
 }
 
-function SkeletonRow() {
+const SkeletonRow = forwardRef<
+  HTMLTableRowElement,
+  HTMLProps<HTMLTableRowElement>
+>((props, ref) => {
   return (
-    <TableRow>
+    <TableRow {...props} ref={ref}>
       <TableCell>
         <Skeleton className="h-4 w-3/4" />
       </TableCell>
@@ -204,14 +204,14 @@ function SkeletonRow() {
       </TableCell>
     </TableRow>
   );
-}
+});
 
 export default function RoomTable({ session }: { session: Session }) {
   const { searchQuery, debouncedSearchQuery } = useSearchQuery();
 
   const {
     data: roomsPages,
-    isInitialLoading,
+    isLoading,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
@@ -232,17 +232,25 @@ export default function RoomTable({ session }: { session: Session }) {
     return getColumns(session);
   }, [session]);
 
-  const data = useMemo(() => {
+  const allRooms = useMemo(() => {
     return roomsPages ? roomsPages.pages.flatMap((page) => page.items) : [];
   }, [roomsPages]);
 
   const table = useReactTable({
-    data,
+    data: allRooms,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const { rows } = table.getRowModel();
+
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtual({
+    size: rows.length,
+    parentRef,
+    overscan: 15,
+  });
 
   useEffect(() => {
     if (debouncedSearchQuery !== searchQuery) {
@@ -250,106 +258,149 @@ export default function RoomTable({ session }: { session: Session }) {
     }
   }, [debouncedSearchQuery, refetch, searchQuery]);
 
+  useEffect(() => {
+    const [lastItem] = [...virtualizer.virtualItems].reverse();
+
+    if (!lastItem) {
+      return;
+    }
+
+    if (
+      lastItem.index >= allRooms.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      void fetchNextPage();
+    }
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    allRooms.length,
+    isFetchingNextPage,
+    virtualizer.virtualItems,
+  ]);
+
   return (
-    <TableVirtuoso
-      style={{ height: "100%" }}
-      totalCount={rows.length}
-      overscan={{ main: 15, reverse: 10 }}
-      components={{
-        Table: ({ style, ...props }) => {
-          return (
-            <Table
-              {...props}
-              style={{
-                ...style,
-                width: "100%",
-                tableLayout: "fixed",
-                borderCollapse: "collapse",
-                borderSpacing: 0,
-              }}
-            />
-          );
-        },
-        TableRow: (props) => {
-          const index = props["data-index"];
-          const row = rows[index];
-
-          if (!row) return null;
-
-          return (
-            <TableRow {...props}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          );
-        },
-        TableBody: TableBody,
-        TableFoot: TableFooter,
-        EmptyPlaceholder: () => {
-          if (isInitialLoading) {
-            return (
-              <TableBody>
+    <div ref={parentRef} className="h-full overflow-y-auto">
+      <div style={{ height: `${virtualizer.totalSize}px` }}>
+        <Table className="flex-grow" data-testid="room-table">
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{ width: header.getSize() }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <>
                 {Array.from({ length: DEFAULT_PAGINATION_LIMIT }).map(
                   (_, index) => (
                     <SkeletonRow key={`row-skeleton-${index}`} />
                   )
                 )}
-              </TableBody>
-            );
-          }
+              </>
+            ) : (
+              <>
+                {virtualizer.virtualItems.map((virtualItem, index) => {
+                  const isLoaderRow = virtualItem.index > allRooms.length - 1;
 
-          if (rows.length === 0) {
-            return (
-              <TableCaption>
-                <TableCell colSpan={4}>
-                  <div className="flex h-full w-full items-center justify-center text-sm">
-                    No rooms found!
-                  </div>
-                </TableCell>
-              </TableCaption>
-            );
-          }
+                  if (isLoaderRow) {
+                    // TODO: return multiple skeleton rows here
+                    return (
+                      <SkeletonRow
+                        key={virtualItem.key}
+                        ref={virtualItem.measureRef}
+                        style={{
+                          height: `${virtualItem.size}px`,
+                          transform: `translateY(${
+                            virtualItem.start - index * virtualItem.size
+                          }px)`,
+                        }}
+                      />
+                    );
+                  }
 
-          return null;
-        },
-        ScrollSeekPlaceholder: () => {
-          return <SkeletonRow />;
-        },
-      }}
-      fixedHeaderContent={() => {
-        return table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              return (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
+                  const row = rows[virtualItem.index];
+
+                  if (!row)
+                    return (
+                      <SkeletonRow
+                        key={virtualItem.key}
+                        ref={virtualItem.measureRef}
+                        style={{
+                          height: `${virtualItem.size}px`,
+                          transform: `translateY(${
+                            virtualItem.start - index * virtualItem.size
+                          }px)`,
+                        }}
+                      />
+                    );
+
+                  return (
+                    <TableRow
+                      key={virtualItem.key}
+                      data-state={row.getIsSelected() && "selected"}
+                      ref={virtualItem.measureRef}
+                      style={{
+                        height: `${virtualItem.size}px`,
+                        transform: `translateY(${
+                          virtualItem.start - index * virtualItem.size
+                        }px)`,
+                      }}
+                    >
+                      {isLoaderRow && hasNextPage ? (
+                        <>
+                          {row.getVisibleCells().map((cell) => {
+                            return (
+                              <TableCell key={cell.id}>
+                                <Skeleton className="h-4 w-3/4" />
+                              </TableCell>
+                            );
+                          })}
+                        </>
+                      ) : (
+                        <>
+                          {row.getVisibleCells().map((cell) => {
+                            return (
+                              <TableCell key={cell.id}>
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                        </>
                       )}
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        ));
-      }}
-      endReached={async () => {
-        if (hasNextPage && !isFetchingNextPage) {
-          await fetchNextPage();
-        }
-      }}
-      scrollSeekConfiguration={{
-        enter: (velocity) => {
-          return Math.abs(velocity) > 1000;
-        },
-        exit: (velocity) => {
-          return Math.abs(velocity) < 500;
-        },
-      }}
-    />
+                    </TableRow>
+                  );
+                })}
+              </>
+            )}
+          </TableBody>
+          {!rows.length ? (
+            <TableCaption className="w-full text-center">
+              No rooms found.
+            </TableCaption>
+          ) : null}
+        </Table>
+      </div>
+    </div>
   );
 }
