@@ -211,7 +211,6 @@ export default function RoomTable({ session }: { session: Session }) {
 
   const {
     data: roomsPages,
-    isLoading,
     isInitialLoading,
     hasNextPage,
     isFetchingNextPage,

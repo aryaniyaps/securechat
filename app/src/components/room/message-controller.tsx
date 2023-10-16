@@ -330,7 +330,7 @@ export default function MessageController({
         clearTimeout(typingTimeout);
       }
     };
-  });
+  }, [typingTimeout]);
 
   return (
     <div className="mb-4 flex w-full flex-col gap-4">

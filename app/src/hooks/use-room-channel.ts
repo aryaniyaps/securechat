@@ -21,9 +21,7 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
   const socket = useSocket();
   const utils = api.useContext();
 
-  const [presenceInfo, setPresenceInfo] = useState<PresenceEntry[] | null>(
-    null
-  );
+  const [presenceInfo, setPresenceInfo] = useState<PresenceEntry[]>([]);
   const [channel, setChannel] = useState<Channel | null>(null);
 
   useEffect(() => {
