@@ -1,7 +1,6 @@
+import { useVirtual } from "@tanstack/react-virtual";
 import { type Session } from "next-auth";
 import { useEffect, useRef, useState } from "react";
-import { StateSnapshot, Virtuoso, type VirtuosoHandle } from "react-virtuoso";
-import { type Message } from "~/schemas/message";
 import { api } from "~/utils/api";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Icons } from "../icons";
@@ -43,119 +42,116 @@ export default function MessageList({
 
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 
-  const virtuosoRef = useRef<VirtuosoHandle | null>(null);
-  const state = useRef<StateSnapshot | undefined>(undefined);
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const [atBottom, setAtBottom] = useState(false);
-  const showButtonTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [showButton, setShowButton] = useState(false);
+  const [isScrolledUp, setIsScrolledUp] = useState(false);
 
-  const START_INDEX = 100_000; // Use an appropriate large number based on your expected data size.
+  const allMessages = messagesPages
+    ? messagesPages.pages.flatMap((data) => data.items)
+    : [];
 
-  const [firstItemIndex, setFirstItemIndex] = useState(START_INDEX);
-  const [allMessages, setAllMessages] = useState<Message[]>([]);
+  const rowVirtualizer = useVirtual({
+    size: hasNextPage ? allMessages.length + 1 : allMessages.length,
+    parentRef,
+    overscan: 15,
+  });
+
+  function handleParentScroll() {
+    if (parentRef.current) {
+      const isNotAtTop = parentRef.current.scrollTop > 5; // 5 is a small threshold
+      setIsScrolledUp(isNotAtTop);
+    }
+  }
 
   useEffect(() => {
-    if (messagesPages) {
-      const newMessages = messagesPages.pages
-        .flatMap((data) => data.items)
-        .reverse();
-      const numberOfNewMessages = newMessages.length - allMessages.length;
-      setFirstItemIndex((prevIndex) => prevIndex - numberOfNewMessages);
-      setAllMessages(newMessages);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messagesPages]);
+    const [lastItem] = [...rowVirtualizer.virtualItems].reverse();
 
-  useEffect(() => {
-    return () => {
-      if (showButtonTimeoutRef.current !== null) {
-        clearTimeout(showButtonTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (showButtonTimeoutRef.current !== null) {
-      clearTimeout(showButtonTimeoutRef.current);
+    if (!lastItem) {
+      return;
     }
 
-    // slight hack: if we have no messages and we are already at the bottom of the list,
-    // atBottom is always false initially
-    if (!atBottom && allMessages.length > 0) {
-      showButtonTimeoutRef.current = setTimeout(() => setShowButton(true), 500);
-    } else {
-      setShowButton(false);
+    if (
+      lastItem.index >= allMessages.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      void fetchNextPage();
     }
-  }, [atBottom, allMessages]);
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    allMessages.length,
+    isFetchingNextPage,
+    rowVirtualizer.virtualItems,
+  ]);
 
   return (
-    <div className="relative flex flex-1 flex-col" data-testid="message-list">
-      <Virtuoso
-        ref={virtuosoRef}
-        firstItemIndex={firstItemIndex}
-        followOutput="auto"
-        alignToBottom
-        totalCount={allMessages.length}
-        initialTopMostItemIndex={allMessages.length - 1}
-        data={allMessages}
-        overscan={15}
-        restoreStateFrom={state.current}
-        computeItemKey={(key: number) => `message-${key.toString()}`}
-        atBottomStateChange={(bottom) => {
-          setAtBottom(bottom);
-        }}
-        components={{
-          ScrollSeekPlaceholder: () => <MessageTileSkeleton />,
-          EmptyPlaceholder: () => {
-            if (isInitialLoading) {
-              return <MessageListSkeleton />;
-            }
+    <div className="relative h-full w-full overflow-hidden">
+      {isInitialLoading ? (
+        <MessageListSkeleton />
+      ) : (
+        <>
+          <div
+            ref={parentRef}
+            onScroll={handleParentScroll}
+            className="h-full w-full overflow-y-auto scroll-smooth"
+          >
+            <div
+              style={{
+                height: `${rowVirtualizer.totalSize}px`,
+                width: "100%",
+                position: "relative",
+              }}
+            >
+              {rowVirtualizer.virtualItems.map((virtualRow) => {
+                const message = allMessages[virtualRow.index];
 
-            // Return null when there are messages to prevent it from rendering.
-            return null;
-          },
-        }}
-        scrollSeekConfiguration={{
-          enter: (velocity) => {
-            return Math.abs(velocity) > 1000;
-          },
-          exit: (velocity) => {
-            return Math.abs(velocity) < 500;
-          },
-        }}
-        startReached={async () => {
-          if (hasNextPage && !isFetchingNextPage) {
-            await fetchNextPage();
-          }
-        }}
-        itemContent={(_index, message) => {
-          return (
-            <MessageTile
-              message={message}
-              session={session}
-              isEditing={editingMessageId === message.id}
-              setEditingMessageId={setEditingMessageId}
-            />
-          );
-        }}
-      />
-      {showButton && (
-        <Button
-          size="sm"
-          variant="secondary"
-          className="absolute bottom-2 right-8 max-w-min"
-          onClick={() => {
-            if (virtuosoRef.current) {
-              virtuosoRef.current.scrollToIndex({
-                index: allMessages.length - 1,
-                behavior: "smooth",
-              });
-            }
-          }}
-        >
-          <Icons.arrowDown size={15} className="h-4 w-4" />
-        </Button>
+                const isLoaderRow = virtualRow.index > allMessages.length - 1;
+
+                return (
+                  <div
+                    key={virtualRow.key}
+                    ref={virtualRow.measureRef}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    {isLoaderRow ? (
+                      <MessageListSkeleton />
+                    ) : !message ? (
+                      <MessageTileSkeleton />
+                    ) : (
+                      <MessageTile
+                        message={message}
+                        session={session}
+                        isEditing={editingMessageId === message.id}
+                        setEditingMessageId={setEditingMessageId}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {isScrolledUp && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="absolute bottom-2 right-8 max-w-min"
+              onClick={() => {
+                if (parentRef.current) {
+                  parentRef.current.scrollTop = 0;
+                }
+              }}
+            >
+              <Icons.arrowUp size={15} className="h-4 w-4" />
+            </Button>
+          )}
+        </>
       )}
     </div>
   );

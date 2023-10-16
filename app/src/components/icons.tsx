@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowRight,
+  ArrowUp,
   CameraIcon,
   Check,
   ChevronLeft,
@@ -52,6 +53,7 @@ export const Icons = {
       <circle cx="12" cy="12" r="10"></circle>
     </svg>
   ),
+  arrowUp: ArrowUp,
   users: Users,
   paperclip: Paperclip,
   textCursor: TextCursor,
