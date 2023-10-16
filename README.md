@@ -1,7 +1,7 @@
 # SecureChat
 
 <p align="left">
-<img height=400 src="/assets/architecture.svg"/>
+<img height=400 src="/assets/architecture-new.svg"/>
 <br /> 
   <strong>Project architecture</strong>
 </p>
