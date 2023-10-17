@@ -7,7 +7,7 @@ import {
 import { useVirtual } from "@tanstack/react-virtual";
 import { type Session } from "next-auth";
 import Link from "next/link";
-import { HTMLProps, forwardRef, useEffect, useMemo, useRef } from "react";
+import { forwardRef, useEffect, useMemo, useRef, type HTMLProps } from "react";
 import { Icons } from "~/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -184,7 +184,7 @@ function RoomActions({
 const SkeletonRow = forwardRef<
   HTMLTableRowElement,
   HTMLProps<HTMLTableRowElement>
->((props, ref) => {
+>(function SkeletonRow(props, ref) {
   return (
     <TableRow {...props} ref={ref}>
       <TableCell>
