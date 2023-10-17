@@ -247,7 +247,7 @@ export default function RoomTable({ session }: { session: Session }) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtual({
-    size: rows.length,
+    size: hasNextPage ? rows.length + DEFAULT_PAGINATION_LIMIT : rows.length,
     parentRef,
     overscan: 15,
   });
@@ -318,24 +318,6 @@ export default function RoomTable({ session }: { session: Session }) {
             ) : (
               <>
                 {virtualizer.virtualItems.map((virtualItem, index) => {
-                  const isLoaderRow = virtualItem.index > allRooms.length - 1;
-
-                  if (isLoaderRow) {
-                    // TODO: return multiple skeleton rows here
-                    return (
-                      <SkeletonRow
-                        key={virtualItem.key}
-                        ref={virtualItem.measureRef}
-                        style={{
-                          height: `${virtualItem.size}px`,
-                          transform: `translateY(${
-                            virtualItem.start - index * virtualItem.size
-                          }px)`,
-                        }}
-                      />
-                    );
-                  }
-
                   const row = rows[virtualItem.index];
 
                   if (!row)
@@ -364,30 +346,18 @@ export default function RoomTable({ session }: { session: Session }) {
                         }px)`,
                       }}
                     >
-                      {isLoaderRow && hasNextPage ? (
-                        <>
-                          {row.getVisibleCells().map((cell) => {
-                            return (
-                              <TableCell key={cell.id}>
-                                <Skeleton className="h-4 w-3/4" />
-                              </TableCell>
-                            );
-                          })}
-                        </>
-                      ) : (
-                        <>
-                          {row.getVisibleCells().map((cell) => {
-                            return (
-                              <TableCell key={cell.id}>
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext()
-                                )}
-                              </TableCell>
-                            );
-                          })}
-                        </>
-                      )}
+                      <>
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <TableCell key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </>
                     </TableRow>
                   );
                 })}

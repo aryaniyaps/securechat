@@ -53,7 +53,9 @@ export default function MessageList({
   }, [messagesPages]);
 
   const rowVirtualizer = useVirtual({
-    size: hasNextPage ? allMessages.length + 1 : allMessages.length,
+    size: hasNextPage
+      ? allMessages.length + DEFAULT_PAGINATION_LIMIT
+      : allMessages.length,
     parentRef,
     overscan: 15,
   });
@@ -108,8 +110,6 @@ export default function MessageList({
               {rowVirtualizer.virtualItems.map((virtualRow) => {
                 const message = allMessages[virtualRow.index];
 
-                const isLoaderRow = virtualRow.index > allMessages.length - 1;
-
                 return (
                   <div
                     key={virtualRow.key}
@@ -122,9 +122,7 @@ export default function MessageList({
                       transform: `translateY(${virtualRow.start}px)`,
                     }}
                   >
-                    {isLoaderRow ? (
-                      <MessageListSkeleton />
-                    ) : !message ? (
+                    {!message ? (
                       <MessageTileSkeleton />
                     ) : (
                       <MessageTile
