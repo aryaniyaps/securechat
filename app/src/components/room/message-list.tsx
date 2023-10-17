@@ -1,6 +1,6 @@
 import { useVirtual } from "@tanstack/react-virtual";
 import { type Session } from "next-auth";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { DEFAULT_PAGINATION_LIMIT } from "~/utils/constants";
 import { Icons } from "../icons";
@@ -46,9 +46,11 @@ export default function MessageList({
 
   const [isScrolledUp, setIsScrolledUp] = useState(false);
 
-  const allMessages = messagesPages
-    ? messagesPages.pages.flatMap((data) => data.items)
-    : [];
+  const allMessages = useMemo(() => {
+    return messagesPages
+      ? messagesPages.pages.flatMap((data) => data.items)
+      : [];
+  }, [messagesPages]);
 
   const rowVirtualizer = useVirtual({
     size: hasNextPage ? allMessages.length + 1 : allMessages.length,
