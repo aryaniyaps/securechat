@@ -1,7 +1,7 @@
 import { Presence, type Channel } from "phoenix";
 import { useEffect, useState } from "react";
 import { useSocket } from "~/components/socket-provider";
-import { type Message } from "~/schemas/message";
+import { MessageCreatePayload, type Message } from "~/schemas/message";
 import { type User } from "~/schemas/user";
 import { api } from "~/utils/api";
 
@@ -46,23 +46,26 @@ export function useRoomChannel({ roomId }: { roomId: string }) {
       }
     );
 
-    roomChannel.on("create_message", async (newMessage: Message) => {
-      await utils.message.getAll.cancel();
+    roomChannel.on(
+      "create_message",
+      async (newMessage: MessageCreatePayload) => {
+        await utils.message.getAll.cancel();
 
-      utils.message.getAll.setInfiniteData({ roomId }, (oldData) => {
-        if (oldData == null || oldData.pages[0] == null) return;
-        return {
-          ...oldData,
-          pages: [
-            {
-              ...oldData.pages[0],
-              items: [newMessage, ...oldData.pages[0].items],
-            },
-            ...oldData.pages.slice(1),
-          ],
-        };
-      });
-    });
+        utils.message.getAll.setInfiniteData({ roomId }, (oldData) => {
+          if (oldData == null || oldData.pages[0] == null) return;
+          return {
+            ...oldData,
+            pages: [
+              {
+                ...oldData.pages[0],
+                items: [newMessage, ...oldData.pages[0].items],
+              },
+              ...oldData.pages.slice(1),
+            ],
+          };
+        });
+      }
+    );
 
     roomChannel.on("update_message", async (updatedMessage: Message) => {
       await utils.message.getAll.cancel();

@@ -1,4 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { nanoid } from "nanoid";
+import { useSession } from "next-auth/react";
 import { type Channel } from "phoenix";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -188,6 +190,8 @@ export default function MessageController({
 }) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
+  const { data: session } = useSession();
+
   const [isTyping, setIsTyping] = useState(false);
 
   const [typingTimeout, setTypingTimeout] = useState<ReturnType<
@@ -202,6 +206,8 @@ export default function MessageController({
   });
 
   const { toast } = useToast();
+
+  const utils = api.useContext();
 
   const createMessage = api.message.create.useMutation({});
 
@@ -287,6 +293,7 @@ export default function MessageController({
       }
 
       await createMessage.mutateAsync({
+        nonce: nanoid(12),
         content: values.content,
         roomId: roomId,
         ...(attachments && { attachments: attachments }),

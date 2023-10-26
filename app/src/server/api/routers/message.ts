@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import { attachmentFileSchema } from "~/schemas/attachment";
-import { messageSchema } from "~/schemas/message";
+import { messageCreateSchema, messageSchema } from "~/schemas/message";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { broadcastEvent } from "~/server/broadcast";
 import { s3Client } from "~/server/config/s3";
@@ -126,6 +126,7 @@ export const messageRouter = createTRPCRouter({
         content: z.string().nullable(),
         attachments: z.array(attachmentFileSchema).max(MAX_MESSAGE_ATTACHMENTS),
         roomId: z.string(),
+        nonce: z.string().nullable(),
       })
     )
     .output(messageSchema)
@@ -158,7 +159,7 @@ export const messageRouter = createTRPCRouter({
 
       broadcastEvent({
         event: "create_message",
-        payload: messageSchema.parse(message),
+        payload: messageCreateSchema.parse({ ...message, nonce: input.nonce }),
         roomId: input.roomId,
       });
 

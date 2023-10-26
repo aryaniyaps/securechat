@@ -18,4 +18,10 @@ export const messageSchema = z.object({
   }),
 });
 
+export const messageCreateSchema = messageSchema.extend({
+  nonce: z.string().nullable(),
+});
+
 export type Message = z.infer<typeof messageSchema>;
+
+export type MessageCreatePayload = z.infer<typeof messageCreateSchema>;

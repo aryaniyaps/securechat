@@ -281,9 +281,9 @@ export default function RoomTable({ session }: { session: Session }) {
   ]);
 
   return (
-    <div ref={parentRef} className="h-full overflow-y-auto">
+    <div ref={parentRef} className="h-full w-full overflow-y-auto">
       <div style={{ height: `${virtualizer.totalSize}px` }}>
-        <Table className="flex-grow" data-testid="room-table">
+        <Table className="h-full w-full" data-testid="room-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
