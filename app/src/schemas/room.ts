@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ownerSchema } from "./user";
 
 export const roomSchema = z.object({
   id: z.string(),
@@ -6,11 +7,7 @@ export const roomSchema = z.object({
   ownerId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
-  owner: z.object({
-    name: z.string().nullish(),
-    username: z.string(),
-    image: z.string().nullable(),
-  }),
+  owner: ownerSchema,
 });
 
 export type Room = z.infer<typeof roomSchema>;

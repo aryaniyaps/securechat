@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { attachmentFileSchema } from "./attachment";
+import { ownerSchema } from "./user";
 
 export const messageSchema = z.object({
   id: z.string(),
@@ -10,12 +11,7 @@ export const messageSchema = z.object({
   isEdited: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
-  owner: z.object({
-    name: z.string().nullish(),
-    username: z.string(),
-    image: z.string().nullable(),
-    createdAt: z.date(),
-  }),
+  owner: ownerSchema,
 });
 
 export const messageCreateSchema = messageSchema.extend({
