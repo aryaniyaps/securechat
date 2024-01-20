@@ -1,0 +1,707 @@
+repo_name: aryaniyaps/securechat
+report_id: 69a0e944e7a09ad8722cec79e8b1d0d1
+version: 0.1
+repo_type: Public
+timestamp: '2024-01-20T08:12:58+00:00'
+requested_by: aryaniyaps
+provider: github
+branch: main
+detected_tools_count: 53
+tools:
+- name: CSS 3
+  description: The latest evolution of the Cascading Style Sheets language
+  website_url: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS3
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/6727/css.png
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: Elixir
+  description: Dynamic, functional language designed for building scalable and maintainable
+    applications
+  website_url: http://elixir-lang.org/
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1974/drop.png
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: JavaScript
+  description: Lightweight, interpreted, object-oriented language with first-class
+    functions
+  website_url: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: Pug
+  description: Robust, elegant, feature rich template engine for nodejs
+  website_url: https://pugjs.org
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Templating Languages & Extensions
+  image_url: https://img.stackshare.io/service/1175/pug.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: TypeScript
+  description: A superset of JavaScript that compiles to clean JavaScript output
+  website_url: http://www.typescriptlang.org
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1612/bynNY5dJ.jpg
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: Autoprefixer
+  description: PostCSS plugin to parse CSS and add vendor prefixes to CSS rules
+  website_url: https://github.com/postcss/autoprefixer
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: CSS Pre-processors / Extensions
+  image_url: https://img.stackshare.io/service/2202/72d087642cfce6fef6f2dabec5bf49e8_400x400.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: Next.js
+  description: 'A small framework for server-rendered universal JavaScript apps '
+  website_url: https://nextjs.org/
+  version: 13.5.4
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/5936/nextjs.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: Node.js
+  description: A platform built on Chrome's JavaScript runtime for easily building
+    fast, scalable network applications
+  website_url: http://nodejs.org/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/Dockerfile
+  detection_source: app/Dockerfile
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: Phoenix Framework
+  description: Most web frameworks make you choose between speed and a productive
+    environment. Phoenix gives you both.
+  website_url: http://www.phoenixframework.org
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/3262/-s9uoLIN.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/ws-server/mix.exs
+  detection_source: ws-server/mix.exs
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-26 13:07:44.000000000 Z
+- name: PostCSS
+  description: Transform CSS with JS plugins
+  website_url: https://github.com/postcss/postcss
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: CSS Pre-processors / Extensions
+  image_url: https://img.stackshare.io/service/3339/rlFcjEdI.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: React
+  description: A JavaScript library for building user interfaces
+  website_url: https://reactjs.org/
+  version: 16.14.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Javascript UI Libraries
+  image_url: https://img.stackshare.io/service/1020/OYIaJ1KK.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-16 15:23:18.000000000 Z
+- name: Tailwind CSS
+  description: A utility-first CSS framework for rapid UI development
+  website_url: https://tailwindcss.com
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Front-End Frameworks
+  image_url: https://img.stackshare.io/service/8158/default_660b7c41c3ba489cb581eec89c04655404258c19.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: Prisma
+  description: Modern Database Access for TypeScript &amp; Node.js
+  website_url: https://www.prisma.io/
+  version: 4.16.2
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Object Relational Mapper (ORM)
+  image_url: https://img.stackshare.io/service/8680/Logo_Symbol_White.jpg
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-07-05 15:27:25.000000000 Z
+- name: Babel
+  description: Use next generation JavaScript, today.
+  website_url: http://babeljs.io/
+  version: 7.22.17
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: JavaScript Compilers
+  image_url: https://img.stackshare.io/service/2739/-1wfGjNw.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-07-11 11:48:58.000000000 Z
+- name: Caddy
+  description: The Ultimate Server with Automatic HTTPS
+  website_url: https://caddyserver.com/
+  open_source: true
+  hosted_saas: false
+  category: Application Hosting
+  sub_category: Web Servers
+  image_url: https://img.stackshare.io/service/3834/caddy.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/caddy/Dockerfile
+  detection_source: caddy/Dockerfile
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-08-14 03:45:56.000000000 Z
+- name: Cowboy
+  description: 'Small, fast, modular HTTP server written in Erlang. '
+  website_url: https://github.com/ninenines/cowboy
+  license: ISC
+  open_source: true
+  hosted_saas: false
+  category: Application Hosting
+  sub_category: Web Servers
+  image_url: https://img.stackshare.io/service/2738/1166740.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/ws-server/mix.exs
+  detection_source: ws-server/mix.exs
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-28 17:53:11.000000000 Z
+- name: Docker
+  description: Enterprise Container Platform for High-Velocity Innovation.
+  website_url: https://www.docker.com/
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Virtual Machine Platforms & Containers
+  image_url: https://img.stackshare.io/service/586/n4u37v9t_400x400.png
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: ESLint
+  description: The fully pluggable JavaScript code quality tool
+  website_url: http://eslint.org/
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Code Review
+  image_url: https://img.stackshare.io/service/3337/Q4L7Jncy.jpg
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: GitHub Actions
+  description: Automate your workflow from idea to production
+  website_url: https://github.com/features/actions
+  open_source: false
+  hosted_saas: true
+  category: Build, Test, Deploy
+  sub_category: Continuous Integration
+  image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/.github/workflows/build-caddy.yml
+  detection_source: ".github/workflows/build-caddy.yml"
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-08-13 11:22:31.000000000 Z
+- name: Prettier
+  description: 'Prettier is an opinionated code formatter. '
+  website_url: https://prettier.io/
+  version: 2.8.8
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Code Review
+  image_url: https://img.stackshare.io/service/7035/default_66f265943abed56bcdbfca1c866a4261b1fbb063.jpg
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-07-05 16:13:18.000000000 Z
+- name: npm
+  description: The package manager for JavaScript.
+  website_url: https://www.npmjs.com/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Front End Package Manager
+  image_url: https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/ws-server/mix.exs
+  detection_source: ws-server/mix.exs
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-26 13:07:44.000000000 Z
+- name: Nodemailer
+  description: A module for Node.js applications to allow email sending
+  website_url: http://www.nodemailer.com/
+  open_source: true
+  hosted_saas: false
+  category: Communications
+  sub_category: Transactional Email
+  image_url: https://img.stackshare.io/service/2862/qr2-jCLr.jpg
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-08-09 03:54:37.000000000 Z
+- name: Shell
+  description: A shell is a text-based terminal, used for manipulating programs and
+    files. Shell scripts typically manage program execution.
+  website_url: https://en.wikipedia.org/wiki/Shell_script
+  open_source: false
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png
+  detection_source_url: https://github.com/aryaniyaps/securechat
+  detection_source: Repo Metadata
+- name: Zod
+  description: TypeScript-first schema validation
+  website_url: https://zod.dev/
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/48521/default_eea961e4c374e68a1c7eb5bbc9e4a39920890342.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: superJSON
+  website_url: https://github.com/blitz-js/superjson
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/25051/default_e6d588b7b89872630cad4650352e935999e0d113.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: "@babel/runtime"
+  description: Babel's modular runtime helpers
+  package_url: https://www.npmjs.com/@babel/runtime
+  version: 7.22.6
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15934/default_54b691c123fc8979741e800e4dcd3936c0f3b246.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-07-11 11:48:58.000000000 Z
+- name: "@next-auth/prisma-adapter"
+  description: Prisma adapter for next-auth
+  package_url: https://www.npmjs.com/@next-auth/prisma-adapter
+  version: 1.0.7
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Package Managers
+  image_url: https://img.stackshare.io/package/npm/image.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-11 04:49:03.000000000 Z
+- name: "@prisma/client"
+  description: Prisma Client is an auto-generated, type-safe and modern JavaScript/TypeScript
+    ORM for Node.js that's tailored to your data
+  package_url: https://www.npmjs.com/@prisma/client
+  version: 4.16.2
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Package Managers
+  image_url: https://img.stackshare.io/package/npm/image.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-06 09:24:58.000000000 Z
+- name: "@testing-library/jest-dom"
+  description: Custom jest matchers to test the state of the DOM
+  package_url: https://www.npmjs.com/@testing-library/jest-dom
+  version: 5.17.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17424/default_1cdcda15ebb7caed879f8340bc212b44c4ec9dac.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-06 09:24:58.000000000 Z
+- name: "@testing-library/react"
+  description: Simple and complete React DOM testing utilities that encourage good
+    testing practices
+  package_url: https://www.npmjs.com/@testing-library/react
+  version: 14.0.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16549/default_d522554c6a41cb28d922d6d3ad32ad4afa0e3bb5.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-16 15:23:18.000000000 Z
+- name: "@types/amqplib"
+  description: TypeScript definitions for amqplib
+  package_url: https://www.npmjs.com/@types/amqplib
+  version: 0.10.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/18378/default_b2c6032681a6747cfd45e1399143ed0d1db9b898.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@types/eslint"
+  description: TypeScript definitions for eslint
+  package_url: https://www.npmjs.com/@types/eslint
+  version: 8.40.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/18156/default_9663441986aa2be78296ccf617e43ef9e612b34e.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@types/jsonwebtoken"
+  description: TypeScript definitions for jsonwebtoken
+  package_url: https://www.npmjs.com/@types/jsonwebtoken
+  version: 9.0.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16959/default_caea01ce44a5fd1bb200d8fc0f8f2a1695b4e569.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@types/node"
+  description: TypeScript definitions for Node.js
+  package_url: https://www.npmjs.com/@types/node
+  version: 18.16.18
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15809/default_5e5e8ac63beda29f31f1844df64d4b8247570a66.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@types/pluralize"
+  description: TypeScript definitions for pluralize
+  package_url: https://www.npmjs.com/@types/pluralize
+  version: 0.0.30
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17552/default_5133f19ba634118175f1e1bf0c5b91999134bf79.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@types/prettier"
+  description: TypeScript definitions for prettier
+  package_url: https://www.npmjs.com/@types/prettier
+  version: 2.7.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16943/default_c17ccfb3dc0510bb2c684b87ee080a74a9728c34.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@types/react"
+  description: TypeScript definitions for React
+  package_url: https://www.npmjs.com/@types/react
+  version: 18.2.14
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15894/default_1d65e37e65b7f80761374f0202776043277d505d.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-16 15:23:18.000000000 Z
+- name: "@types/react-dom"
+  description: TypeScript definitions for React
+  package_url: https://www.npmjs.com/@types/react-dom
+  version: 18.2.6
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15946/default_54b691c123fc8979741e800e4dcd3936c0f3b246.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-16 15:23:18.000000000 Z
+- name: "@types/uuid"
+  description: TypeScript definitions for uuid
+  package_url: https://www.npmjs.com/@types/uuid
+  version: 9.0.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16257/default_ab17554b7e80af3d234b14168ed61e75d43f8eee.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@typescript-eslint/eslint-plugin"
+  description: TypeScript plugin for ESLint
+  package_url: https://www.npmjs.com/@typescript-eslint/eslint-plugin
+  version: 5.60.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15982/default_8b5680d4e916298d08363c291a0d6e34c07ceb15.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: "@typescript-eslint/parser"
+  description: An ESLint custom parser which leverages TypeScript ESTree
+  package_url: https://www.npmjs.com/@typescript-eslint/parser
+  version: 5.60.1
+  license: BSD-2-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15980/default_732016a20524708efe7a4c77497fe9bfeea19ba6.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: amqplib
+  description: An AMQP 0-9-1
+  package_url: https://www.npmjs.com/amqplib
+  version: 0.10.3
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16639/default_5a21421012fa20e57fe0aeab31228f42e7118abc.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-28 17:53:11.000000000 Z
+- name: eslint-config-next
+  description: ESLint configuration used by Next.js
+  package_url: https://www.npmjs.com/eslint-config-next
+  version: 13.4.7
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Package Managers
+  image_url: https://img.stackshare.io/package/npm/image.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-11 04:49:03.000000000 Z
+- name: eslint-config-prettier
+  description: Turns off all rules that are unnecessary or might conflict with Prettier
+  package_url: https://www.npmjs.com/eslint-config-prettier
+  version: 8.8.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15879/default_0b10af8ca19c215f781dc07442e75bdc831089d0.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-06 09:24:58.000000000 Z
+- name: eslint-plugin-prettier
+  description: Runs prettier as an eslint rule
+  package_url: https://www.npmjs.com/eslint-plugin-prettier
+  version: 4.2.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15896/default_6e6e1d6bb189c8bb26c6410618bd597979578f39.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-09-06 09:24:58.000000000 Z
+- name: jsonwebtoken
+  description: JSON Web Token implementation
+  package_url: https://www.npmjs.com/jsonwebtoken
+  version: 9.0.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16155/default_77b54a203c743d16eddb6b6390cba17218454fa0.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-01 16:43:02.000000000 Z
+- name: nanoid
+  description: A tiny
+  package_url: https://www.npmjs.com/nanoid
+  version: 4.0.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17208/default_183829c5079b84333a720d8590a328efc043ba0e.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-07-02 09:53:09.000000000 Z
+- name: next-auth
+  description: Authentication for Next.js
+  package_url: https://www.npmjs.com/next-auth
+  version: 4.22.1
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Package Managers
+  image_url: https://img.stackshare.io/package/npm/image.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-11 04:49:03.000000000 Z
+  vulnerabilities:
+  - name: Possible user mocking that bypasses basic authentication
+    cve_id: CVE-2023-48309
+    cve_url: https://github.com/advisories/GHSA-v64w-49xw-qq89
+    detected_date: Nov 25
+    severity: moderate
+    first_patched: 4.24.5
+- name: prisma
+  description: Prisma is an open-source database toolkit
+  package_url: https://www.npmjs.com/prisma
+  version: 4.16.2
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Package Managers
+  image_url: https://img.stackshare.io/package/npm/image.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-07-05 15:27:25.000000000 Z
+- name: react-dom
+  description: React package for working with the DOM
+  package_url: https://www.npmjs.com/react-dom
+  version: 16.14.0
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15808/default_14fd11531839d935f920b6d55bd6f3528c890ad7.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-10-16 15:23:18.000000000 Z
+- name: tailwindcss
+  description: A utility-first CSS framework for rapidly building custom user interfaces
+  package_url: https://www.npmjs.com/tailwindcss
+  version: 3.3.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17398/default_2cd7ed1c123f2fca074a6f4b16c4e73d5bfe82be.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-06-30 09:33:31.000000000 Z
+- name: uuid
+  description: RFC4122
+  package_url: https://www.npmjs.com/uuid
+  version: 8.3.2
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15916/default_e0a4fb1126d7400f419f0931cf1669947a5bc552.png
+  detection_source_url: https://github.com/aryaniyaps/securechat/blob/main/app/package-lock.json
+  detection_source: app/package.json
+  last_updated_by: Aryan Iyappan
+  last_updated_on: 2023-08-11 04:59:27.000000000 Z
