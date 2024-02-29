@@ -2,7 +2,7 @@ repo_name: aryaniyaps/securechat
 report_id: 69a0e944e7a09ad8722cec79e8b1d0d1
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-20T08:12:58+00:00'
+timestamp: '2024-02-29T19:31:25+00:00'
 requested_by: aryaniyaps
 provider: github
 branch: main
@@ -77,7 +77,7 @@ tools:
   last_updated_by: Aryan Iyappan
   last_updated_on: 2023-06-30 09:33:31.000000000 Z
 - name: Next.js
-  description: 'A small framework for server-rendered universal JavaScript apps '
+  description: A small framework for server-rendered universal JavaScript apps
   website_url: https://nextjs.org/
   version: 13.5.4
   open_source: true
@@ -197,7 +197,7 @@ tools:
   last_updated_by: Aryan Iyappan
   last_updated_on: 2023-08-14 03:45:56.000000000 Z
 - name: Cowboy
-  description: 'Small, fast, modular HTTP server written in Erlang. '
+  description: Small, fast, modular HTTP server written in Erlang.
   website_url: https://github.com/ninenines/cowboy
   license: ISC
   open_source: true
@@ -256,7 +256,7 @@ tools:
   last_updated_by: Aryan Iyappan
   last_updated_on: 2023-08-13 11:22:31.000000000 Z
 - name: Prettier
-  description: 'Prettier is an opinionated code formatter. '
+  description: Prettier is an opinionated code formatter.
   website_url: https://prettier.io/
   version: 2.8.8
   license: MIT
