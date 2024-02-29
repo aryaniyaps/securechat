@@ -3,27 +3,27 @@
 ## Tech Stack
 aryaniyaps/securechat is built on the following main stack:
 
-- [Node.js](http://nodejs.org/) – Frameworks (Full Stack)
-- [React](https://reactjs.org/) – Javascript UI Libraries
-- [Pug](https://pugjs.org) – Templating Languages & Extensions
-- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Languages
-- [TypeScript](http://www.typescriptlang.org) – Languages
 - [Elixir](http://elixir-lang.org/) – Languages
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Languages
+- [Pug](https://pugjs.org) – Templating Languages & Extensions
+- [TypeScript](http://www.typescriptlang.org) – Languages
 - [Autoprefixer](https://github.com/postcss/autoprefixer) – CSS Pre-processors / Extensions
-- [Cowboy](https://github.com/ninenines/cowboy) – Web Servers
-- [Babel](http://babeljs.io/) – JavaScript Compilers
-- [Nodemailer](http://www.nodemailer.com/) – Transactional Email
-- [Phoenix Framework](http://www.phoenixframework.org) – Frameworks (Full Stack)
-- [ESLint](http://eslint.org/) – Code Review
-- [PostCSS](https://github.com/postcss/postcss) – CSS Pre-processors / Extensions
-- [Caddy](https://caddyserver.com/) – Web Servers
-- [Shell](https://en.wikipedia.org/wiki/Shell_script) – Shells
 - [Next.js](https://nextjs.org/) – Frameworks (Full Stack)
-- [Prettier](https://prettier.io/) – Code Review
+- [Node.js](http://nodejs.org/) – Frameworks (Full Stack)
+- [Phoenix Framework](http://www.phoenixframework.org) – Frameworks (Full Stack)
+- [PostCSS](https://github.com/postcss/postcss) – CSS Pre-processors / Extensions
+- [React](https://reactjs.org/) – Javascript UI Libraries
 - [Tailwind CSS](https://tailwindcss.com) – Front-End Frameworks
 - [Prisma](https://www.prisma.io/) – Object Relational Mapper (ORM)
-- [GitHub Actions](https://github.com/features/actions) – Continuous Integration
+- [Babel](http://babeljs.io/) – JavaScript Compilers
+- [Caddy](https://caddyserver.com/) – Web Servers
+- [Cowboy](https://github.com/ninenines/cowboy) – Web Servers
 - [Docker](https://www.docker.com/) – Virtual Machine Platforms & Containers
+- [ESLint](http://eslint.org/) – Code Review
+- [GitHub Actions](https://github.com/features/actions) – Continuous Integration
+- [Prettier](https://prettier.io/) – Code Review
+- [Nodemailer](http://www.nodemailer.com/) – Transactional Email
+- [Shell](https://en.wikipedia.org/wiki/Shell_script) – Shells
 
 Full tech stack [here](/techstack.md)
 
@@ -33,27 +33,27 @@ Full tech stack [here](/techstack.md)
 ## Tech Stack
 aryaniyaps/securechat is built on the following main stack:
 
-- <img width='25' height='25' src='https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png' alt='Node.js'/> [Node.js](http://nodejs.org/) – Frameworks (Full Stack)
-- <img width='25' height='25' src='https://img.stackshare.io/service/1020/OYIaJ1KK.png' alt='React'/> [React](https://reactjs.org/) – Javascript UI Libraries
-- <img width='25' height='25' src='https://img.stackshare.io/service/1175/pug.png' alt='Pug'/> [Pug](https://pugjs.org) – Templating Languages & Extensions
-- <img width='25' height='25' src='https://img.stackshare.io/service/1209/javascript.jpeg' alt='JavaScript'/> [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Languages
-- <img width='25' height='25' src='https://img.stackshare.io/service/1612/bynNY5dJ.jpg' alt='TypeScript'/> [TypeScript](http://www.typescriptlang.org) – Languages
 - <img width='25' height='25' src='https://img.stackshare.io/service/1974/drop.png' alt='Elixir'/> [Elixir](http://elixir-lang.org/) – Languages
+- <img width='25' height='25' src='https://img.stackshare.io/service/1209/javascript.jpeg' alt='JavaScript'/> [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) – Languages
+- <img width='25' height='25' src='https://img.stackshare.io/service/1175/pug.png' alt='Pug'/> [Pug](https://pugjs.org) – Templating Languages & Extensions
+- <img width='25' height='25' src='https://img.stackshare.io/service/1612/bynNY5dJ.jpg' alt='TypeScript'/> [TypeScript](http://www.typescriptlang.org) – Languages
 - <img width='25' height='25' src='https://img.stackshare.io/service/2202/72d087642cfce6fef6f2dabec5bf49e8_400x400.png' alt='Autoprefixer'/> [Autoprefixer](https://github.com/postcss/autoprefixer) – CSS Pre-processors / Extensions
-- <img width='25' height='25' src='https://img.stackshare.io/service/2738/1166740.png' alt='Cowboy'/> [Cowboy](https://github.com/ninenines/cowboy) – Web Servers
-- <img width='25' height='25' src='https://img.stackshare.io/service/2739/-1wfGjNw.png' alt='Babel'/> [Babel](http://babeljs.io/) – JavaScript Compilers
-- <img width='25' height='25' src='https://img.stackshare.io/service/2862/qr2-jCLr.jpg' alt='Nodemailer'/> [Nodemailer](http://www.nodemailer.com/) – Transactional Email
-- <img width='25' height='25' src='https://img.stackshare.io/service/3262/-s9uoLIN.png' alt='Phoenix Framework'/> [Phoenix Framework](http://www.phoenixframework.org) – Frameworks (Full Stack)
-- <img width='25' height='25' src='https://img.stackshare.io/service/3337/Q4L7Jncy.jpg' alt='ESLint'/> [ESLint](http://eslint.org/) – Code Review
-- <img width='25' height='25' src='https://img.stackshare.io/service/3339/rlFcjEdI.png' alt='PostCSS'/> [PostCSS](https://github.com/postcss/postcss) – CSS Pre-processors / Extensions
-- <img width='25' height='25' src='https://img.stackshare.io/service/3834/caddy.png' alt='Caddy'/> [Caddy](https://caddyserver.com/) – Web Servers
-- <img width='25' height='25' src='https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png' alt='Shell'/> [Shell](https://en.wikipedia.org/wiki/Shell_script) – Shells
 - <img width='25' height='25' src='https://img.stackshare.io/service/5936/nextjs.png' alt='Next.js'/> [Next.js](https://nextjs.org/) – Frameworks (Full Stack)
-- <img width='25' height='25' src='https://img.stackshare.io/service/7035/default_66f265943abed56bcdbfca1c866a4261b1fbb063.jpg' alt='Prettier'/> [Prettier](https://prettier.io/) – Code Review
+- <img width='25' height='25' src='https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png' alt='Node.js'/> [Node.js](http://nodejs.org/) – Frameworks (Full Stack)
+- <img width='25' height='25' src='https://img.stackshare.io/service/3262/-s9uoLIN.png' alt='Phoenix Framework'/> [Phoenix Framework](http://www.phoenixframework.org) – Frameworks (Full Stack)
+- <img width='25' height='25' src='https://img.stackshare.io/service/3339/rlFcjEdI.png' alt='PostCSS'/> [PostCSS](https://github.com/postcss/postcss) – CSS Pre-processors / Extensions
+- <img width='25' height='25' src='https://img.stackshare.io/service/1020/OYIaJ1KK.png' alt='React'/> [React](https://reactjs.org/) – Javascript UI Libraries
 - <img width='25' height='25' src='https://img.stackshare.io/service/8158/default_660b7c41c3ba489cb581eec89c04655404258c19.png' alt='Tailwind CSS'/> [Tailwind CSS](https://tailwindcss.com) – Front-End Frameworks
 - <img width='25' height='25' src='https://img.stackshare.io/service/8680/Logo_Symbol_White.jpg' alt='Prisma'/> [Prisma](https://www.prisma.io/) – Object Relational Mapper (ORM)
-- <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – Continuous Integration
+- <img width='25' height='25' src='https://img.stackshare.io/service/2739/-1wfGjNw.png' alt='Babel'/> [Babel](http://babeljs.io/) – JavaScript Compilers
+- <img width='25' height='25' src='https://img.stackshare.io/service/3834/caddy.png' alt='Caddy'/> [Caddy](https://caddyserver.com/) – Web Servers
+- <img width='25' height='25' src='https://img.stackshare.io/service/2738/1166740.png' alt='Cowboy'/> [Cowboy](https://github.com/ninenines/cowboy) – Web Servers
 - <img width='25' height='25' src='https://img.stackshare.io/service/586/n4u37v9t_400x400.png' alt='Docker'/> [Docker](https://www.docker.com/) – Virtual Machine Platforms & Containers
+- <img width='25' height='25' src='https://img.stackshare.io/service/3337/Q4L7Jncy.jpg' alt='ESLint'/> [ESLint](http://eslint.org/) – Code Review
+- <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – Continuous Integration
+- <img width='25' height='25' src='https://img.stackshare.io/service/7035/default_66f265943abed56bcdbfca1c866a4261b1fbb063.jpg' alt='Prettier'/> [Prettier](https://prettier.io/) – Code Review
+- <img width='25' height='25' src='https://img.stackshare.io/service/2862/qr2-jCLr.jpg' alt='Nodemailer'/> [Nodemailer](http://www.nodemailer.com/) – Transactional Email
+- <img width='25' height='25' src='https://img.stackshare.io/service/4631/default_c2062d40130562bdc836c13dbca02d318205a962.png' alt='Shell'/> [Shell](https://en.wikipedia.org/wiki/Shell_script) – Shells
 
 Full tech stack [here](/techstack.md)
 
@@ -64,7 +64,7 @@ Full tech stack [here](/techstack.md)
 # Tech Stack File
 ![](https://img.stackshare.io/repo.svg "repo") [aryaniyaps/securechat](https://github.com/aryaniyaps/securechat)![](https://img.stackshare.io/public_badge.svg "public")
 <br/><br/>
-|53<br/>Tools used|01/20/24 <br/>Report generated|
+|53<br/>Tools used|02/29/24 <br/>Report generated|
 |------|------|
 </div>
 
